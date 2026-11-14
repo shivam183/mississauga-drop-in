@@ -388,3 +388,29 @@ test("open enrol cards get a green stripe; full ones are faded", async ({ page }
   await page.goto("/?type=dropin");
   expect((await look(page.getByRole("article").first())).shadow).toBe("none");
 });
+
+test("security headers are set, and the CSP doesn't break the page", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (msg) => {
+    if (msg.type() === "error" && /Content Security Policy|CSP/i.test(msg.text())) {
+      errors.push(msg.text());
+    }
+  });
+  const response = await page.goto("/?type=enrol");
+  const headers = response!.headers();
+  expect(headers["content-security-policy"]).toContain("frame-ancestors 'none'");
+  expect(headers["content-security-policy"]).toContain("connect-src 'self'");
+  expect(headers["x-content-type-options"]).toBe("nosniff");
+  expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+  expect(headers["permissions-policy"]).toContain("geolocation=()");
+  expect(headers["x-powered-by"]).toBeUndefined();
+
+  // The app still works under the policy: it hydrates and loads spots.
+  await expect(
+    page
+      .getByRole("article")
+      .first()
+      .getByText(/spots? left|^Full$/),
+  ).toBeVisible();
+  expect(errors).toEqual([]);
+});

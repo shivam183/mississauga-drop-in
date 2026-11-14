@@ -178,6 +178,13 @@ mississauga-drop-in/
 - Unit tests built from real fixtures. Key cases: `parseSpaces`, `toEnrolState` with times before and after the opening time, the full notice, and link safety.
 - Create the GitHub repo and push, after confirming with the user, then do the one-time setup steps under **GitHub automation**.
 - Connect Vercel. `v0.1.0` comes from merging the first release-please PR, not from tagging by hand.
+- Progress (2026-11-14):
+  - Done: unit tests from real fixtures (127), Playwright e2e (42), Vercel connected (https://mississauga-drop-in.vercel.app).
+  - Done: security headers (CSP, nosniff, Referrer-Policy, Permissions-Policy) with an e2e check; `npm audit` clean.
+  - Done: live Lighthouse mobile scores 92–99 for performance and 100 for accessibility, best practices and SEO.
+  - Done: squash-only merges with the PR title, auto-merge, and merged branches deleted.
+  - Next: release `v0.1.0` by merging the release PR, then a `main` ruleset requiring a PR and passing `check`, `e2e`, `analyze` and `conventional-title`. The user chose this over direct pushes.
+  - Still on the user: a `RELEASE_PLEASE_TOKEN` secret. Without it, future release PRs get no checks and can't pass that ruleset.
 
 **Later:** favourites, an `.ics` calendar export, a PWA, and "notify me when spots open".
 
