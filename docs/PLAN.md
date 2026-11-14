@@ -173,7 +173,7 @@ mississauga-drop-in/
 - `GET /api/centres`, `/api/sessions?type=&q=&centre=&from=&to=` and `/api/availability?ids=&fresh=`, with limits on how much each returns.
 - Done: documented in `docs/api.md`. `/api/centres` is static. `/api/sessions` takes the site's filters plus `limit` (1–200, default 50) and `offset`, returns `total` and a `next` link, and lets shared caches keep it for 60 s. `/api/availability` also returns the worked-out `enrol` state per session. Times are ISO 8601 with Toronto's offset. All three allow calls from any website (CORS `*`, plain GETs). The response shapes are a public contract, separate from the internal `Session` type.
 
-**5. Quality + release**
+**5. Quality + release** ✅
 
 - Unit tests built from real fixtures. Key cases: `parseSpaces`, `toEnrolState` with times before and after the opening time, the full notice, and link safety.
 - Create the GitHub repo and push, after confirming with the user, then do the one-time setup steps under **GitHub automation**.
@@ -183,8 +183,9 @@ mississauga-drop-in/
   - Done: security headers (CSP, nosniff, Referrer-Policy, Permissions-Policy) with an e2e check; `npm audit` clean.
   - Done: live Lighthouse mobile scores 92–99 for performance and 100 for accessibility, best practices and SEO.
   - Done: squash-only merges with the PR title, auto-merge, and merged branches deleted.
-  - Next: release `v0.1.0` by merging the release PR, then a `main` ruleset requiring a PR and passing `check`, `e2e`, `analyze` and `conventional-title`. The user chose this over direct pushes.
-  - Still on the user: a `RELEASE_PLEASE_TOKEN` secret. Without it, future release PRs get no checks and can't pass that ruleset.
+  - Done: `v0.1.0` released (https://github.com/shivam183/mississauga-drop-in/releases/tag/v0.1.0).
+  - Done: the "Protect main" ruleset requires a PR (squash only) and passing `check`, `e2e`, `analyze` and `conventional-title`, and blocks deletion and force pushes. All changes now go through PRs.
+  - Done: the `RELEASE_PLEASE_TOKEN` secret (a fine-grained PAT) is set, so release PRs get their checks. Renew it before it expires.
 
 **Later:** favourites, an `.ics` calendar export, a PWA, and "notify me when spots open".
 
