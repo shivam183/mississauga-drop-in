@@ -143,7 +143,7 @@ mississauga-drop-in/
 - Add `api-health.yml` (a nightly shape check using the same client, with at most a handful of requests) and `update-centres.yml`.
 - Done: the client validates every response shape at runtime (`validate.ts`) and throws `ActiveNetError` or `ActiveNetShapeError`. Fixtures and their manifest are in `tests/fixtures/`. The unit tests cover the throttle, the client and the API facts from the fixtures.
 
-**2. Domain**
+**2. Domain** ✅
 
 - Normalise events into `Session {id, type: "dropin"|"enrol", title, centreId, centreName, facility, start, end, activityId, url}`.
 - Merge both calendars into one list sorted by start time.
@@ -153,13 +153,15 @@ mississauga-drop-in/
   - `{count: N, level: N <= 5 ? "few" : "open"}` for "N openings remaining"
   - `unknown` for anything else, logged so new wording gets noticed
 - Each session card shows its own count.
-- `toEnrolState(buttonStatus, detail, now)` returns `enrol | opens | full | closed | unknown`.
+- `toEnrolState(status, now)` returns `enrol | opens | full | closed | unknown`, where `status` comes from `toSessionStatus(detail, buttonStatus)`. The status is cached and the state is worked out when shown, because "opens at 7 am" depends on the current time.
 - Fetch schedules in batches of about 5 centres, drop sessions that have already ended, and cache the normalised sessions (not the raw 12 MB response) with `"use cache"` and `cacheLife`.
+- Done: models in `src/models/` (`session`, `availability`, `filters`, `links`), services in `src/lib/` (`schedule`, `availability`, `centres`), and cache profiles `schedule` (10 min) and `spots` (60 s) in `next.config.ts`. Spots left are cached for 60 s; the enrol link and opening time for 10 min, so the refresh button costs one request per session. Availability lookups accept only ids of upcoming calendar 3 sessions (at most 20 per call). Facility names have the centre prefix removed ("Churchill Mdws CC Gym 2" becomes "Gym 2"); all 133 real names were checked.
+- Live check (2026-11-14): 9,319 sessions load in about 3 s cold and 25 ms cached. Availability for 3 sessions takes about 3 s cold, because of the 2-requests-per-second throttle, and 12 ms cached.
 
 **3. UI**
 
 - Build the mobile card and day groups described above.
-- `SpotsLeft` and `EnrolButton` are client components. They load counts in batches from `/api/availability` after the page renders, show skeletons while loading, show a visible error if a lookup fails, and include the refresh button.
+- `SpotsLeft` and `EnrolButton` are client components. They load counts in batches from `/api/availability` after the page renders, only for cards that are on screen (a cold lookup takes about 1 s per session because of the throttle), show skeletons while loading, show a visible error if a lookup fails, and include the refresh button.
 - Add the centre pages and a week view.
 - All filter state lives in the URL.
 - Add `lighthouse.yml` to run Lighthouse CI against each Vercel preview.

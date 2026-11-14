@@ -20,3 +20,17 @@ Browser ──► Next.js server (pages + /api routes)
 
 See [PLAN.md](PLAN.md) for the roadmap and [data-source.md](data-source.md) for
 the API.
+
+## Caching
+
+`"use cache"` with the profiles in `next.config.ts`:
+
+| Function                                  | Profile    | Lifetime | Key                         |
+| ----------------------------------------- | ---------- | -------- | --------------------------- |
+| `getCentreBatch` (schedule.ts)            | `schedule` | 10 min   | calendar + up to 5 centres  |
+| `getCachedButtonStatus` (availability.ts) | `schedule` | 10 min   | activity id + session start |
+| `getCachedDetail` (availability.ts)       | `spots`    | 60 s     | activity id                 |
+
+Anything that depends on the current time, like hiding ended sessions or
+deciding whether enrolment has opened, runs at request time, outside the cache.
+Each spot count carries `checkedAt`, so the page can say "as of 3:42 pm".
