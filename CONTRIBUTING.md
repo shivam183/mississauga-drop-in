@@ -29,7 +29,8 @@ Also:
 
 - Keep pull requests small and focused on one change.
 - Add or update tests for any logic you change.
-- Update `CHANGELOG.md` under **Unreleased**.
+- Give the pull request a Conventional Commit title (see below). Don't edit
+  `CHANGELOG.md`; it is generated at release time.
 - Check the change on a phone-sized screen (375px wide).
 
 ## Being kind to the City's servers
@@ -42,7 +43,23 @@ This app reads data from the City of Mississauga's public ActiveNet site.
 
 ## Commit messages
 
-Use short, imperative subjects, for example `Add centre filter to search`.
+Pull requests are squash-merged, so the **pull request title** becomes the
+commit message on `main`. It must follow
+[Conventional Commits](https://www.conventionalcommits.org/), and a CI check
+enforces this:
+
+- `feat: add centre filter to search` adds a feature and goes in the changelog.
+- `fix(enrol): show Full when the notice says full` fixes a bug and goes in the changelog.
+- `docs:`, `perf:` and `revert:` also go in the changelog.
+- `refactor:`, `test:`, `build:`, `ci:`, `chore:` and `style:` are left out.
+- Add `!` after the type (`feat!:`) for a breaking change.
+
+## Releases
+
+Releases are automated with release-please. It keeps a "chore: release" pull
+request open with the next version and changelog. A maintainer merges it to
+tag the release and publish a GitHub Release. Every merge to `main` deploys to
+production on Vercel, and every pull request gets a preview deployment.
 
 ## Licence
 

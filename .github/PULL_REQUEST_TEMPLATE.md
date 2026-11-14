@@ -11,4 +11,4 @@
 - [ ] `npm run lint`, `npm run typecheck`, `npm test` and `npm run build` pass
 - [ ] Tests added or updated for changed logic
 - [ ] UI changes checked at 375px width and in dark mode
-- [ ] `CHANGELOG.md` updated under **Unreleased**
+- [ ] PR title follows Conventional Commits, e.g. `feat: add centre filter`

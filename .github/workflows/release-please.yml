@@ -1,0 +1,25 @@
+# Keeps a "Release PR" open that bumps the version and updates CHANGELOG.md
+# from Conventional Commit messages. Merging that PR tags the release and
+# publishes a GitHub Release.
+name: Release Please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          # PRs opened with the default GITHUB_TOKEN don't trigger CI. Add a
+          # RELEASE_PLEASE_TOKEN secret (a fine-grained PAT) so the release PR
+          # gets CI checks and can pass the ruleset on main.
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

@@ -58,7 +58,32 @@ Settled by the user:
 - **Caching:** use Next's data cache. Schedules are revalidated every 10 minutes. Detail and button status use `revalidate: 60`, and the refresh button bypasses the cache with `?fresh=1`, rate-limited per IP.
 - **Load on the City's servers:** request starts are throttled to at most 2 per second, with at most 4 lookups in flight at once.
 - **Tooling:** Vitest, ESLint and Prettier, Node 22.
-- **Hosting:** Vercel.
+- **Hosting:** Vercel, connected through its GitHub integration. Every PR gets a preview URL, and every merge to `main` deploys to production.
+
+## GitHub automation
+
+| Workflow                   | Trigger                         | What it does                                                                                                                                       |
+| -------------------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ci.yml`                   | push to `main`, PRs             | lint, format check, typecheck, test, build                                                                                                         |
+| `pr-title.yml`             | PR opened/edited                | Requires a Conventional Commit PR title (`feat:`, `fix(enrol):` …). PRs are squash-merged, so the title becomes the commit message on `main`.      |
+| `release-please.yml`       | push to `main`                  | Keeps a release PR open with the next version and `CHANGELOG.md`. Merging it tags `vX.Y.Z` and publishes a GitHub Release. `feat` bumps 0.x minor. |
+| `codeql.yml`               | push to `main`, PRs, weekly     | CodeQL security scan (`security-extended` queries)                                                                                                 |
+| `dependabot-automerge.yml` | Dependabot PRs                  | Auto-merges patch updates, and minor updates to dev dependencies and Actions, once required checks pass. Major updates wait for a human.           |
+| `api-health.yml` _(Ph. 1)_ | nightly cron, manual            | Calls the four ActiveNet endpoints once and fails if the response shape changes, so a broken unofficial API is noticed before users notice it.     |
+| `update-centres.yml` _(1)_ | weekly cron, manual             | Runs `scripts/update-centres.ts` and opens a PR if `data/centres.*.json` changed                                                                   |
+| `lighthouse.yml` _(Ph. 3)_ | Vercel preview deployment ready | Lighthouse CI on the preview URL; fails below 90 for mobile accessibility or performance                                                           |
+
+Dependabot (`dependabot.yml`) uses Conventional Commit prefixes (`fix(deps)`, `chore(deps)`, `ci(deps)`), so its PRs pass the title check.
+
+### One-time setup on GitHub and Vercel (done by hand)
+
+1. Create the public GitHub repo and push.
+2. **Settings → General:** allow squash merging only, use the PR title as the default commit message, enable "Allow auto-merge" and "Automatically delete head branches".
+3. **Settings → Actions → General:** set workflow permissions to "Read and write" and tick "Allow GitHub Actions to create and approve pull requests" (release-please needs this).
+4. **Settings → Rules → Rulesets:** for `main`, require a pull request and the status checks `check` (CI), `conventional-title` and `analyze` (CodeQL), and block force pushes.
+5. **Settings → Code security:** turn on Dependabot alerts, Dependabot security updates, secret scanning and push protection.
+6. **Release PR CI:** add a fine-grained PAT (contents and pull requests: read/write on this repo) as the `RELEASE_PLEASE_TOKEN` secret. Without it the release PR gets no CI run and can't pass the ruleset.
+7. **Vercel:** import the repo, keep the Next.js defaults, set the production branch to `main`, and enable PR comments for preview URLs.
 
 ## Mobile-first result card
 
@@ -85,7 +110,9 @@ Settled by the user:
 ```
 mississauga-drop-in/
 ├── .github/ ISSUE_TEMPLATE/{bug_report,feature_request,config}.yml
-│           workflows/ci.yml  PULL_REQUEST_TEMPLATE.md  dependabot.yml
+│           workflows/{ci,pr-title,release-please,codeql,dependabot-automerge}.yml
+│           workflows/{api-health,update-centres,lighthouse}.yml   # added in later phases
+│           PULL_REQUEST_TEMPLATE.md  dependabot.yml
 ├── docs/ PLAN.md  architecture.md  data-source.md
 ├── public/
 ├── scripts/ capture-fixtures.ts  update-centres.ts
@@ -99,20 +126,23 @@ mississauga-drop-in/
 ├── tests/ unit/*.test.ts  fixtures/*.json
 ├── .editorconfig .env.example .gitignore .nvmrc .prettierrc
 ├── CHANGELOG.md CODE_OF_CONDUCT.md CONTRIBUTING.md LICENSE (MIT) README.md SECURITY.md
+├── release-please-config.json .release-please-manifest.json
 └── package.json tsconfig.json next.config.ts eslint.config.mjs vitest.config.ts
 ```
 
 ## Phases
 
-**0. Repo skeleton**
+**0. Repo skeleton** ✅
 
 - Run `git init`, scaffold Next.js, add the OSS files and a README with the disclaimer, and make the first commit.
+- Add the GitHub automation: release-please, the PR title check, CodeQL and Dependabot auto-merge. CONTRIBUTING and the PR template now ask for Conventional Commit titles, and `CHANGELOG.md` is generated.
 
 **1. Data layer + verify the API**
 
 - Write `lib/activenet/client.ts` with `getFilters`, `getEvents`, `getActivityDetail` and `getButtonStatus`, plus the throttle.
 - Use `capture-fixtures.ts` to record real responses for **both** calendars and all four endpoints, including one enrollable activity and one full activity.
 - Answer the open questions and write the answers into `docs/data-source.md`.
+- Add `api-health.yml` (a nightly shape check using the same client, with at most a handful of requests) and `update-centres.yml`.
 
 **2. Domain**
 
@@ -132,6 +162,7 @@ mississauga-drop-in/
 - `SpotsLeft` and `EnrolButton` are client components. They load counts in batches from `/api/availability` after the page renders, show skeletons while loading, show a visible error if a lookup fails, and include the refresh button.
 - Add the centre pages and a week view.
 - All filter state lives in the URL.
+- Add `lighthouse.yml` to run Lighthouse CI against each Vercel preview.
 
 **4. Public JSON API**
 
@@ -140,8 +171,8 @@ mississauga-drop-in/
 **5. Quality + release**
 
 - Unit tests built from real fixtures. Key cases: `parseSpaces`, `toEnrolState` with times before and after the opening time, the full notice, and link safety.
-- CI, deploy to Vercel, and tag `v0.1.0`.
-- Create the GitHub repo and push, after confirming with the user.
+- Create the GitHub repo and push, after confirming with the user, then do the one-time setup steps under **GitHub automation**.
+- Connect Vercel. `v0.1.0` comes from merging the first release-please PR, not from tagging by hand.
 
 **Later:** favourites, an `.ics` calendar export, a PWA, and "notify me when spots open".
 
