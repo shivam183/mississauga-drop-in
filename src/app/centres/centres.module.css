@@ -1,0 +1,37 @@
+.list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 700px) {
+  .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.item {
+  display: grid;
+  gap: 2px;
+  min-height: 64px;
+  padding: 12px var(--space);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.item:hover {
+  border-color: var(--accent);
+}
+
+.name {
+  font-weight: 700;
+}
+
+.types {
+  color: var(--muted);
+  font-size: 0.9375rem;
+}

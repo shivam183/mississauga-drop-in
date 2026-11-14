@@ -23,7 +23,11 @@ npm run lint
 npm run typecheck
 npm test
 npm run build
+npm run e2e   # first time: npx playwright install chromium
 ```
+
+The end-to-end tests build the app and run it against `e2e/mock-activenet.mjs`, a
+mock of the City API that serves the recorded fixtures, so they never call the City.
 
 Also:
 

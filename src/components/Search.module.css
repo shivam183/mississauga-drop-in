@@ -1,0 +1,540 @@
+/* Phone first: one column. From 900px: filter sidebar on the left. */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "search filters"
+    "chips chips"
+    "results results";
+  gap: 10px;
+}
+
+.searchForm {
+  grid-area: search;
+  position: relative;
+  min-width: 0;
+}
+
+/* "Searching…" sits inside the right edge of the box. */
+.searchStatus {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 0.875rem;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 88px 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.apply {
+  min-height: 48px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--on-accent);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Phone: a filter icon beside the search box. */
+.filtersButton {
+  grid-area: filters;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.filtersButton[aria-expanded="true"] {
+  border-color: var(--text);
+}
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.chips {
+  grid-area: chips;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.chip[aria-current="page"] {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* Bottom sheet on phones */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgb(0 0 0 / 0.45);
+}
+
+.sheet {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 21;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 8px var(--space) 0;
+  border-radius: 16px 16px 0 0;
+  background: var(--surface);
+  box-shadow: 0 -8px 32px rgb(0 0 0 / 0.35);
+}
+
+.handle {
+  width: 40px;
+  height: 4px;
+  margin: 0 auto 8px;
+  border-radius: 2px;
+  background: var(--border);
+}
+
+.sheet[data-open="false"] {
+  display: none;
+}
+
+/* Handle and title: drag down to close. */
+.grab {
+  margin: -8px calc(-1 * var(--space)) 8px;
+  padding: 8px var(--space) 4px;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.sheet {
+  transition: transform 0.2s ease-out;
+}
+
+.sheet[data-dragging="true"] {
+  transition: none;
+}
+
+.sheet[data-dragging="true"] .grab {
+  cursor: grabbing;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet {
+    transition: none;
+  }
+}
+
+.sheetTitle {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.srClose {
+  margin-bottom: 8px;
+}
+
+/* Community centre combobox */
+.combo {
+  position: relative;
+}
+
+.comboBox {
+  position: relative;
+}
+
+.combo input[role="combobox"] {
+  padding-right: 44px;
+  text-overflow: ellipsis;
+}
+
+.comboToggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 100%;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.comboList {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  max-height: min(280px, 45vh);
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.2);
+}
+
+.comboOption {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.comboOption[data-active="true"] {
+  background: var(--surface);
+}
+
+.comboOption[aria-selected="true"] {
+  font-weight: 700;
+}
+
+/* A tick box in front of each centre */
+.comboCheck {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  border: 2px solid var(--border);
+  border-radius: 5px;
+}
+
+.comboOption[aria-selected="true"] .comboCheck {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.comboOption[aria-selected="true"] .comboCheck::after {
+  content: "✓";
+  color: var(--on-accent);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.comboChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.comboChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 4px 10px 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.comboChip:hover {
+  border-color: var(--text);
+}
+
+.comboEmpty {
+  padding: 10px;
+  color: var(--muted);
+}
+
+.filterForm {
+  display: grid;
+  gap: 16px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.field legend,
+.field > label {
+  padding: 0;
+  font-weight: 700;
+}
+
+.field select,
+.field input[type="text"] {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.toggles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.toggle {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  min-height: 56px;
+  padding: 6px 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+}
+
+.toggleLabel {
+  font-weight: 700;
+}
+
+.toggleRange {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.toggle:has(input:checked) .toggleRange {
+  color: inherit;
+}
+
+/* The checkbox stays in the form and keyboard order, but the chip is what shows. */
+.toggle input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.toggle:has(input:checked) {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--bg);
+}
+
+.toggle:has(input:focus-visible) {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.actions {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 calc(-1 * var(--space));
+  padding: 12px var(--space) max(12px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.apply {
+  flex: 1;
+}
+
+.clear {
+  flex: 1;
+  min-height: 48px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.clear:disabled {
+  border-style: dashed;
+  background: transparent;
+  color: var(--muted);
+  cursor: default;
+}
+
+.clearLink {
+  padding: 10px 0;
+}
+
+/* Results */
+.results {
+  grid-area: results;
+  min-width: 0;
+}
+
+.summary {
+  margin: 0 0 4px;
+  color: var(--muted);
+}
+
+.warning {
+  padding: 10px 12px;
+  border-left: 4px solid var(--few);
+  background: var(--surface);
+}
+
+.more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 48px;
+  margin-top: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.cardSkeleton {
+  height: 140px;
+  margin-top: 10px;
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: 340px minmax(0, 1fr);
+    grid-template-areas:
+      "side search"
+      "side chips"
+      "side results";
+    align-items: start;
+    gap: 16px 32px;
+  }
+
+  .filtersButton,
+  .backdrop,
+  .handle {
+    display: none;
+  }
+
+  /* Let the centre list grow past the sidebar so names fit on one line. */
+  .comboList {
+    right: auto;
+    width: max-content;
+    min-width: 100%;
+    max-width: 440px;
+  }
+
+  /* The sidebar is narrow: one chip per row, hours on the right. */
+  .toggles {
+    grid-template-columns: 1fr;
+  }
+
+  .toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 14px;
+    text-align: left;
+  }
+
+  .grab {
+    margin: 0 0 8px;
+    padding: 0;
+    touch-action: auto;
+    cursor: auto;
+    user-select: auto;
+  }
+
+  .actions {
+    position: static;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .sheet,
+  .sheet[data-open="false"] {
+    grid-area: side;
+    position: sticky;
+    top: var(--space);
+    display: block;
+    z-index: auto;
+    max-height: none;
+    padding: var(--space);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: none;
+    background: var(--surface);
+  }
+
+  .results:only-child {
+    grid-column: 1 / -1;
+  }
+}

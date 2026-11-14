@@ -118,10 +118,19 @@ describe("toEnrolState", () => {
   });
 
   it("closed: another notice and no link", () => {
-    const message = "We're sorry, but this activity is over.";
-    expect(toEnrolState({ ...base, enrolUrl: null, notice: message }, now)).toEqual({
+    const other = "Registration for this activity is closed.";
+    expect(toEnrolState({ ...base, enrolUrl: null, notice: other }, now)).toEqual({
       state: "closed",
-      message,
+      message: other,
+    });
+  });
+
+  it("a session that has started passes on the City's notice word for word", () => {
+    const over =
+      "We're sorry, but this activity is over. The last meeting was Saturday, November 14, 2026.";
+    expect(toEnrolState({ ...base, enrolUrl: null, notice: over }, now)).toEqual({
+      state: "closed",
+      message: over,
     });
   });
 

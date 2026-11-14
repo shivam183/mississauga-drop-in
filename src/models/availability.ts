@@ -81,6 +81,8 @@ export function toEnrolState(status: SessionStatus | null, now: LocalDateTime): 
     }
     return { state: "enrol", url: status.enrolUrl };
   }
+  // Any other notice is passed on in the City's own words, e.g. "We're sorry,
+  // but this activity is over…" once a session has started.
   if (status.notice) return { state: "closed", message: status.notice };
   return { state: "unknown" };
 }

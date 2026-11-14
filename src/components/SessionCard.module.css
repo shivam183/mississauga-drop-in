@@ -1,0 +1,81 @@
+.card {
+  padding: 14px var(--space);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.time {
+  margin: 0;
+  font-size: 1.375rem;
+  font-weight: 800;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.title {
+  margin: 4px 0 2px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.title a {
+  color: inherit;
+  text-decoration-color: var(--border);
+  text-underline-offset: 3px;
+}
+
+.title a:hover {
+  text-decoration-color: currentColor;
+}
+
+.where {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.centre {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.centre:hover {
+  text-decoration: underline;
+}
+
+.facility {
+  color: var(--muted);
+}
+
+/*
+ * Enrol-online cards get a cue once spots are known (data-level on the
+ * panel): a green stripe with plenty of spots, amber with only a few (only
+ * when you can enrol), and a faded card when full. The text always says it too. The stripe is an inset
+ * shadow so nothing shifts when the count loads.
+ */
+.card:has([data-level="open"]) {
+  box-shadow: inset 5px 0 0 var(--open);
+}
+
+.card:has([data-level="few"]) {
+  box-shadow: inset 5px 0 0 var(--few);
+}
+
+.card:has([data-level="full"]) {
+  background: var(--surface);
+}
+
+.card:has([data-level="full"]) .time,
+.card:has([data-level="full"]) .title,
+.card:has([data-level="full"]) .centre {
+  color: var(--muted);
+}

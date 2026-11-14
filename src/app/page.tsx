@@ -1,12 +1,17 @@
-export default function Home() {
+import { Suspense } from "react";
+import { SearchSkeleton, SearchView } from "@/components/SearchView";
+
+export default function Home({ searchParams }: PageProps<"/">) {
   return (
-    <main className="container">
-      <h1>Mississauga Drop-In</h1>
-      <p>
-        Find drop-in and online-enrollable recreation programs in Mississauga, with times, centres
-        and spots left at a glance.
+    <>
+      <h1 className="page-title">Drop-in and enrol-online programs</h1>
+      <p className="muted intro">
+        Every session at Mississauga&rsquo;s community centres, soonest first. Enrol-online sessions
+        show live spots left.
       </p>
-      <p className="muted">Coming soon. Unofficial; not affiliated with the City of Mississauga.</p>
-    </main>
+      <Suspense fallback={<SearchSkeleton />}>
+        <SearchView searchParams={searchParams} path="/" />
+      </Suspense>
+    </>
   );
 }

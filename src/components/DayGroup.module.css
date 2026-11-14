@@ -1,0 +1,23 @@
+.group + .group {
+  margin-top: 8px;
+}
+
+.heading {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0 calc(-1 * var(--space));
+  padding: 10px var(--space);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.list {
+  display: grid;
+  gap: 10px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}

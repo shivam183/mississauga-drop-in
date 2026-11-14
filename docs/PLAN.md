@@ -116,7 +116,7 @@ mississauga-drop-in/
 ├── scripts/ capture-fixtures.ts  update-centres.ts  check-api.ts  lib.ts
 ├── data/ centres.dropin.json  centres.enrol.json
 ├── src/
-│   ├── app/            # /, /centres, /centres/[id], /calendar, /api/*
+│   ├── app/            # /, /centres, /centres/[id], /api/*
 │   ├── components/     # SessionCard, DayGroup, FilterSheet, TypeBadge, SpotsLeft, EnrolButton
 │   ├── lib/activenet/  # client.ts, types.ts, validate.ts, throttle.ts (raw API only)
 │   ├── lib/            # schedule service, enrolment service, dates, search, params
@@ -158,13 +158,15 @@ mississauga-drop-in/
 - Done: models in `src/models/` (`session`, `availability`, `filters`, `links`), services in `src/lib/` (`schedule`, `availability`, `centres`), and cache profiles `schedule` (10 min) and `spots` (60 s) in `next.config.ts`. Spots left are cached for 60 s; the enrol link and opening time for 10 min, so the refresh button costs one request per session. Availability lookups accept only ids of upcoming calendar 3 sessions (at most 20 per call). Facility names have the centre prefix removed ("Churchill Mdws CC Gym 2" becomes "Gym 2"); all 133 real names were checked.
 - Live check (2026-11-14): 9,319 sessions load in about 3 s cold and 25 ms cached. Availability for 3 sessions takes about 3 s cold, because of the 2-requests-per-second throttle, and 12 ms cached.
 
-**3. UI**
+**3. UI** ✅
 
 - Build the mobile card and day groups described above.
 - `SpotsLeft` and `EnrolButton` are client components. They load counts in batches from `/api/availability` after the page renders, only for cards that are on screen (a cold lookup takes about 1 s per session because of the throttle), show skeletons while loading, show a visible error if a lookup fails, and include the refresh button.
-- Add the centre pages and a week view.
+- Add the centre pages. (A week view was built, then removed: the day-grouped list and date filter cover it.)
 - All filter state lives in the URL.
 - Add `lighthouse.yml` to run Lighthouse CI against each Vercel preview.
+- Done: pages `/`, `/centres` and `/centres/[id]` (prerendered for every centre). The header is just the site name, with no nav tabs; centre pages are reached from the centre name on each card. Search updates the results 300 ms after typing pauses (no Search button; Enter searches at once), and Enrol now opens the City's page in a new tab. The static shell renders first and results stream in. The search box, type chips and filter form are plain GET forms and links, so everything works without JavaScript except the phone filter sheet and live spot counts (a `<noscript>` link to the City page is shown instead). `/api/availability` is built here because the cards need it: at most 20 ids per call, and `fresh=1` is limited to 10 per IP per minute (429 after that). 30 results per page with "Show more".
+- Checked in a production build: no horizontal scroll at 375px, light and dark mode, and real data (spots, Full, Enrol now, Opens …). Local Lighthouse mobile: performance 97–99, accessibility 100, best practices 100, SEO 100. Showing 50 results per page scored 89, so the page size is 30.
 
 **4. Public JSON API**
 
@@ -181,6 +183,7 @@ mississauga-drop-in/
 ## Verification
 
 - `npm run lint && npm run typecheck && npm test && npm run build` pass.
+- `npm run e2e` passes: Playwright (Chromium, 375px phone and desktop) against a production build and a mock of the City API (`e2e/mock-activenet.mjs`). It covers sideways scrolling, chips, search, the filter sheet, spots, Full, Enrol now, refresh, centre pages, search-as-you-type and Enrol now opening a new tab. CI runs it in `.github/workflows/playwright.yml`.
 - `npm run capture-fixtures` gets live data for calendars 1 and 3.
 - **Manual checks in `npm run dev`** (Chrome devtools, iPhone SE width of 375px):
   - Searching "pickleball" shows Enrol online rows. Each has a time and centre you can read at a glance, a spots-left count with "as of", and an Enrol button that opens the right ActiveMississauga enrol page.
