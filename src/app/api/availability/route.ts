@@ -4,45 +4,53 @@
  * Spots left and enrol status for up to 20 upcoming "enrol online" sessions
  * (ids are ActiveNet activity ids, which are per session for these).
  * `fresh=1` skips the 60-second cache and is rate-limited per IP.
+ * See docs/api.md.
  */
 import type { NextRequest } from "next/server";
+import { apiError, CORS_HEADERS, torontoIso } from "@/lib/api";
 import { getAvailability, MAX_AVAILABILITY_IDS } from "@/lib/availability";
 import { toTorontoLocal } from "@/lib/dates";
 import { clientIp, createRateLimiter } from "@/lib/rate-limit";
+import { toEnrolState, type EnrolState } from "@/models/availability";
 
 /** Refreshes per IP per minute that bypass the cache. */
 const FRESH_PER_MINUTE = 10;
 const freshLimiter = createRateLimiter({ limit: FRESH_PER_MINUTE, windowMs: 60_000 });
 
-const NO_STORE = { "Cache-Control": "no-store" };
-
-function error(status: number, message: string, headers: Record<string, string> = {}) {
-  return Response.json({ error: message }, { status, headers: { ...NO_STORE, ...headers } });
-}
-
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
   const raw = (params.get("ids") ?? "").split(",").filter(Boolean);
-  if (raw.length === 0) return error(400, "Pass ids, e.g. ?ids=166860,164542");
+  if (raw.length === 0) return apiError(400, "Pass ids, e.g. ?ids=166860,164542");
   if (raw.length > MAX_AVAILABILITY_IDS) {
-    return error(400, `At most ${MAX_AVAILABILITY_IDS} ids per request`);
+    return apiError(400, `At most ${MAX_AVAILABILITY_IDS} ids per request`);
   }
   const ids = raw.map(Number);
   if (!ids.every((id) => Number.isInteger(id) && id > 0)) {
-    return error(400, "ids must be positive integers");
+    return apiError(400, "ids must be positive integers");
   }
 
   const fresh = params.get("fresh") === "1";
   if (fresh && !freshLimiter.allow(clientIp(request.headers))) {
-    return error(429, "Too many refreshes. Try again in a minute.", { "Retry-After": "60" });
+    return apiError(429, "Too many refreshes. Try again in a minute.", { "Retry-After": "60" });
   }
 
   try {
     const result = await getAvailability(ids, { fresh });
-    return Response.json({ now: toTorontoLocal(new Date()), ...result }, { headers: NO_STORE });
+    const now = toTorontoLocal(new Date());
+    // The Enrol button state per session, worked out now (opensAt as ISO 8601).
+    const enrol: Record<number, EnrolState> = {};
+    for (const [id, status] of Object.entries(result.statuses)) {
+      const state = toEnrolState(status, now);
+      enrol[Number(id)] =
+        state.state === "opens" ? { ...state, opensAt: torontoIso(state.opensAt) } : state;
+    }
+    return Response.json(
+      { now, ...result, enrol },
+      { headers: { ...CORS_HEADERS, "Cache-Control": "no-store" } },
+    );
   } catch (cause) {
-    if (cause instanceof RangeError) return error(400, cause.message);
+    if (cause instanceof RangeError) return apiError(400, cause.message);
     console.error("[api/availability]", cause);
-    return error(502, "Couldn't reach ActiveMississauga. Try again shortly.");
+    return apiError(502, "Couldn't reach ActiveMississauga. Try again shortly.");
   }
 }

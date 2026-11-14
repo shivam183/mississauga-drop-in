@@ -168,9 +168,10 @@ mississauga-drop-in/
 - Done: pages `/`, `/centres` and `/centres/[id]` (prerendered for every centre). The header is just the site name, with no nav tabs; centre pages are reached from the centre name on each card. Search updates the results 300 ms after typing pauses (no Search button; Enter searches at once), and Enrol now opens the City's page in a new tab. The static shell renders first and results stream in. The search box, type chips and filter form are plain GET forms and links, so everything works without JavaScript except the phone filter sheet and live spot counts (a `<noscript>` link to the City page is shown instead). `/api/availability` is built here because the cards need it: at most 20 ids per call, and `fresh=1` is limited to 10 per IP per minute (429 after that). 30 results per page with "Show more".
 - Checked in a production build: no horizontal scroll at 375px, light and dark mode, and real data (spots, Full, Enrol now, Opens …). Local Lighthouse mobile: performance 97–99, accessibility 100, best practices 100, SEO 100. Showing 50 results per page scored 89, so the page size is 30.
 
-**4. Public JSON API**
+**4. Public JSON API** ✅
 
 - `GET /api/centres`, `/api/sessions?type=&q=&centre=&from=&to=` and `/api/availability?ids=&fresh=`, with limits on how much each returns.
+- Done: documented in `docs/api.md`. `/api/centres` is static. `/api/sessions` takes the site's filters plus `limit` (1–200, default 50) and `offset`, returns `total` and a `next` link, and lets shared caches keep it for 60 s. `/api/availability` also returns the worked-out `enrol` state per session. Times are ISO 8601 with Toronto's offset. All three allow calls from any website (CORS `*`, plain GETs). The response shapes are a public contract, separate from the internal `Session` type.
 
 **5. Quality + release**
 
