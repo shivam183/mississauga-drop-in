@@ -27,51 +27,49 @@ This is the unofficial ActiveNet JSON API. It needs no auth, and only our server
 | Purpose      | Call                                                                                                         | Used for                                                                                                                                                                                                 |
 | ------------ | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Centres      | `POST /onlinecalendar/filters?locale=en-US` with body `{calendar_id:"1"}` or `"3"` (a string)                | `body.center[]`, kept as a separate list per calendar                                                                                                                                                    |
-| Events       | `POST /onlinecalendar/multicenter/events` with `calendar_id` 1 or 3 (a number) and `center_ids[]` in batches | `title`, `start_time`/`end_time` (`YYYY-MM-DD HH:mm:ss`, Toronto time), `facilities[]`, `activity_detail_url`, activity id                                                                               |
-| Spots left   | `GET /activity/detail/{id}?locale=en-US`                                                                     | `body.detail.space_status`: either `"Full"` or `"N openings remaining"` (confirmed by the user). The count is **per session**.                                                                           |
+| Events       | `POST /onlinecalendar/multicenter/events` with `calendar_id` 1 or 3 (a number) and `center_ids[]` in batches | `title`, `start_time`/`end_time` (`YYYY-MM-DD HH:mm:ss`, Toronto time), `facilities[]`, `activity_detail_url`, `event_item_id` (activity id)                                                             |
+| Spots left   | `GET /activity/detail/{id}?locale=en-US`                                                                     | `body.detail.space_status`: either `"Full"` or `"N openings remaining"`. Per session for calendar 3; for calendar 1 it covers the whole run, so it isn't shown.                                          |
 | Enrol status | `GET /activity/detail/buttonstatus/{id}?selected_date=YYYY-MM-DD HH:mm:ss&locale=en-US`                      | `action_link.href` (the Enrol URL, for example `.../activity/search/enroll/155514`), `activity_online_start_time` (when enrolment opens) and `notification` (HTML, for example "This activity is full…") |
 
-The calendar 3 enrol state comes from `buttonstatus` and `detail` combined. `buttonstatus` gets the next upcoming session start as `selected_date`.
+Full details, with the live responses that confirm them, are in `docs/data-source.md`.
 
-- **Enrol now:** there is an `href`, the opening time is in the past, and the activity isn't full. The button opens `href`.
-- **Opens {date}:** the opening time is in the future. The button is disabled.
+The calendar 3 enrol state comes from `buttonstatus` and `detail` combined. `buttonstatus` is called with the session's own start as `selected_date`.
+
+- **Enrol now:** there is an `href`, the opening time is **empty or in the past** (it is `""` once enrolment is open), and `space_status` isn't "Full". The button opens `href`.
+- **Opens {date}:** there is an `href` and the opening time is in the future (seen: 7 am the day before the session). The button is disabled.
 - **Full:** `space_status` is "Full" for that session, or the notice says "full". There is no button, but a link to the City page remains.
+- **Closed:** any other notice with no `href`, such as "this activity is over". There is no button, and the notice is shown as plain text.
 - **Unknown:** the lookup failed. Show "Check on ActiveMississauga" and link to `activity_detail_url`.
 
 Only https `*.activecommunities.com` URLs are allowed as links. The notice HTML is turned into plain text and never rendered as markup.
 
-Open questions to settle in Phase 1 using real responses:
+Answered in Phase 1 (see `docs/data-source.md`):
 
-- The date format for `search_start_time`/`search_end_time`
-- How many centres one events request accepts
-- Whether calendar 3 events have the same shape as calendar 1's
-- **Which request returns the count for one session.** The count is per session, but `/activity/detail/{id}` is keyed by activity. Check whether it, or `buttonstatus`, takes `selected_date` to pick the session, and whether the events response or `event_item_id` holds it directly. Cache and look up counts by `(activityId, sessionStart)`, not by activity alone.
-
-Settled by the user:
-
-- `space_status` is per session.
-- `space_status` is either "Full" or "N openings remaining".
+- **Date range:** `search_start_time` and `search_end_time` are ignored in every format tried. The API always returns its whole window (the Monday of this week to about 6–8 weeks ahead), so the app filters by date itself.
+- **Centres per request:** any number, with no paging. But calendar 1 with all 21 centres is about **12 MB**, so requests are batched (about 5 centres each), and the cache stores normalised sessions, not raw responses.
+- **Calendar 3 shape:** the same as calendar 1. On 2026-11-14 it held only "Drop In Adult Pickleball" (about 480 sessions at 10 centres).
+- **Spots for one session:** in calendar 3, **every session has its own `event_item_id`**, so `/activity/detail/{event_item_id}` is already per session, and counts are cached by `event_item_id`. No `selected_date` is needed for detail.
 
 ## Tech stack
 
 - **Next.js (App Router) + TypeScript + React**, rendered on the server and styled with CSS modules.
-- **Caching:** use Next's data cache. Schedules are revalidated every 10 minutes. Detail and button status use `revalidate: 60`, and the refresh button bypasses the cache with `?fresh=1`, rate-limited per IP.
-- **Load on the City's servers:** request starts are throttled to at most 2 per second, with at most 4 lookups in flight at once.
+- **Caching:** this Next.js version uses Cache Components (`cacheComponents: true`), so caching uses `"use cache"` with `cacheLife` in the `src/lib/` services, not `fetch` revalidate options. The ActiveNet client itself never caches. Normalised schedules are cached for 10 minutes, and spot counts and button status for 60 seconds. The refresh button bypasses the cache with `?fresh=1`, rate-limited per IP.
+- **Load on the City's servers:** request starts are throttled to at most 2 per second, with at most 4 lookups in flight at once (per server process).
 - **Tooling:** Vitest, ESLint and Prettier, Node 22.
 - **Hosting:** Vercel, connected through its GitHub integration. Every PR gets a preview URL, and every merge to `main` deploys to production.
 
 ## GitHub automation
 
-| Workflow                   | Trigger                         | What it does                                                                                                                                       |
-| -------------------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ci.yml`                   | push to `main`, PRs             | lint, format check, typecheck, test, build                                                                                                         |
-| `pr-title.yml`             | PR opened/edited                | Requires a Conventional Commit PR title (`feat:`, `fix(enrol):` …). PRs are squash-merged, so the title becomes the commit message on `main`.      |
-| `release-please.yml`       | push to `main`                  | Keeps a release PR open with the next version and `CHANGELOG.md`. Merging it tags `vX.Y.Z` and publishes a GitHub Release. `feat` bumps 0.x minor. |
-| `codeql.yml`               | push to `main`, PRs, weekly     | CodeQL security scan (`security-extended` queries)                                                                                                 |
-| `dependabot-automerge.yml` | Dependabot PRs                  | Auto-merges patch updates, and minor updates to dev dependencies and Actions, once required checks pass. Major updates wait for a human.           |
-| `api-health.yml` _(Ph. 1)_ | nightly cron, manual            | Calls the four ActiveNet endpoints once and fails if the response shape changes, so a broken unofficial API is noticed before users notice it.     |
-| `update-centres.yml` _(1)_ | weekly cron, manual             | Runs `scripts/update-centres.ts` and opens a PR if `data/centres.*.json` changed                                                                   |
-| `lighthouse.yml` _(Ph. 3)_ | Vercel preview deployment ready | Lighthouse CI on the preview URL; fails below 90 for mobile accessibility or performance                                                           |
+| Workflow                   | Trigger                         | What it does                                                                                                                                                                                |
+| -------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ci.yml`                   | push to `main`, PRs             | lint, format check, typecheck, test, build                                                                                                                                                  |
+| `pr-title.yml`             | PR opened/edited                | Requires a Conventional Commit PR title (`feat:`, `fix(enrol):` …). PRs are squash-merged, so the title becomes the commit message on `main`.                                               |
+| `release-please.yml`       | push to `main`                  | Keeps a release PR open with the next version and `CHANGELOG.md`. Merging it tags `vX.Y.Z` and publishes a GitHub Release. `feat` bumps 0.x minor.                                          |
+| `codeql.yml`               | push to `main`, PRs, weekly     | CodeQL security scan (`security-extended` queries)                                                                                                                                          |
+| `dependabot-automerge.yml` | Dependabot PRs                  | Auto-merges patch updates, and minor updates to dev dependencies and Actions, once required checks pass. Major updates wait for a human.                                                    |
+| `api-health.yml`           | nightly cron, manual            | `npm run check-api`: 8 requests covering all four endpoints. Fails if a response shape or the `space_status` wording changes, so a broken unofficial API is noticed before users notice it. |
+| `update-centres.yml`       | weekly cron, manual             | Runs `scripts/update-centres.ts` and opens a PR if `data/centres.*.json` changed                                                                                                            |
+| `lighthouse.yml` _(Ph. 3)_ | Vercel preview deployment ready | Lighthouse CI on the preview URL; fails below 90 for mobile accessibility or performance                                                                                                    |
 
 Dependabot (`dependabot.yml`) uses Conventional Commit prefixes (`fix(deps)`, `chore(deps)`, `ci(deps)`), so its PRs pass the title check.
 
@@ -111,16 +109,16 @@ Dependabot (`dependabot.yml`) uses Conventional Commit prefixes (`fix(deps)`, `c
 mississauga-drop-in/
 ├── .github/ ISSUE_TEMPLATE/{bug_report,feature_request,config}.yml
 │           workflows/{ci,pr-title,release-please,codeql,dependabot-automerge}.yml
-│           workflows/{api-health,update-centres,lighthouse}.yml   # added in later phases
+│           workflows/{api-health,update-centres}.yml  workflows/lighthouse.yml (Phase 3)
 │           PULL_REQUEST_TEMPLATE.md  dependabot.yml
 ├── docs/ PLAN.md  architecture.md  data-source.md
 ├── public/
-├── scripts/ capture-fixtures.ts  update-centres.ts
+├── scripts/ capture-fixtures.ts  update-centres.ts  check-api.ts  lib.ts
 ├── data/ centres.dropin.json  centres.enrol.json
 ├── src/
 │   ├── app/            # /, /centres, /centres/[id], /calendar, /api/*
 │   ├── components/     # SessionCard, DayGroup, FilterSheet, TypeBadge, SpotsLeft, EnrolButton
-│   ├── lib/activenet/  # client.ts, types.ts, throttle.ts (raw API only)
+│   ├── lib/activenet/  # client.ts, types.ts, validate.ts, throttle.ts (raw API only)
 │   ├── lib/            # schedule service, enrolment service, dates, search, params
 │   └── models/         # Session, Centre, Availability, EnrolState (pure functions)
 ├── tests/ unit/*.test.ts  fixtures/*.json
@@ -137,12 +135,13 @@ mississauga-drop-in/
 - Run `git init`, scaffold Next.js, add the OSS files and a README with the disclaimer, and make the first commit.
 - Add the GitHub automation: release-please, the PR title check, CodeQL and Dependabot auto-merge. CONTRIBUTING and the PR template now ask for Conventional Commit titles, and `CHANGELOG.md` is generated.
 
-**1. Data layer + verify the API**
+**1. Data layer + verify the API** ✅
 
 - Write `lib/activenet/client.ts` with `getFilters`, `getEvents`, `getActivityDetail` and `getButtonStatus`, plus the throttle.
 - Use `capture-fixtures.ts` to record real responses for **both** calendars and all four endpoints, including one enrollable activity and one full activity.
 - Answer the open questions and write the answers into `docs/data-source.md`.
 - Add `api-health.yml` (a nightly shape check using the same client, with at most a handful of requests) and `update-centres.yml`.
+- Done: the client validates every response shape at runtime (`validate.ts`) and throws `ActiveNetError` or `ActiveNetShapeError`. Fixtures and their manifest are in `tests/fixtures/`. The unit tests cover the throttle, the client and the API facts from the fixtures.
 
 **2. Domain**
 
@@ -154,7 +153,8 @@ mississauga-drop-in/
   - `{count: N, level: N <= 5 ? "few" : "open"}` for "N openings remaining"
   - `unknown` for anything else, logged so new wording gets noticed
 - Each session card shows its own count.
-- `toEnrolState(buttonStatus, detail, now)` returns `enrol | opens | full | unknown`.
+- `toEnrolState(buttonStatus, detail, now)` returns `enrol | opens | full | closed | unknown`.
+- Fetch schedules in batches of about 5 centres, drop sessions that have already ended, and cache the normalised sessions (not the raw 12 MB response) with `"use cache"` and `cacheLife`.
 
 **3. UI**
 

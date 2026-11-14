@@ -1,0 +1,33 @@
+{
+  "headers": {
+    "sessionRefreshedOn": null,
+    "sessionExtendedCount": 0,
+    "response_code": "0000",
+    "response_message": "Successful",
+    "page_info": {
+      "order_by": "",
+      "order_option": "ASC",
+      "total_page": 1,
+      "total_records_per_page": 30,
+      "total_records": 0,
+      "page_number": 1
+    }
+  },
+  "body": {
+    "button_status": {
+      "activity_online_start_time": "",
+      "action_link": {
+        "href": "https://anc.ca.apm.activecommunities.com/activemississauga/activity/search/enroll/166860?locale=en-US",
+        "title": "",
+        "label": "Enroll Now",
+        "type": 3,
+        "unit": "",
+        "show_all_inclusive_pricing": false,
+        "enable_all_inclusive_pricing": false
+      },
+      "team_action_links": null,
+      "time_remaining": 0,
+      "notification": ""
+    }
+  }
+}

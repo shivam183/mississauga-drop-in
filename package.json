@@ -17,7 +17,10 @@
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "capture-fixtures": "tsx scripts/capture-fixtures.ts",
+    "update-centres": "tsx scripts/update-centres.ts",
+    "check-api": "tsx scripts/check-api.ts"
   },
   "dependencies": {
     "next": "16.4.6",

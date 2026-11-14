@@ -1,0 +1,177 @@
+{
+  "headers": {
+    "sessionRefreshedOn": null,
+    "sessionExtendedCount": 0,
+    "response_code": "0000",
+    "response_message": "Successful",
+    "page_info": {
+      "order_by": "",
+      "order_option": "ASC",
+      "total_page": 1,
+      "total_records_per_page": 20,
+      "total_records": 0,
+      "page_number": 1
+    }
+  },
+  "body": {
+    "center": [
+      {
+        "id": 290,
+        "name": "Burnhamthorpe Community Centre"
+      },
+      {
+        "id": 248,
+        "name": "Carmen Corbasson Community Centre"
+      },
+      {
+        "id": 261,
+        "name": "Churchill Meadows Community Centre"
+      },
+      {
+        "id": 240,
+        "name": "Clarkson Community Centre"
+      },
+      {
+        "id": 243,
+        "name": "Frank McKechnie Community Centre"
+      },
+      {
+        "id": 252,
+        "name": "Huron Park Recreation Centre"
+      },
+      {
+        "id": 125,
+        "name": "Malton Community Centre"
+      },
+      {
+        "id": 119,
+        "name": "Meadowvale Community Centre"
+      },
+      {
+        "id": 396,
+        "name": "Mississauga Valley Gymnasium"
+      },
+      {
+        "id": 110,
+        "name": "River Grove Community Centre"
+      }
+    ],
+    "activity": [
+      {
+        "id": 145769,
+        "name": "Drop In Adult Pickleball",
+        "category_id": 39,
+        "sub_category_id": 3,
+        "center_ids": [
+          243
+        ]
+      },
+      {
+        "id": 145770,
+        "name": "Drop In Adult Pickleball",
+        "category_id": 39,
+        "sub_category_id": 3,
+        "center_ids": [
+          243
+        ]
+      },
+      {
+        "id": 145771,
+        "name": "Drop In Adult Pickleball",
+        "category_id": 39,
+        "sub_category_id": 3,
+        "center_ids": [
+          243
+        ]
+      }
+    ],
+    "activity_category": [
+      {
+        "id": 39,
+        "name": "Sports",
+        "centerIds": [
+          240,
+          290,
+          243,
+          261,
+          119,
+          248,
+          252,
+          396,
+          125,
+          110
+        ]
+      }
+    ],
+    "facilities": [
+      {
+        "facility_id": 2191,
+        "facility_name": "Burnhamthorpe CC Gym A",
+        "center_id": 290,
+        "center_name": "Burnhamthorpe Community Centre",
+        "is_center_valid": true,
+        "event_type_ids": [
+          0
+        ]
+      },
+      {
+        "facility_id": 64,
+        "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+        "center_id": 290,
+        "center_name": "Burnhamthorpe Community Centre",
+        "is_center_valid": true,
+        "event_type_ids": [
+          0
+        ]
+      },
+      {
+        "facility_id": 2192,
+        "facility_name": "Burnhamthorpe CC Gym B",
+        "center_id": 290,
+        "center_name": "Burnhamthorpe Community Centre",
+        "is_center_valid": true,
+        "event_type_ids": [
+          0
+        ]
+      }
+    ],
+    "calendar_period": {
+      "start_date": "2026-11-09",
+      "end_date": "2027-02-22"
+    },
+    "event_types": [],
+    "activity_center": [
+      {
+        "id": 290,
+        "name": "Burnhamthorpe Community Centre"
+      },
+      {
+        "id": 248,
+        "name": "Carmen Corbasson Community Centre"
+      },
+      {
+        "id": 261,
+        "name": "Churchill Meadows Community Centre"
+      }
+    ],
+    "activity_sub_category": [
+      {
+        "id": 3,
+        "name": "Adult",
+        "centerIds": [
+          240,
+          290,
+          243,
+          261,
+          119,
+          248,
+          252,
+          396,
+          125,
+          110
+        ]
+      }
+    ],
+    "permit_center": []
+  }
+}

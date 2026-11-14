@@ -1,0 +1,23 @@
+{
+  "capturedAt": "2026-11-14 15:21:58",
+  "timeZone": "America/Toronto",
+  "dropIn": {
+    "centreId": 290,
+    "activityId": 158004,
+    "sessions": 27
+  },
+  "enrol": {
+    "opens": {
+      "activityId": 164373,
+      "start": "2026-12-31 08:30:00"
+    },
+    "enrol": {
+      "activityId": 166860,
+      "start": "2026-11-14 16:30:00"
+    },
+    "full": {
+      "activityId": 164542,
+      "start": "2026-11-14 17:15:00"
+    }
+  }
+}

@@ -1,0 +1,1768 @@
+{
+  "headers": {
+    "sessionRefreshedOn": null,
+    "sessionExtendedCount": 0,
+    "response_code": "0000",
+    "response_message": "Successful",
+    "page_info": {
+      "order_by": "",
+      "order_option": "ASC",
+      "total_page": 1,
+      "total_records_per_page": 20,
+      "total_records": 0,
+      "page_number": 1
+    }
+  },
+  "body": {
+    "center_events": [
+      {
+        "center_id": 290,
+        "center_name": "Burnhamthorpe Community Centre",
+        "events": [
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-09 08:00:00",
+            "end_time": "2026-11-09 10:00:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155562,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155562",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-09 10:15:00",
+            "end_time": "2026-11-09 12:15:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155578,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155578",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-10 12:30:00",
+            "end_time": "2026-11-10 14:30:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155915,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155915",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-11 08:00:00",
+            "end_time": "2026-11-11 10:00:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155603,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155603",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-11 10:15:00",
+            "end_time": "2026-11-11 12:15:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 158757,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/158757",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-11 12:30:00",
+            "end_time": "2026-11-11 14:30:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 164135,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/164135",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-12 12:30:00",
+            "end_time": "2026-11-12 14:30:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155939,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155939",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-13 08:00:00",
+            "end_time": "2026-11-13 10:00:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 164150,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/164150",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-13 10:15:00",
+            "end_time": "2026-11-13 12:15:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 164165,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/164165",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-15 07:30:00",
+            "end_time": "2026-11-15 09:30:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155514,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155514",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-16 08:00:00",
+            "end_time": "2026-11-16 10:00:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155563,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155563",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-16 10:15:00",
+            "end_time": "2026-11-16 12:15:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155579,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155579",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-17 12:30:00",
+            "end_time": "2026-11-17 14:30:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155916,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155916",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-18 08:00:00",
+            "end_time": "2026-11-18 10:00:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155604,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155604",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-18 10:15:00",
+            "end_time": "2026-11-18 12:15:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 158758,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/158758",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-18 12:30:00",
+            "end_time": "2026-11-18 14:30:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 164136,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/164136",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-19 12:30:00",
+            "end_time": "2026-11-19 14:30:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155940,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155940",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-20 08:00:00",
+            "end_time": "2026-11-20 10:00:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 164151,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/164151",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-20 10:15:00",
+            "end_time": "2026-11-20 12:15:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 164166,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/164166",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-22 07:30:00",
+            "end_time": "2026-11-22 09:30:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155516,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155516",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-23 08:00:00",
+            "end_time": "2026-11-23 10:00:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155564,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155564",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-23 10:15:00",
+            "end_time": "2026-11-23 12:15:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155580,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155580",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-24 12:30:00",
+            "end_time": "2026-11-24 14:30:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155917,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155917",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-25 08:00:00",
+            "end_time": "2026-11-25 10:00:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155605,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155605",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-25 10:15:00",
+            "end_time": "2026-11-25 12:15:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 158759,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/158759",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-25 12:30:00",
+            "end_time": "2026-11-25 14:30:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 164137,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/164137",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-26 12:30:00",
+            "end_time": "2026-11-26 14:30:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155941,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155941",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-27 08:00:00",
+            "end_time": "2026-11-27 10:00:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 164152,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/164152",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-27 10:15:00",
+            "end_time": "2026-11-27 12:15:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 164167,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/164167",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          },
+          {
+            "title": "Drop In Adult Pickleball",
+            "start_time": "2026-11-29 07:30:00",
+            "end_time": "2026-11-29 09:30:00",
+            "event_type": 0,
+            "description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+            "event_item_id": 155518,
+            "online_new_activity": false,
+            "activity_detail_url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/drop-in-adult-pickleball/155518",
+            "activity_location_desc": "",
+            "facilities": [
+              {
+                "facility_id": 2191,
+                "facility_name": "Burnhamthorpe CC Gym A",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 64,
+                "facility_name": "Burnhamthorpe CC Gym Applewood Heights",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              },
+              {
+                "facility_id": 2192,
+                "facility_name": "Burnhamthorpe CC Gym B",
+                "center_id": 290,
+                "center_name": "Burnhamthorpe Community Centre",
+                "is_center_valid": true,
+                "event_type_ids": []
+              }
+            ],
+            "reservation_event_type_id": 0,
+            "price": {
+              "show_price_info_online": false,
+              "estimate_price": "",
+              "prices": [],
+              "registration_type_prices": [],
+              "private_lesson_enroll_now": "",
+              "not_allow_online_team_enroll": false,
+              "search_from_price": null,
+              "search_from_price_desc": "",
+              "show_all_inclusive_pricing": false,
+              "all_inclusive_total_price": null,
+              "is_package": false,
+              "simple_fee": false,
+              "free": false
+            },
+            "instructors": [],
+            "background_color": null,
+            "text_color": null,
+            "action_link": null,
+            "allow_flexible_class": false
+          }
+        ],
+        "total": 30,
+        "extra_notes": ""
+      }
+    ]
+  }
+}

@@ -1,0 +1,280 @@
+{
+  "headers": {
+    "sessionRefreshedOn": null,
+    "sessionExtendedCount": 0,
+    "response_code": "0000",
+    "response_message": "Successful",
+    "page_info": {
+      "order_by": "Date",
+      "order_option": "ASC",
+      "total_page": 314,
+      "total_records_per_page": 20,
+      "total_records": 6275,
+      "page_number": 317
+    }
+  },
+  "body": {
+    "center": [
+      {
+        "id": 290,
+        "name": "Burnhamthorpe Community Centre"
+      },
+      {
+        "id": 248,
+        "name": "Carmen Corbasson Community Centre"
+      },
+      {
+        "id": 261,
+        "name": "Churchill Meadows Community Centre"
+      },
+      {
+        "id": 240,
+        "name": "Clarkson Community Centre"
+      },
+      {
+        "id": 403,
+        "name": "Clarkson Library"
+      },
+      {
+        "id": 267,
+        "name": "Erin Meadows Community Centre"
+      },
+      {
+        "id": 250,
+        "name": "Erin Mills Twin Arena"
+      },
+      {
+        "id": 243,
+        "name": "Frank McKechnie Community Centre"
+      },
+      {
+        "id": 252,
+        "name": "Huron Park Recreation Centre"
+      },
+      {
+        "id": 253,
+        "name": "Iceland Arena"
+      },
+      {
+        "id": 125,
+        "name": "Malton Community Centre"
+      },
+      {
+        "id": 65,
+        "name": "Mattamy Sports Park"
+      },
+      {
+        "id": 100,
+        "name": "Meadowvale 4 Rinks"
+      },
+      {
+        "id": 119,
+        "name": "Meadowvale Community Centre"
+      },
+      {
+        "id": 401,
+        "name": "Mississauga Seniors' Centre"
+      },
+      {
+        "id": 91,
+        "name": "Mississauga Sports and Ent. Centre SportsPlex"
+      },
+      {
+        "id": 82,
+        "name": "Mississauga Valley Community Centre"
+      },
+      {
+        "id": 396,
+        "name": "Mississauga Valley Gymnasium"
+      },
+      {
+        "id": 128,
+        "name": "Paul Coffey Arena"
+      },
+      {
+        "id": 106,
+        "name": "Port Credit Memorial Arena"
+      },
+      {
+        "id": 110,
+        "name": "River Grove Community Centre"
+      }
+    ],
+    "activity": [
+      {
+        "id": 166412,
+        "name": "ABS Abdominals, Back and Stretching",
+        "category_id": 40,
+        "sub_category_id": 3,
+        "center_ids": [
+          252
+        ]
+      },
+      {
+        "id": 157743,
+        "name": "Adult Leisure Swim",
+        "category_id": 42,
+        "sub_category_id": 3,
+        "center_ids": [
+          252
+        ]
+      },
+      {
+        "id": 157752,
+        "name": "Adult Leisure Swim",
+        "category_id": 42,
+        "sub_category_id": 3,
+        "center_ids": [
+          252
+        ]
+      }
+    ],
+    "activity_category": [
+      {
+        "id": 47,
+        "name": "Arts",
+        "centerIds": [
+          240,
+          243,
+          261
+        ]
+      },
+      {
+        "id": 41,
+        "name": "Dance, Drama, Music",
+        "centerIds": [
+          401
+        ]
+      },
+      {
+        "id": 40,
+        "name": "Fitness",
+        "centerIds": [
+          290,
+          261,
+          267,
+          110,
+          240,
+          401,
+          82,
+          243,
+          119,
+          248,
+          91,
+          252,
+          125
+        ]
+      }
+    ],
+    "facilities": [
+      {
+        "facility_id": 367,
+        "facility_name": "Burnhamthorpe CC Applewood Hills E",
+        "center_id": 290,
+        "center_name": "Burnhamthorpe Community Centre",
+        "is_center_valid": true,
+        "event_type_ids": [
+          0
+        ]
+      },
+      {
+        "facility_id": 1903,
+        "facility_name": "Burnhamthorpe CC Fitness Studio",
+        "center_id": 290,
+        "center_name": "Burnhamthorpe Community Centre",
+        "is_center_valid": true,
+        "event_type_ids": [
+          0
+        ]
+      },
+      {
+        "facility_id": 1901,
+        "facility_name": "Burnhamthorpe CC Fleetwood Village Room",
+        "center_id": 290,
+        "center_name": "Burnhamthorpe Community Centre",
+        "is_center_valid": true,
+        "event_type_ids": [
+          0
+        ]
+      }
+    ],
+    "calendar_period": {
+      "start_date": "2026-11-09",
+      "end_date": "2027-02-22"
+    },
+    "event_types": [],
+    "activity_center": [
+      {
+        "id": 290,
+        "name": "Burnhamthorpe Community Centre"
+      },
+      {
+        "id": 248,
+        "name": "Carmen Corbasson Community Centre"
+      },
+      {
+        "id": 261,
+        "name": "Churchill Meadows Community Centre"
+      }
+    ],
+    "activity_sub_category": [
+      {
+        "id": 3,
+        "name": "Adult",
+        "centerIds": [
+          65,
+          290,
+          100,
+          261,
+          106,
+          267,
+          396,
+          110,
+          240,
+          401,
+          82,
+          243,
+          119,
+          248,
+          250,
+          91,
+          252,
+          125,
+          253
+        ]
+      },
+      {
+        "id": 6,
+        "name": "All Ages",
+        "centerIds": [
+          128,
+          290,
+          100,
+          261,
+          106,
+          267,
+          240,
+          82,
+          243,
+          119,
+          248,
+          250,
+          252,
+          253,
+          125
+        ]
+      },
+      {
+        "id": 8,
+        "name": "Family/Group",
+        "centerIds": [
+          290,
+          261,
+          248,
+          267
+        ]
+      }
+    ],
+    "permit_center": []
+  }
+}

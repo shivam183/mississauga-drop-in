@@ -1,0 +1,112 @@
+{
+  "headers": {
+    "sessionRefreshedOn": null,
+    "sessionExtendedCount": 0,
+    "response_code": "0000",
+    "response_message": "Successful",
+    "page_info": {
+      "order_by": "",
+      "order_option": "ASC",
+      "total_page": 1,
+      "total_records_per_page": 20,
+      "total_records": 0,
+      "page_number": 1
+    }
+  },
+  "body": {
+    "detail": {
+      "activity_id": 166860,
+      "activity_name": "Drop In Adult Pickleball",
+      "wish_list_id": 0,
+      "show_wish_list": true,
+      "season_name": "2026 Fall",
+      "term_name": null,
+      "category": "Sports",
+      "sub_category": "Adult",
+      "risk_category": null,
+      "activity_type": "Drop In Program",
+      "activity_number": "168873",
+      "first_date": "2026-11-14",
+      "last_date": "2026-11-14",
+      "facilities": [
+        {
+          "id": 895,
+          "name": "Malton CC Gym",
+          "detail_url": "https://anc.ca.apm.activecommunities.com/activemississauga/reservation/search/detail/simple/895?onlineSiteId=0&from_original_cui=true&online=true",
+          "address1": null,
+          "address2": null,
+          "city": null,
+          "state": null,
+          "zip_code": null,
+          "country": null,
+          "phone": null,
+          "center_id": 0
+        }
+      ],
+      "instructors": [],
+      "online_notes": "",
+      "user_notes": "",
+      "other_info": {
+        "department": "Community Programs",
+        "education_unit": "",
+        "supervisor": "Supervisor Community Programs",
+        "skills": [],
+        "sessions": 1
+      },
+      "extra_detail": [],
+      "allowed_gender": "Mixed",
+      "age_min_year": 18,
+      "age_min_month": 0,
+      "age_min_week": 0,
+      "age_max_year": 0,
+      "age_max_month": 0,
+      "age_max_week": 0,
+      "age_description": "18 yrs +,",
+      "min_grade": null,
+      "max_grade": null,
+      "location_description": "",
+      "catalog_description": "A racquet sport that combines elements of badminton, tennis and table tennis. Pickleball is played on a court with the same dimensions as a doubles badminton court. The net is similar to a tennis net but is mounted lower. This game is played with a hard paddle and a whiffle ball. Beginners welcome.",
+      "centers": [
+        {
+          "id": 125,
+          "name": "Malton Community Centre",
+          "address1": "3540 Morning Star Drive",
+          "address2": "",
+          "city": "Mississauga",
+          "state": "ON",
+          "zip_code": "L4T 1Y2",
+          "country": "CA",
+          "phone": "(905) 615-4100",
+          "latitude": 43.7235,
+          "longitude": -79.6385
+        }
+      ],
+      "no_qty_based_enrollment": true,
+      "nearby_message": null,
+      "space_status": "8 openings remaining",
+      "space_message": "",
+      "space_type": 2,
+      "max_num_enrollee_per_lesson": 1,
+      "allow_change_max_booking_online": false,
+      "max_lessons_per_enrollee": 0,
+      "min_lessons_per_enrollee": 0,
+      "allow_pre_book_private_lesson_only_online": false,
+      "prompt_adjust_number_lessons": true,
+      "auto_adjust_number_lessons": false,
+      "enforce_booking_pattern": false,
+      "booking_pattern_same_dow": false,
+      "booking_pattern_same_time": false,
+      "booking_pattern_freq": "none",
+      "private_lesson": false,
+      "allow_drop_in_reg": false,
+      "allow_schedule_later": true,
+      "disable_privateLesson_enrollment": false,
+      "allow_flexible_class": false,
+      "allow_flag_activity": false,
+      "allow_multi_select_flexible_class": false,
+      "max_drop_in_classes_per_receipt_per_participant": 1,
+      "is_package": false,
+      "is_parent_activity": false
+    }
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "headers": {
+    "sessionRefreshedOn": null,
+    "sessionExtendedCount": 0,
+    "response_code": "0000",
+    "response_message": "Successful",
+    "page_info": {
+      "order_by": "",
+      "total_page": 1,
+      "order_option": "ASC",
+      "total_records_per_page": 20,
+      "total_records": 0,
+      "page_number": 1
+    }
+  },
+  "body": {
+    "detail": {
+      "activity_id": 158004,
+      "activity_name": "Drop In Zumba®",
+      "wish_list_id": 0,
+      "show_wish_list": true,
+      "season_name": "2026 Fall",
+      "term_name": null,
+      "category": "Fitness",
+      "sub_category": "Adult",
+      "risk_category": null,
+      "activity_type": "Drop In Program",
+      "activity_number": "160017",
+      "first_date": "2026-09-26",
+      "last_date": "2027-01-02",
+      "facilities": [
+        {
+          "id": 1903,
+          "name": "Burnhamthorpe CC Fitness Studio",
+          "detail_url": "https://anc.ca.apm.activecommunities.com/activemississauga/reservation/search/detail/simple/1903?onlineSiteId=0&from_original_cui=true&online=true",
+          "address1": null,
+          "address2": null,
+          "city": null,
+          "state": null,
+          "zip_code": null,
+          "country": null,
+          "phone": null,
+          "center_id": 0
+        }
+      ],
+      "instructors": [],
+      "online_notes": "",
+      "user_notes": "This is a Drop-in Program for informational purposes only. NO REGISTRATIONS are to be processed for this program.",
+      "other_info": {
+        "department": "Fitness",
+        "education_unit": "",
+        "supervisor": "Supervisor Fitness",
+        "skills": [],
+        "sessions": 39
+      },
+      "extra_detail": [],
+      "allowed_gender": "Mixed",
+      "age_min_year": 14,
+      "age_min_month": 0,
+      "age_min_week": 0,
+      "age_max_year": 0,
+      "age_max_month": 0,
+      "age_max_week": 0,
+      "age_description": "14 yrs +,",
+      "min_grade": null,
+      "max_grade": null,
+      "location_description": "",
+      "catalog_description": "This fitness dance class combines Latin and international music with slow and fast paced moves. Enjoy this inspiring up beat workout.",
+      "centers": [
+        {
+          "id": 290,
+          "name": "Burnhamthorpe Community Centre",
+          "address1": "1500 Gulleden Drive",
+          "address2": "",
+          "city": "Mississauga",
+          "state": "ON",
+          "zip_code": "L4X 2T7",
+          "country": "CA",
+          "phone": "(905) 615-4100",
+          "latitude": 43.6227,
+          "longitude": -79.5988
+        }
+      ],
+      "no_qty_based_enrollment": true,
+      "nearby_message": null,
+      "space_status": "29 openings remaining",
+      "space_message": "",
+      "space_type": 2,
+      "max_num_enrollee_per_lesson": 1,
+      "allow_change_max_booking_online": false,
+      "max_lessons_per_enrollee": 0,
+      "min_lessons_per_enrollee": 0,
+      "allow_pre_book_private_lesson_only_online": false,
+      "prompt_adjust_number_lessons": true,
+      "auto_adjust_number_lessons": false,
+      "enforce_booking_pattern": false,
+      "booking_pattern_same_dow": false,
+      "booking_pattern_same_time": false,
+      "booking_pattern_freq": "none",
+      "private_lesson": false,
+      "allow_drop_in_reg": false,
+      "allow_schedule_later": true,
+      "disable_privateLesson_enrollment": false,
+      "allow_flexible_class": false,
+      "allow_flag_activity": false,
+      "allow_multi_select_flexible_class": false,
+      "max_drop_in_classes_per_receipt_per_participant": 1,
+      "is_package": false,
+      "is_parent_activity": false
+    }
+  }
+}

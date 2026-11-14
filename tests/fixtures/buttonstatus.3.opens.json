@@ -1,0 +1,33 @@
+{
+  "headers": {
+    "sessionRefreshedOn": null,
+    "sessionExtendedCount": 0,
+    "response_code": "0000",
+    "response_message": "Successful",
+    "page_info": {
+      "order_by": "",
+      "total_page": 1,
+      "order_option": "ASC",
+      "total_records_per_page": 30,
+      "total_records": 0,
+      "page_number": 1
+    }
+  },
+  "body": {
+    "button_status": {
+      "activity_online_start_time": "2026-12-30 07:00:00",
+      "action_link": {
+        "href": "https://anc.ca.apm.activecommunities.com/activemississauga/activity/search/enroll/164373?locale=en-US",
+        "title": "",
+        "label": "Enroll Now",
+        "type": 3,
+        "unit": "",
+        "show_all_inclusive_pricing": false,
+        "enable_all_inclusive_pricing": false
+      },
+      "team_action_links": null,
+      "time_remaining": 3944280,
+      "notification": ""
+    }
+  }
+}
