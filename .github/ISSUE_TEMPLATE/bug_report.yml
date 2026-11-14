@@ -1,0 +1,35 @@
+name: Bug report
+description: Something is wrong or confusing.
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you see, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to ...
+        2. Search for ...
+        3. See ...
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Page URL
+      description: The URL includes your filters, which helps us reproduce it.
+  - type: input
+    id: device
+    attributes:
+      label: Device and browser
+      placeholder: e.g. iPhone 15, Safari
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or anything else

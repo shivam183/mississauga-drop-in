@@ -1,0 +1,82 @@
+/* Mobile-first base styles. Colours are tokens so light and dark stay in sync. */
+
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --surface: #f5f6f8;
+  --text: #15181d;
+  --muted: #555d68;
+  --border: #d9dde3;
+  --accent: #0a5cc2;
+  --open: #1d7a3a;
+  --few: #9a5b00;
+  --full: #b42318;
+  --radius: 12px;
+  --space: 16px;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111418;
+    --surface: #1b1f25;
+    --text: #eef1f5;
+    --muted: #a3acb8;
+    --border: #2e343d;
+    --accent: #6aa8ff;
+    --open: #5cc97a;
+    --few: #f0b44c;
+    --full: #ff7b6e;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--accent);
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--space);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+h1 {
+  font-size: 1.5rem;
+  line-height: 1.2;
+  margin: 0 0 0.5rem;
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+}
