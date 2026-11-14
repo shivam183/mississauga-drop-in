@@ -9,9 +9,20 @@ updates:
       prefix: fix
       prefix-development: chore
       include: scope
+    ignore:
+      # Types must match the Node version we run (.nvmrc is Node 22).
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
+      # Packages that must move together, or `npm ci` fails on peer versions.
+      react:
+        patterns: ["react", "react-dom", "@types/react", "@types/react-dom"]
+      next:
+        patterns: ["next", "eslint-config-next"]
+      # Low-risk dev updates in one PR; majors (e.g. ESLint) arrive on their own.
       dev-dependencies:
         dependency-type: development
+        update-types: ["minor", "patch"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
