@@ -146,6 +146,7 @@ describe("params", () => {
       to: "2026-11-20",
     });
     expect(activeFilterCount(many)).toBe(7);
+    expect(activeFilterCount(parseSearchParams({ type: "dropin" }))).toBe(1);
   });
 });
 

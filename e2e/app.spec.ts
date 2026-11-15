@@ -27,17 +27,29 @@ test("results are grouped by day and lead with time and centre", async ({ page }
   await expect(card.getByRole("link", { name: "Burnhamthorpe Community Centre" })).toBeVisible();
 });
 
-test("type chips filter the list and live in the URL", async ({ page }) => {
+test("the Type filter narrows the list and lives in the URL", async ({ page }, testInfo) => {
   await page.goto("/");
-  const chips = page.getByRole("navigation", { name: "Program type" });
-  await chips.getByRole("link", { name: "Enroll online" }).click();
+  if (isPhone(testInfo.project.name)) await page.getByRole("button", { name: /^Filters/ }).click();
+  const type = page.getByRole("region", { name: "Filters" }).getByLabel("Type");
+  await type.selectOption("enroll");
   await expect(page).toHaveURL(/[?&]type=enroll\b/);
-  await expect(chips.getByRole("link", { name: "Enroll online" })).toHaveAttribute(
-    "aria-current",
-    "page",
-  );
+  await expect(type).toHaveValue("enroll");
   await expect(page.getByRole("article").first().getByText("Enroll online")).toBeVisible();
   await expect(page.getByRole("article").getByText("Drop-in", { exact: true })).toHaveCount(0);
+});
+
+test("activity chips search for an activity and toggle off", async ({ page }) => {
+  await page.goto("/");
+  const chips = page.getByRole("navigation", { name: "Activity" });
+  await chips.getByRole("link", { name: "Swim" }).click();
+  await expect(page).toHaveURL(/[?&]q=swim\b/);
+  await expect(page.getByRole("searchbox")).toHaveValue("swim");
+  await expect(chips.getByRole("link", { name: "Swim" })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("article").first()).toContainText(/swim/i);
+
+  await chips.getByRole("link", { name: "Swim" }).click();
+  await expect(page).not.toHaveURL(/[?&]q=/);
+  await expect(page.getByRole("searchbox")).toHaveValue("");
 });
 
 test("searching starts as soon as typing pauses, with no Search button", async ({ page }) => {
@@ -135,8 +147,7 @@ test("Clear filters also drops a date range and centres that came from a link", 
   await expect(sheet.getByRole("list", { name: "Chosen centres" })).toBeVisible();
 
   await sheet.getByRole("button", { name: "Clear filters" }).click();
-  await expect(page).not.toHaveURL(/[?&](from|to|centre|time)=/);
-  await expect(page).toHaveURL(/[?&]type=dropin\b/);
+  await expect(page).not.toHaveURL(/[?&](type|from|to|centre|time)=/);
   await expect(day).toHaveValue("any");
   await expect(day.locator('option[value="keep"]')).toHaveCount(0);
   await expect(sheet.getByRole("list", { name: "Chosen centres" })).toHaveCount(0);
