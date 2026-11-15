@@ -8,7 +8,7 @@ The data comes from the City of Mississauga's ActiveMississauga site. This
 project is unofficial; always confirm on ActiveMississauga before you go, and
 enroll there.
 
-Base URL: `https://mississauga-drop-in.vercel.app`
+Base URL: `https://mississaugadropin.com`
 
 **Please be gentle.** Every request that isn't cached reaches the City's
 servers. Responses are cached (schedules for 10 minutes, spots for 60

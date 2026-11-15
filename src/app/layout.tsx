@@ -6,11 +6,23 @@ import { ExternalLink } from "@/components/ExternalLink";
 import "./globals.css";
 
 const REPO_URL = "https://github.com/shivam183/mississauga-drop-in";
+const SITE_URL = "https://mississaugadropin.com";
+const DESCRIPTION =
+  "Find drop-in and online-enrollable recreation programs in Mississauga, with times, centres and spots left. Unofficial; not affiliated with the City of Mississauga.";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: { default: "Mississauga Drop-In", template: "%s · Mississauga Drop-In" },
-  description:
-    "Find drop-in and online-enrollable recreation programs in Mississauga, with times, centres and spots left. Unofficial; not affiliated with the City of Mississauga.",
+  description: DESCRIPTION,
+  // The preview shown when a link is pasted into Reddit, chats, etc.
+  openGraph: {
+    type: "website",
+    siteName: "Mississauga Drop-In",
+    title: "Mississauga Drop-In: find drop-in sports and swims near you",
+    description: DESCRIPTION,
+    url: "/",
+    locale: "en_CA",
+  },
 };
 
 export const viewport: Viewport = {
