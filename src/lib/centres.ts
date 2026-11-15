@@ -1,5 +1,5 @@
 import dropInCentres from "../../data/centres.dropin.json";
-import enrolCentres from "../../data/centres.enrol.json";
+import enrollCentres from "../../data/centres.enroll.json";
 import type { SessionType } from "@/models/session";
 
 export interface Centre {
@@ -13,10 +13,10 @@ export interface Centre {
  */
 export const CENTRES_BY_TYPE: Record<SessionType, readonly Centre[]> = {
   dropin: dropInCentres,
-  enrol: enrolCentres,
+  enroll: enrollCentres,
 };
 
 /** Every centre in either calendar, sorted by name. */
 export const ALL_CENTRES: readonly Centre[] = [
-  ...new Map([...dropInCentres, ...enrolCentres].map((c) => [c.id, c])).values(),
+  ...new Map([...dropInCentres, ...enrollCentres].map((c) => [c.id, c])).values(),
 ].sort((a, b) => a.name.localeCompare(b.name, "en"));

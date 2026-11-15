@@ -14,7 +14,7 @@ test("GET /api/centres lists every centre with its session types", async ({ requ
   expect(centres).toContainEqual({
     id: 290,
     name: "Burnhamthorpe Community Centre",
-    types: ["dropin", "enrol"],
+    types: ["dropin", "enroll"],
   });
   const names = centres.map((c: { name: string }) => c.name);
   expect(names).toEqual([...names].sort((a: string, b: string) => a.localeCompare(b, "en")));
@@ -64,9 +64,9 @@ test("GET /api/sessions pages with limit, offset and next", async ({ request }) 
 });
 
 test("GET /api/sessions filters like the site", async ({ request }) => {
-  const enrol = await (await request.get("/api/sessions?type=enrol&limit=200")).json();
-  expect(enrol.total).toBeGreaterThan(0);
-  expect(enrol.sessions.every((s: { type: string }) => s.type === "enrol")).toBe(true);
+  const enroll = await (await request.get("/api/sessions?type=enroll&limit=200")).json();
+  expect(enroll.total).toBeGreaterThan(0);
+  expect(enroll.sessions.every((s: { type: string }) => s.type === "enroll")).toBe(true);
 
   const swim = await (await request.get("/api/sessions?q=swim&time=morning&limit=200")).json();
   for (const s of swim.sessions) {
@@ -86,20 +86,20 @@ test("GET /api/sessions rejects bad paging", async ({ request }) => {
   }
 });
 
-test("GET /api/availability includes the worked-out enrol state", async ({ request }) => {
-  const enrol = await (await request.get("/api/sessions?type=enrol&limit=3")).json();
-  const ids = enrol.sessions.map((s: { activityId: number }) => s.activityId);
+test("GET /api/availability includes the worked-out enroll state", async ({ request }) => {
+  const enroll = await (await request.get("/api/sessions?type=enroll&limit=3")).json();
+  const ids = enroll.sessions.map((s: { activityId: number }) => s.activityId);
   const response = await request.get(`/api/availability?ids=${ids.join(",")}`);
   expect(response.status()).toBe(200);
   expect(response.headers()["access-control-allow-origin"]).toBe("*");
   const body = await response.json();
   expect(Object.keys(body.statuses).map(Number).sort()).toEqual([...ids].sort());
-  expect(body.enrol[ids[0]]).toMatchObject({
-    state: "enrol",
+  expect(body.enroll[ids[0]]).toMatchObject({
+    state: "enroll",
     url: expect.stringContaining("/enroll/"),
   });
-  expect(body.enrol[ids[1]]).toEqual({ state: "full" });
-  for (const state of Object.values(body.enrol) as Array<{ state: string; opensAt?: string }>) {
+  expect(body.enroll[ids[1]]).toEqual({ state: "full" });
+  for (const state of Object.values(body.enroll) as Array<{ state: string; opensAt?: string }>) {
     if (state.state === "opens") expect(state.opensAt).toMatch(ISO_WITH_OFFSET);
   }
 

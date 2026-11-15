@@ -53,7 +53,7 @@ commit message on `main`. It must follow
 enforces this:
 
 - `feat: add centre filter to search` adds a feature and goes in the changelog.
-- `fix(enrol): show Full when the notice says full` fixes a bug and goes in the changelog.
+- `fix(enroll): show Full when the notice says full` fixes a bug and goes in the changelog.
 - `docs:`, `perf:` and `revert:` also go in the changelog.
 - `refactor:`, `test:`, `build:`, `ci:`, `chore:` and `style:` are left out.
 - Add `!` after the type (`feat!:`) for a breaking change.

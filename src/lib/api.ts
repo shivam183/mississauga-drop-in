@@ -101,7 +101,7 @@ export interface ApiSession {
   /** ISO 8601 with Toronto's UTC offset. */
   start: string;
   end: string;
-  /** ActiveNet activity id; for "enrol" sessions, use it with /api/availability. */
+  /** ActiveNet activity id; for "enroll" sessions, use it with /api/availability. */
   activityId: number;
   /** The City's page for the activity, or null. */
   url: string | null;

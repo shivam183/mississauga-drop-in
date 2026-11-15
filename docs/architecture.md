@@ -3,7 +3,7 @@
 ```
 Browser ──► Next.js server (pages + /api routes)
                  │
-                 ├─ src/lib/            services: schedule, enrolment, caching
+                 ├─ src/lib/            services: schedule, enrollment, caching
                  │     └─ activenet/    raw ActiveNet client (throttled HTTP only)
                  └─ src/models/         pure data types and functions (no I/O)
 ```
@@ -32,5 +32,5 @@ the API.
 | `getCachedDetail` (availability.ts)       | `spots`    | 60 s     | activity id                 |
 
 Anything that depends on the current time, like hiding ended sessions or
-deciding whether enrolment has opened, runs at request time, outside the cache.
+deciding whether enrollment has opened, runs at request time, outside the cache.
 Each spot count carries `checkedAt`, so the page can say "as of 3:42 pm".

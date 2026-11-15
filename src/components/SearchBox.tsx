@@ -26,6 +26,7 @@ export function SearchBox({
   const pathname = usePathname();
   const [pending, startTransition] = useTransition();
   const [waiting, setWaiting] = useState(false);
+  const [hasText, setHasText] = useState(defaultValue !== "");
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const lastSearched = useRef(defaultValue.trim());
   const input = useRef<HTMLInputElement>(null);
@@ -39,6 +40,7 @@ export function SearchBox({
     clearTimeout(timer.current);
     setWaiting(false);
     input.current.value = defaultValue;
+    setHasText(defaultValue !== "");
     lastSearched.current = defaultValue.trim();
   }, [defaultValue]);
 
@@ -87,6 +89,7 @@ export function SearchBox({
         aria-describedby="q-status"
         onChange={(event) => {
           const value = event.currentTarget.value;
+          setHasText(value !== "");
           clearTimeout(timer.current);
           setWaiting(true);
           timer.current = setTimeout(() => search(value), SEARCH_DELAY_MS);
@@ -96,6 +99,30 @@ export function SearchBox({
       <span id="q-status" className={styles.searchStatus} role="status" aria-live="polite">
         {pending ? "Searching…" : waiting ? <span aria-hidden="true">…</span> : ""}
       </span>
+      {/* Shares the status's spot, so it hides while a search is running. */}
+      {hasText && !pending && !waiting && (
+        <button
+          type="button"
+          className={styles.searchClear}
+          aria-label="Clear search"
+          onClick={() => {
+            if (!input.current) return;
+            input.current.value = "";
+            setHasText(false);
+            search("");
+            input.current.focus();
+          }}
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path
+              d="M6 6l12 12M18 6L6 18"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
+      )}
     </form>
   );
 }

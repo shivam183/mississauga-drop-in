@@ -11,8 +11,8 @@
  *   detail.3.open.json        a calendar 3 session with openings
  *   detail.3.full.json        a calendar 3 session that is full
  *   buttonstatus.1.json       "Online registration is not available…"
- *   buttonstatus.3.enrol.json enrolment open now
- *   buttonstatus.3.opens.json enrolment opens in the future
+ *   buttonstatus.3.enroll.json enrollment open now
+ *   buttonstatus.3.opens.json enrollment opens in the future
  *   buttonstatus.3.full.json  "This activity is full…"
  *   buttonstatus.3.over.json  "…this activity is over" (only if one ended today)
  *   capture.json              when and from which sessions the above came
@@ -76,7 +76,7 @@ run(async () => {
     await writeJson(`${OUT}/filters.${calendar}.json`, envelope);
   }
   const dropInCentre = centres[1][0];
-  const enrolCentres = centres[3];
+  const enrollCentres = centres[3];
 
   // Calendar 1: one centre's sessions, and one activity with many sessions.
   const dropIn = await client.getEvents(1, [dropInCentre.id]);
@@ -99,15 +99,15 @@ run(async () => {
   manifest.dropIn = { centreId: dropInCentre.id, activityId: busiest[0], sessions: busiest[1] };
 
   // Calendar 3: all centres (one ~0.7 MB request), fixture keeps one centre.
-  const enrol = await client.getEvents(
+  const enroll = await client.getEvents(
     3,
-    enrolCentres.map((c) => c.id),
+    enrollCentres.map((c) => c.id),
   );
   const envelope3 = lastEnvelope("/multicenter/events");
   envelope3.body.center_events = (envelope3.body.center_events as unknown[]).slice(0, 1);
   await writeJson(`${OUT}/events.3.json`, trimEvents(envelope3, 30));
 
-  const sessions = enrol.center_events
+  const sessions = enroll.center_events
     .flatMap((c) => c.events)
     .sort((a, b) => a.start_time.localeCompare(b.start_time));
   const upcoming = sessions.filter((e) => e.start_time > now);
@@ -127,17 +127,17 @@ run(async () => {
     }
   };
 
-  // Furthest session: enrolment usually opens the day before, so it's in the future.
+  // Furthest session: enrollment usually opens the day before, so it's in the future.
   const last = upcoming.at(-1);
   if (last) {
     const { button_status: s } = await client.getButtonStatus(last.event_item_id, last.start_time);
     if (s.action_link && s.activity_online_start_time > now) await save("opens", last);
   }
 
-  // Soonest sessions: look for one open for enrolment and one full.
+  // Soonest sessions: look for one open for enrollment and one full.
   let lookups = 0;
   for (const session of upcoming) {
-    if ((found.enrol && found.full) || lookups >= MAX_STATUS_LOOKUPS) break;
+    if ((found.enroll && found.full) || lookups >= MAX_STATUS_LOOKUPS) break;
     lookups++;
     const { button_status: s } = await client.getButtonStatus(
       session.event_item_id,
@@ -145,8 +145,8 @@ run(async () => {
     );
     const isFull = /\bfull\b/i.test(s.notification);
     if (isFull && !found.full) await save("full", session, "full");
-    else if (!isFull && s.action_link && s.activity_online_start_time <= now && !found.enrol) {
-      await save("enrol", session, "open");
+    else if (!isFull && s.action_link && s.activity_online_start_time <= now && !found.enroll) {
+      await save("enroll", session, "open");
     }
   }
 
@@ -161,7 +161,7 @@ run(async () => {
     if (/\bover\b/i.test(s.notification)) await save("over", ended);
   }
 
-  manifest.enrol = Object.fromEntries(
+  manifest.enroll = Object.fromEntries(
     Object.entries(found).map(([k, e]) => [
       k,
       { activityId: e.event_item_id, start: e.start_time },
@@ -169,7 +169,7 @@ run(async () => {
   );
   await writeJson(`${OUT}/capture.json`, manifest);
 
-  const missing = ["opens", "enrol", "full"].filter((k) => !found[k]);
+  const missing = ["opens", "enroll", "full"].filter((k) => !found[k]);
   console.log(
     `Captured ${raw.size} responses into tests/fixtures (${Object.keys(found).join(", ")}).`,
   );

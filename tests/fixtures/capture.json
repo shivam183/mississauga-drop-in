@@ -6,12 +6,12 @@
     "activityId": 158004,
     "sessions": 27
   },
-  "enrol": {
+  "enroll": {
     "opens": {
       "activityId": 164373,
       "start": "2026-12-31 08:30:00"
     },
-    "enrol": {
+    "enroll": {
       "activityId": 166860,
       "start": "2026-11-14 16:30:00"
     },

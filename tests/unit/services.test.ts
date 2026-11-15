@@ -10,7 +10,7 @@ import type { Envelope, EventsBody, EventsQuery } from "@/lib/activenet/types";
 import { getAvailability, MAX_AVAILABILITY_IDS } from "@/lib/availability";
 import { CENTRES_BY_TYPE } from "@/lib/centres";
 import { CENTRES_PER_REQUEST, getSchedule } from "@/lib/schedule";
-import { toEnrolState } from "@/models/availability";
+import { toEnrollState } from "@/models/availability";
 import { fixture } from "./fixtures";
 
 vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
@@ -19,7 +19,7 @@ vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
 const NOW = new Date("2026-11-14T20:00:00Z");
 
 /** Calendar 3 sessions at centre 290 matching the recorded detail/buttonstatus fixtures. */
-function enrolEvents(): Envelope<EventsBody> {
+function enrollEvents(): Envelope<EventsBody> {
   const envelope = fixture<Envelope<EventsBody>>("events.3.json");
   const template = envelope.body.center_events[0].events[0];
   const at = (id: number, start: string, end: string) => ({
@@ -29,7 +29,7 @@ function enrolEvents(): Envelope<EventsBody> {
     end_time: end,
   });
   envelope.body.center_events[0].events = [
-    at(166860, "2026-11-14 16:30:00", "2026-11-14 18:30:00"), // enrol now (fixture)
+    at(166860, "2026-11-14 16:30:00", "2026-11-14 18:30:00"), // enroll now (fixture)
     at(164542, "2026-11-14 17:15:00", "2026-11-14 19:15:00"), // full (fixture)
     at(164373, "2026-12-31 08:30:00", "2026-12-31 10:30:00"), // opens later (fixture)
     at(164222, "2026-11-14 11:30:00", "2026-11-14 13:30:00"), // already over
@@ -44,7 +44,7 @@ const DETAIL: Record<number, string> = {
   164373: "detail.3.open.json",
 };
 const BUTTON: Record<number, string> = {
-  166860: "buttonstatus.3.enrol.json",
+  166860: "buttonstatus.3.enroll.json",
   164542: "buttonstatus.3.full.json",
   164373: "buttonstatus.3.opens.json",
 };
@@ -61,7 +61,7 @@ const fakeFetch = vi.fn<typeof fetch>(async (input, init) => {
     const query = JSON.parse(String(init?.body)) as EventsQuery;
     if (query.calendar_id === failing.calendar) return json({}, 503);
     const envelope =
-      query.calendar_id === 3 ? enrolEvents() : fixture<Envelope<EventsBody>>("events.1.json");
+      query.calendar_id === 3 ? enrollEvents() : fixture<Envelope<EventsBody>>("events.1.json");
     envelope.body.center_events = envelope.body.center_events.filter((c) =>
       query.center_ids.includes(c.center_id),
     );
@@ -97,10 +97,10 @@ describe("getSchedule", () => {
     const { sessions, failedCentres } = await getSchedule();
     const batches =
       Math.ceil(CENTRES_BY_TYPE.dropin.length / CENTRES_PER_REQUEST) +
-      Math.ceil(CENTRES_BY_TYPE.enrol.length / CENTRES_PER_REQUEST);
+      Math.ceil(CENTRES_BY_TYPE.enroll.length / CENTRES_PER_REQUEST);
     expect(requests.filter((u) => u.endsWith("/multicenter/events"))).toHaveLength(batches);
     expect(failedCentres).toEqual([]);
-    expect(new Set(sessions.map((s) => s.type))).toEqual(new Set(["dropin", "enrol"]));
+    expect(new Set(sessions.map((s) => s.type))).toEqual(new Set(["dropin", "enroll"]));
     const starts = sessions.map((s) => s.start);
     expect(starts).toEqual([...starts].sort());
   });
@@ -109,7 +109,7 @@ describe("getSchedule", () => {
     failing = { calendar: 3 };
     const { sessions, failedCentres } = await getSchedule();
     expect(failedCentres.map((c) => c.id).sort()).toEqual(
-      CENTRES_BY_TYPE.enrol.map((c) => c.id).sort(),
+      CENTRES_BY_TYPE.enroll.map((c) => c.id).sort(),
     );
     expect(sessions.length).toBeGreaterThan(0);
     expect(sessions.every((s) => s.type === "dropin")).toBe(true);
@@ -117,22 +117,22 @@ describe("getSchedule", () => {
 });
 
 describe("getAvailability", () => {
-  it("returns a status per session, and the right Enrol button for each", async () => {
+  it("returns a status per session, and the right Enroll button for each", async () => {
     const result = await getAvailability([166860, 164542, 164373]);
     expect(result.unknownIds).toEqual([]);
     expect(result.failedIds).toEqual([]);
     const now = "2026-11-14 15:00:00";
-    expect(toEnrolState(result.statuses[166860], now).state).toBe("enrol");
+    expect(toEnrollState(result.statuses[166860], now).state).toBe("enroll");
     expect(result.statuses[166860].spaces).toEqual({ level: "open", count: 8 });
-    expect(toEnrolState(result.statuses[164542], now).state).toBe("full");
-    expect(toEnrolState(result.statuses[164373], now)).toMatchObject({
+    expect(toEnrollState(result.statuses[164542], now).state).toBe("full");
+    expect(toEnrollState(result.statuses[164373], now)).toMatchObject({
       state: "opens",
       opensAt: "2026-12-30 07:00:00",
     });
     expect(result.statuses[166860].checkedAt).toBe(NOW.toISOString());
   });
 
-  it("only looks up upcoming enrol-online sessions", async () => {
+  it("only looks up upcoming enroll-online sessions", async () => {
     const result = await getAvailability([166860, 164222, 999999]);
     expect(result.unknownIds).toEqual([164222, 999999]);
     expect(Object.keys(result.statuses)).toEqual(["166860"]);

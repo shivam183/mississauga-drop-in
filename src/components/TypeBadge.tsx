@@ -3,7 +3,7 @@ import styles from "./TypeBadge.module.css";
 
 export const TYPE_LABEL: Record<SessionType, string> = {
   dropin: "Drop-in",
-  enrol: "Enrol online",
+  enroll: "Enroll online",
 };
 
 export function TypeBadge({ type }: { type: SessionType }) {

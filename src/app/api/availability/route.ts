@@ -1,7 +1,7 @@
 /**
  * GET /api/availability?ids=166860,164542[&fresh=1]
  *
- * Spots left and enrol status for up to 20 upcoming "enrol online" sessions
+ * Spots left and enroll status for up to 20 upcoming "enroll online" sessions
  * (ids are ActiveNet activity ids, which are per session for these).
  * `fresh=1` skips the 60-second cache and is rate-limited per IP.
  * See docs/api.md.
@@ -11,7 +11,7 @@ import { apiError, CORS_HEADERS, torontoIso } from "@/lib/api";
 import { getAvailability, MAX_AVAILABILITY_IDS } from "@/lib/availability";
 import { toTorontoLocal } from "@/lib/dates";
 import { clientIp, createRateLimiter } from "@/lib/rate-limit";
-import { toEnrolState, type EnrolState } from "@/models/availability";
+import { toEnrollState, type EnrollState } from "@/models/availability";
 
 /** Refreshes per IP per minute that bypass the cache. */
 const FRESH_PER_MINUTE = 10;
@@ -37,15 +37,15 @@ export async function GET(request: NextRequest) {
   try {
     const result = await getAvailability(ids, { fresh });
     const now = toTorontoLocal(new Date());
-    // The Enrol button state per session, worked out now (opensAt as ISO 8601).
-    const enrol: Record<number, EnrolState> = {};
+    // The Enroll button state per session, worked out now (opensAt as ISO 8601).
+    const enroll: Record<number, EnrollState> = {};
     for (const [id, status] of Object.entries(result.statuses)) {
-      const state = toEnrolState(status, now);
-      enrol[Number(id)] =
+      const state = toEnrollState(status, now);
+      enroll[Number(id)] =
         state.state === "opens" ? { ...state, opensAt: torontoIso(state.opensAt) } : state;
     }
     return Response.json(
-      { now, ...result, enrol },
+      { now, ...result, enroll },
       { headers: { ...CORS_HEADERS, "Cache-Control": "no-store" } },
     );
   } catch (cause) {

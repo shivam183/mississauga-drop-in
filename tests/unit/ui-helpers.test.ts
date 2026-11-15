@@ -58,7 +58,7 @@ describe("params", () => {
   it("parses valid params", () => {
     const state = parseSearchParams({
       q: "  pickle   ball ",
-      type: "enrol",
+      type: "enroll",
       centre: ["290", "119,999999"],
       from: "2026-11-20",
       to: "2026-11-16",
@@ -67,7 +67,7 @@ describe("params", () => {
     });
     expect(state).toEqual({
       q: "pickle ball",
-      type: "enrol",
+      type: "enroll",
       centreIds: [119, 290],
       from: "2026-11-16",
       to: "2026-11-20",

@@ -1,6 +1,6 @@
 /**
- * Availability service for "enrol online" sessions: spots left (cached 60 s)
- * and the enrol link and opening time (cached 10 min). Only ids of real
+ * Availability service for "enroll online" sessions: spots left (cached 60 s)
+ * and the enroll link and opening time (cached 10 min). Only ids of real
  * calendar 3 sessions are looked up, so callers can't make us query anything
  * else. Server-side only.
  */
@@ -30,21 +30,21 @@ export async function getCachedDetail(activityId: number) {
   return fetchDetail(activityId);
 }
 
-/** Enrol link, opening time and notice for one session, cached 10 min. */
+/** Enroll link, opening time and notice for one session, cached 10 min. */
 export async function getCachedButtonStatus(
   activityId: number,
   sessionStart: LocalDateTime,
 ): Promise<ButtonStatusBody> {
   "use cache: remote"; // shared across Vercel instances; in-memory "use cache" misses on serverless
   cacheLife("schedule");
-  cacheTag("enrol", `enrol-${activityId}`);
+  cacheTag("enroll", `enroll-${activityId}`);
   return getActiveNetClient().getButtonStatus(activityId, sessionStart);
 }
 
 export interface AvailabilityResult {
-  /** By activity id. Turn into an Enrol button with toEnrolState(status, now). */
+  /** By activity id. Turn into an Enroll button with toEnrollState(status, now). */
   statuses: Record<number, SessionStatus>;
-  /** Ids that aren't upcoming enrol-online sessions. */
+  /** Ids that aren't upcoming enroll-online sessions. */
   unknownIds: number[];
   /** Ids whose lookup failed; show "Check on ActiveMississauga". */
   failedIds: number[];
@@ -55,7 +55,7 @@ export interface AvailabilityOptions {
   fresh?: boolean;
 }
 
-/** Looks up availability for up to MAX_AVAILABILITY_IDS enrol-online sessions. */
+/** Looks up availability for up to MAX_AVAILABILITY_IDS enroll-online sessions. */
 export async function getAvailability(
   activityIds: readonly number[],
   { fresh = false }: AvailabilityOptions = {},
@@ -68,7 +68,7 @@ export async function getAvailability(
     throw new RangeError("Session ids must be positive integers");
   }
 
-  const { sessions } = await getSchedule(["enrol"]);
+  const { sessions } = await getSchedule(["enroll"]);
   const now = toTorontoLocal(new Date());
   const startById = new Map(
     sessions.filter((s) => s.end > now).map((s) => [s.activityId, s.start]),

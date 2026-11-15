@@ -7,7 +7,7 @@
 /** "YYYY-MM-DD HH:mm:ss" in Toronto local time, with no time zone. */
 export type LocalDateTime = string;
 
-/** The calendars this app reads: 1 = drop-in, 3 = enrol online. */
+/** The calendars this app reads: 1 = drop-in, 3 = enroll online. */
 export type CalendarId = 1 | 3;
 
 export interface Envelope<Body> {
@@ -118,11 +118,11 @@ export interface RawActionLink {
 }
 
 export interface RawButtonStatus {
-  /** When online enrolment opens (LocalDateTime), or "". */
+  /** When online enrollment opens (LocalDateTime), or "". */
   activity_online_start_time: string;
   /** Present when the activity can be (or will be) enrolled in online. */
   action_link: RawActionLink | null;
-  /** Seconds until enrolment opens; goes stale once cached, so unused. */
+  /** Seconds until enrollment opens; goes stale once cached, so unused. */
   time_remaining?: number;
   /** Plain text or HTML, e.g. "This activity is full…". Never render as markup. */
   notification: string;

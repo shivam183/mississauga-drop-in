@@ -60,7 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <ExternalLink href="https://anc.ca.apm.activecommunities.com/activemississauga/home">
                 ActiveMississauga
               </ExternalLink>{" "}
-              site, where all enrolment happens. Always check there before you go.
+              site, where all enrollment happens. Always check there before you go.
             </p>
           </div>
         </footer>

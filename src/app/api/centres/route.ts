@@ -10,7 +10,9 @@ import type { SessionType } from "@/models/session";
 
 export function GET() {
   const types = (id: number): SessionType[] =>
-    (["dropin", "enrol"] as const).filter((type) => CENTRES_BY_TYPE[type].some((c) => c.id === id));
+    (["dropin", "enroll"] as const).filter((type) =>
+      CENTRES_BY_TYPE[type].some((c) => c.id === id),
+    );
 
   return Response.json(
     { centres: ALL_CENTRES.map(({ id, name }) => ({ id, name, types: types(id) })) },

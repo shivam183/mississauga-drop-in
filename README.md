@@ -3,7 +3,7 @@
 An unofficial, mobile-friendly way to find drop-in and online-enrollable
 recreation programs in Mississauga: badminton, pickleball, swimming, skating and
 more. See **when** and **where** at a glance, how many **spots are left**, and
-tap straight through to enrol on the City's site.
+tap straight through to enroll on the City's site.
 
 > **Not affiliated with the City of Mississauga.** This project reads the same
 > public schedule data shown on ActiveMississauga and always links back to it.
@@ -18,8 +18,8 @@ v0.1. See the [plan](docs/PLAN.md).
 - One list of drop-in sessions and online-enrollable programs, grouped by day.
 - Time and community centre shown first on every result.
 - Search as you type; filter by type, one or more centres, day and time of day.
-- Spots left per session, with an **Enrol now** button that opens the City's
-  enrolment page.
+- Spots left per session, with an **Enroll now** button that opens the City's
+  enrollment page.
 - Built for phones first; works without JavaScript except for live spot counts.
 - A public JSON API: see below.
 

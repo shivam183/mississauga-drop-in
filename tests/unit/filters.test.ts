@@ -24,7 +24,7 @@ const sessions: Session[] = [
   session({ id: "running", start: "2026-11-15 11:30:00", end: "2026-11-15 13:00:00" }),
   session({
     id: "pickle",
-    type: "enrol",
+    type: "enroll",
     title: "Drop In Adult Pickleball",
     centreId: 119,
     centreName: "Meadowvale Community Centre",
@@ -53,7 +53,7 @@ describe("filterSessions", () => {
   });
 
   it("filters by type", () => {
-    expect(ids(filterSessions(sessions, { type: "enrol" }, now))).toEqual(["pickle"]);
+    expect(ids(filterSessions(sessions, { type: "enroll" }, now))).toEqual(["pickle"]);
     expect(ids(filterSessions(sessions, { type: "dropin" }, now))).not.toContain("pickle");
   });
 

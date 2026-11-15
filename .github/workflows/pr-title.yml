@@ -1,6 +1,6 @@
 # PRs are squash-merged, so the PR title becomes the commit message on main.
 # release-please reads those messages, so titles must follow Conventional
-# Commits, e.g. "feat: add centre filter" or "fix(enrol): handle full sessions".
+# Commits, e.g. "feat: add centre filter" or "fix(enroll): handle full sessions".
 name: PR title
 
 on:

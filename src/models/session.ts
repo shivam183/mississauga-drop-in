@@ -1,11 +1,11 @@
 import type { CalendarId, EventsBody, LocalDateTime, RawFacility } from "@/lib/activenet/types";
 import { safeCityUrl } from "./links";
 
-/** "dropin" comes from calendar 1, "enrol" from calendar 3. */
-export type SessionType = "dropin" | "enrol";
+/** "dropin" comes from calendar 1, "enroll" from calendar 3. */
+export type SessionType = "dropin" | "enroll";
 
-export const CALENDAR_FOR_TYPE: Record<SessionType, CalendarId> = { dropin: 1, enrol: 3 };
-export const TYPE_FOR_CALENDAR: Record<CalendarId, SessionType> = { 1: "dropin", 3: "enrol" };
+export const CALENDAR_FOR_TYPE: Record<SessionType, CalendarId> = { dropin: 1, enroll: 3 };
+export const TYPE_FOR_CALENDAR: Record<CalendarId, SessionType> = { 1: "dropin", 3: "enroll" };
 
 /** One scheduled occurrence of a program. Plain data, so it can be cached and serialized. */
 export interface Session {
@@ -19,7 +19,7 @@ export interface Session {
   facility: string;
   start: LocalDateTime;
   end: LocalDateTime;
-  /** ActiveNet activity id. For "enrol" sessions it identifies this one session. */
+  /** ActiveNet activity id. For "enroll" sessions it identifies this one session. */
   activityId: number;
   /** The City's page for the activity (https *.activecommunities.com only). */
   url: string | null;

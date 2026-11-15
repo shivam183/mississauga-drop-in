@@ -1,6 +1,6 @@
 /**
  * Raw client for the City's ActiveNet JSON API. It knows URLs, request bodies
- * and response shapes, and nothing about sessions, enrolment or caching. Every
+ * and response shapes, and nothing about sessions, enrollment or caching. Every
  * request goes through a shared throttle. Server-side only.
  */
 import { createThrottle, type Throttle } from "./throttle";
@@ -58,7 +58,7 @@ export interface ActiveNetClient {
   getEvents(calendar: CalendarId, centreIds: readonly number[]): Promise<EventsBody>;
   /** Activity detail, including `space_status`. Per session for calendar 3. */
   getActivityDetail(activityId: number): Promise<ActivityDetailBody>;
-  /** Enrolment button state for the session starting at `sessionStart`. */
+  /** Enrollment button state for the session starting at `sessionStart`. */
   getButtonStatus(activityId: number, sessionStart: LocalDateTime): Promise<ButtonStatusBody>;
 }
 

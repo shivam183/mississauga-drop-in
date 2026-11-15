@@ -6,7 +6,7 @@ on it. It is read-only, needs no key, and can be called from any website
 
 The data comes from the City of Mississauga's ActiveMississauga site. This
 project is unofficial; always confirm on ActiveMississauga before you go, and
-enrol there.
+enroll there.
 
 Base URL: `https://mississauga-drop-in.vercel.app`
 
@@ -19,8 +19,8 @@ seconds), so polling faster than that only returns the same data.
 - **Times** are ISO 8601 with Toronto's UTC offset, e.g.
   `2026-11-15T07:30:00-05:00` (`-04:00` in summer).
 - **Errors** return a 4xx/5xx status with `{ "error": "message" }`.
-- **Session types:** `dropin` (drop-in programs) and `enrol` (programs you
-  enrol in online, with spots left).
+- **Session types:** `dropin` (drop-in programs) and `enroll` (programs you
+  enroll in online, with spots left).
 
 ## `GET /api/centres`
 
@@ -29,7 +29,7 @@ Every community centre, sorted by name, with the session types it lists.
 ```json
 {
   "centres": [
-    { "id": 290, "name": "Burnhamthorpe Community Centre", "types": ["dropin", "enrol"] },
+    { "id": 290, "name": "Burnhamthorpe Community Centre", "types": ["dropin", "enroll"] },
     { "id": 403, "name": "Clarkson Library", "types": ["dropin"] }
   ]
 }
@@ -44,7 +44,7 @@ Upcoming sessions (those that haven't ended), soonest first.
 | Parameter | Example           | Meaning                                                                            |
 | --------- | ----------------- | ---------------------------------------------------------------------------------- |
 | `q`       | `pickleball`      | Words that must all appear in the title, centre or room                            |
-| `type`    | `enrol`           | `dropin` or `enrol`                                                                |
+| `type`    | `enroll`          | `dropin` or `enroll`                                                               |
 | `centre`  | `290,119`         | Centre ids (or exact names); repeat or comma-separate for several                  |
 | `day`     | `2026-11-16`      | One day (Toronto)                                                                  |
 | `from`    | `2026-11-16`      | First day, inclusive (with `to`, a range)                                          |
@@ -62,11 +62,11 @@ returns 400.
   "total": 409,
   "offset": 0,
   "limit": 50,
-  "next": "/api/sessions?type=enrol&offset=50&limit=50",
+  "next": "/api/sessions?type=enroll&offset=50&limit=50",
   "sessions": [
     {
       "id": "e166860-202611141630",
-      "type": "enrol",
+      "type": "enroll",
       "title": "Drop In Adult Pickleball",
       "centre": { "id": 125, "name": "Malton Community Centre" },
       "facility": "Gym",
@@ -89,8 +89,8 @@ Shared caches may reuse a response for up to a minute.
 
 ## `GET /api/availability`
 
-Spots left and enrol status for up to 20 `enrol` sessions, by `activityId`
-(from `/api/sessions`). Only upcoming `enrol` sessions are looked up.
+Spots left and enroll status for up to 20 `enroll` sessions, by `activityId`
+(from `/api/sessions`). Only upcoming `enroll` sessions are looked up.
 
 | Parameter | Example         | Meaning                                                                |
 | --------- | --------------- | ---------------------------------------------------------------------- |
@@ -104,15 +104,15 @@ Spots left and enrol status for up to 20 `enrol` sessions, by `activityId`
     "166860": {
       "activityId": 166860,
       "spaces": { "level": "open", "count": 8 },
-      "enrolUrl": "https://anc.ca.apm.activecommunities.com/activemississauga/activity/search/enroll/166860?locale=en-US",
+      "enrollUrl": "https://anc.ca.apm.activecommunities.com/activemississauga/activity/search/enroll/166860?locale=en-US",
       "opensAt": null,
       "notice": "",
       "checkedAt": "2026-11-14T20:00:00.000Z"
     }
   },
-  "enrol": {
+  "enroll": {
     "166860": {
-      "state": "enrol",
+      "state": "enroll",
       "url": "https://anc.ca.apm.activecommunities.com/…/enroll/166860?locale=en-US"
     }
   },
@@ -123,9 +123,9 @@ Spots left and enrol status for up to 20 `enrol` sessions, by `activityId`
 
 - `spaces.level`: `open` (more than 5), `few` (1–5), `full`, or `unknown` (with
   the City's wording in `text`).
-- `enrol` is what the Enrol button shows, worked out at request time:
-  - `{ "state": "enrol", "url" }`: enrol now at `url`
-  - `{ "state": "opens", "opensAt", "url" }`: online enrolment opens at
+- `enroll` is what the Enroll button shows, worked out at request time:
+  - `{ "state": "enroll", "url" }`: enroll now at `url`
+  - `{ "state": "opens", "opensAt", "url" }`: online enrollment opens at
     `opensAt` (ISO 8601)
   - `{ "state": "full" }`
   - `{ "state": "closed", "message" }`: the City's notice, in its own words
@@ -133,7 +133,7 @@ Spots left and enrol status for up to 20 `enrol` sessions, by `activityId`
 - In `statuses`, `opensAt` and `now` are Toronto wall time
   (`YYYY-MM-DD HH:mm:ss`), as the City sends them; `checkedAt` is when the
   City was asked.
-- `unknownIds`: not upcoming `enrol` sessions. `failedIds`: the City didn't
+- `unknownIds`: not upcoming `enroll` sessions. `failedIds`: the City didn't
   answer; try again later.
 
 Never cached by shared caches.
