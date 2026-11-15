@@ -19,6 +19,8 @@ export interface SessionFilters {
   from?: string;
   to?: string;
   timesOfDay?: readonly TimeOfDay[];
+  /** Only this session (Session.id), e.g. from a shared link. */
+  sessionId?: string;
 }
 
 /** Lower-case and strip accents, so "Zumba®" or "Café" match plain typing. */
@@ -55,6 +57,7 @@ export function filterSessions(
 
   return sessions.filter((s) => {
     if (s.end <= now) return false;
+    if (filters.sessionId && s.id !== filters.sessionId) return false;
     if (filters.type && s.type !== filters.type) return false;
     if (centres && !centres.has(s.centreId)) return false;
     const day = s.start.slice(0, 10);

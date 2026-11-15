@@ -53,6 +53,11 @@ describe("filterSessions", () => {
     expect(ids(filterSessions(sessions, {}, now))).toEqual(["running", "pickle", "zumba", "swim"]);
   });
 
+  it("shows only the shared session, if it hasn't ended", () => {
+    expect(ids(filterSessions(sessions, { sessionId: "zumba" }, now))).toEqual(["zumba"]);
+    expect(ids(filterSessions(sessions, { sessionId: "ended" }, now))).toEqual([]);
+  });
+
   it("filters by type", () => {
     expect(ids(filterSessions(sessions, { type: "enroll" }, now))).toEqual(["pickle"]);
     expect(ids(filterSessions(sessions, { type: "dropin" }, now))).not.toContain("pickle");

@@ -5,9 +5,9 @@ import { useHydrated } from "./FilterForm";
 import styles from "./SessionCard.module.css";
 
 /**
- * Shares a session through the phone's share sheet, or copies the text and
- * link where the browser can't share. Needs JavaScript, so it shows only once
- * the page is hydrated.
+ * Shares a session through the phone's share sheet, or copies it where the
+ * browser can't share: the text, then the link on its own line. Needs
+ * JavaScript, so it shows only once the page is hydrated.
  */
 export function ShareButton({
   title,
@@ -15,7 +15,7 @@ export function ShareButton({
   href,
 }: {
   title: string;
-  /** e.g. "Adult Pickleball · Mon Nov 16, 7:45 – 9:45 AM · Meadowvale Community Centre" */
+  /** One detail per line, e.g. "Adult Pickleball\nMon Nov 16, 7:45 – 9:45 AM\nMeadowvale Community Centre" */
   text: string;
   /** Our list filtered to this session, relative to the site. */
   href: string;
@@ -25,14 +25,16 @@ export function ShareButton({
   if (!live) return null;
 
   async function share() {
-    const url = new URL(href, window.location.href).href;
+    const message = `${text}\n${new URL(href, window.location.href).href}`;
     if (navigator.share) {
-      // Rejects when the person closes the sheet; nothing to do then.
-      await navigator.share({ title, text, url }).catch(() => {});
+      // The link goes in the text, not `url`: apps join a separate url onto the
+      // text in their own way, often on the same line. Rejects when the person
+      // closes the sheet; nothing to do then.
+      await navigator.share({ title, text: message }).catch(() => {});
       return;
     }
     try {
-      await navigator.clipboard.writeText(`${text}\n${url}`);
+      await navigator.clipboard.writeText(message);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {

@@ -44,12 +44,22 @@ export async function SearchView({
       <SearchControls path={path} state={state} today={now.slice(0, 10)} />
 
       <div className={styles.results}>
-        <p className={styles.summary} role="status">
-          {matches.length === 0
-            ? "No upcoming sessions match."
-            : `${matches.length.toLocaleString("en-CA")} upcoming ${matches.length === 1 ? "session" : "sessions"}`}
-          {matches.length > shown.length && ` · showing the first ${shown.length}`}
-        </p>
+        {state.session ? (
+          // A shared link shows just that session (see ShareButton).
+          <p className={styles.summary} role="status">
+            {matches.length === 0
+              ? "This shared session has ended or is no longer listed."
+              : "Shared session"}{" "}
+            · <Link href={hrefWith(path, state, {})}>Show all sessions</Link>
+          </p>
+        ) : (
+          <p className={styles.summary} role="status">
+            {matches.length === 0
+              ? "No upcoming sessions match."
+              : `${matches.length.toLocaleString("en-CA")} upcoming ${matches.length === 1 ? "session" : "sessions"}`}
+            {matches.length > shown.length && ` · showing the first ${shown.length}`}
+          </p>
+        )}
 
         {relevantFailures.length > 0 && (
           <p className={styles.warning} role="alert">
@@ -58,7 +68,7 @@ export async function SearchView({
           </p>
         )}
 
-        {matches.length === 0 && (
+        {matches.length === 0 && !state.session && (
           <p className="muted">
             Try fewer words, another type, or <Link href={path}>clear all filters</Link>.
           </p>

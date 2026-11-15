@@ -21,6 +21,8 @@ export interface SearchState {
   times: TimeOfDay[];
   /** How many results to show. */
   limit: number;
+  /** One session's id (see sessionId), from a shared link: show only it. */
+  session: string | null;
 }
 
 export const EMPTY_SEARCH: SearchState = {
@@ -31,7 +33,11 @@ export const EMPTY_SEARCH: SearchState = {
   to: null,
   times: [],
   limit: PAGE_SIZE,
+  session: null,
 };
+
+/** sessionId's shape: "d" or "e", the activity id, "-", then YYYYMMDDHHmm. */
+const SESSION_ID = /^[de]\d{1,12}-\d{12}$/;
 
 const TIMES = Object.keys(TIME_OF_DAY_HOURS) as TimeOfDay[];
 const CENTRE_IDS = new Set(ALL_CENTRES.map((c) => c.id));
@@ -75,6 +81,7 @@ export function parseSearchParams(params: RawSearchParams): SearchState {
   const from = isIsoDate(day) ? day : anyDay ? undefined : first(params, "from");
   const to = isIsoDate(day) ? day : anyDay ? undefined : first(params, "to");
   const limit = Number(first(params, "limit"));
+  const session = first(params, "session");
 
   const state: SearchState = {
     q,
@@ -93,6 +100,7 @@ export function parseSearchParams(params: RawSearchParams): SearchState {
       Number.isInteger(limit) && limit > PAGE_SIZE
         ? Math.min(Math.ceil(limit / PAGE_SIZE) * PAGE_SIZE, MAX_LIMIT)
         : PAGE_SIZE,
+    session: session && SESSION_ID.test(session) ? session : null,
   };
   if (state.from && state.to && state.from > state.to)
     [state.from, state.to] = [state.to, state.from];
@@ -107,6 +115,7 @@ export function toFilters(state: SearchState): SessionFilters {
     from: state.from ?? undefined,
     to: state.to ?? undefined,
     timesOfDay: state.times,
+    sessionId: state.session ?? undefined,
   };
 }
 
@@ -120,13 +129,17 @@ export function toQueryString(state: SearchState): string {
   if (state.to) params.set("to", state.to);
   if (state.times.length) params.set("time", state.times.join(","));
   if (state.limit !== PAGE_SIZE) params.set("limit", String(state.limit));
+  if (state.session) params.set("session", state.session);
   const query = params.toString();
   return query ? `?${query}` : "";
 }
 
-/** Link to `path` with the state changed by `changes` (the result count resets). */
+/**
+ * Link to `path` with the state changed by `changes`. The result count resets,
+ * and so does a shared session: any change goes back to the full list.
+ */
 export function hrefWith(path: string, state: SearchState, changes: Partial<SearchState>): string {
-  return `${path}${toQueryString({ ...state, limit: PAGE_SIZE, ...changes })}`;
+  return `${path}${toQueryString({ ...state, limit: PAGE_SIZE, session: null, ...changes })}`;
 }
 
 /**

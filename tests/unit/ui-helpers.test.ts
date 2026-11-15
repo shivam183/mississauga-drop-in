@@ -81,6 +81,17 @@ describe("format", () => {
 });
 
 describe("params", () => {
+  it("reads a shared session id, and any change leaves it", () => {
+    const state = parseSearchParams({ session: "e164373-202611160745" });
+    expect(state.session).toBe("e164373-202611160745");
+    expect(toFilters(state).sessionId).toBe("e164373-202611160745");
+    expect(toQueryString(state)).toBe("?session=e164373-202611160745");
+    expect(hrefWith("/", state, { q: "swim" })).toBe("/?q=swim");
+    for (const bad of ["x1-202611160745", "e1-2026", "e1-202611160745x", "../etc"]) {
+      expect(parseSearchParams({ session: bad }).session).toBeNull();
+    }
+  });
+
   it("parses valid params", () => {
     const state = parseSearchParams({
       q: "  pickle   ball ",
@@ -99,6 +110,7 @@ describe("params", () => {
       to: "2026-11-20",
       times: ["morning", "evening"],
       limit: 4 * PAGE_SIZE, // rounded up to whole pages
+      session: null,
     });
   });
 
