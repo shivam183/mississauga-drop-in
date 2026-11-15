@@ -48,7 +48,7 @@ export default defineConfig({
     },
     {
       command: `npm run build && npx next start -p ${APP_PORT}`,
-      url: `http://localhost:${APP_PORT}/centres`,
+      url: `http://localhost:${APP_PORT}/api/centres`,
       env: { ACTIVENET_BASE_URL: `http://127.0.0.1:${MOCK_PORT}` },
       timeout: 240_000,
       reuseExistingServer: !CI,

@@ -22,6 +22,6 @@ jobs:
         with:
           urls: |
             ${{ github.event.deployment_status.target_url }}/?type=enrol
-            ${{ github.event.deployment_status.target_url }}/centres/290
+            ${{ github.event.deployment_status.target_url }}/?centre=290
           configPath: ./lighthouserc.json
           uploadArtifacts: true

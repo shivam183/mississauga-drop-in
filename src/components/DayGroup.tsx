@@ -4,7 +4,15 @@ import styles from "./DayGroup.module.css";
 import { SessionCard } from "./SessionCard";
 
 /** Sessions for one day under a sticky "Today · Sat Nov 14" heading. */
-export function DayGroup({ group, today }: { group: Group; today: string }) {
+export function DayGroup({
+  group,
+  today,
+  centreHref,
+}: {
+  group: Group;
+  today: string;
+  centreHref: (centreId: number) => string;
+}) {
   const id = `day-${group.date}`;
   return (
     <section className={styles.group} aria-labelledby={id}>
@@ -14,7 +22,7 @@ export function DayGroup({ group, today }: { group: Group; today: string }) {
       <ol className={styles.list}>
         {group.sessions.map((session) => (
           <li key={session.id}>
-            <SessionCard session={session} />
+            <SessionCard session={session} centreHref={centreHref(session.centreId)} />
           </li>
         ))}
       </ol>

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { connection } from "next/server";
 import { toTorontoLocal } from "@/lib/dates";
-import type { Centre } from "@/lib/centres";
 import {
   hrefWith,
   PAGE_SIZE,
@@ -23,15 +22,11 @@ import { SearchControls } from "./SearchControls";
 export async function SearchView({
   searchParams,
   path,
-  centre,
 }: {
   searchParams: Promise<RawSearchParams>;
   path: string;
-  /** Set on a centre's page. */
-  centre?: Centre;
 }) {
   const state = parseSearchParams(await searchParams);
-  if (centre) state.centreIds = [centre.id];
 
   const { sessions, failedCentres } = await getSchedule();
   // "Now" (to hide ended sessions) must come from the request, never a prerender.
@@ -45,7 +40,7 @@ export async function SearchView({
 
   return (
     <div className={styles.layout}>
-      <SearchControls path={path} state={state} lockedCentre={centre} today={now.slice(0, 10)} />
+      <SearchControls path={path} state={state} today={now.slice(0, 10)} />
 
       <div className={styles.results}>
         <p className={styles.summary} role="status">
@@ -64,24 +59,28 @@ export async function SearchView({
 
         {matches.length === 0 && (
           <p className="muted">
-            Try fewer words, another type, or{" "}
-            <Link href={centre ? path : "/"}>clear all filters</Link>.
+            Try fewer words, another type, or <Link href={path}>clear all filters</Link>.
           </p>
         )}
 
         <AvailabilityProvider>
           {groupByDay(shown).map((group) => (
-            <DayGroup key={group.date} group={group} today={now.slice(0, 10)} />
+            <DayGroup
+              key={group.date}
+              group={group}
+              today={now.slice(0, 10)}
+              // A card's centre name adds that centre to the filter.
+              centreHref={(id) =>
+                hrefWith(path, state, { centreIds: [...new Set([...state.centreIds, id])] })
+              }
+            />
           ))}
         </AvailabilityProvider>
 
         {matches.length > shown.length && (
           <Link
             className={styles.more}
-            href={hrefWith(path, state, {
-              centreIds: centre ? [] : state.centreIds,
-              limit: state.limit + PAGE_SIZE,
-            })}
+            href={hrefWith(path, state, { limit: state.limit + PAGE_SIZE })}
             scroll={false}
           >
             Show more

@@ -9,7 +9,7 @@ async function enrolCards(page: Page) {
 }
 
 test("the page never scrolls sideways", async ({ page }) => {
-  for (const url of ["/", "/?type=enrol", "/centres", "/centres/290"]) {
+  for (const url of ["/", "/?type=enrol", "/?centre=290&time=morning"]) {
     await page.goto(url);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     const overflow = await page.evaluate(
@@ -279,32 +279,54 @@ test("centre picker: type to filter the list, pick one or more centres", async (
   await expect(centre).toHaveAttribute("placeholder", "All centres");
 });
 
-test("centre pages list that centre's sessions", async ({ page }) => {
-  await page.goto("/centres");
-  await page.getByRole("link", { name: /Burnhamthorpe Community Centre/ }).click();
-  await expect(page).toHaveURL(/\/centres\/290$/);
-  await expect(
-    page.getByRole("heading", { level: 1, name: "Burnhamthorpe Community Centre" }),
-  ).toBeVisible();
-  await expect(page.getByRole("article").first()).toBeVisible();
-});
-
-test("a card's centre name opens that centre's page", async ({ page }) => {
-  await page.goto("/");
+test("a card's centre name adds that centre to the filter", async ({ page }, testInfo) => {
+  await page.goto("/?type=enrol&q=pickle");
   await page
     .getByRole("article")
     .first()
-    .getByRole("link", { name: /Community Centre/ })
+    .getByRole("link", { name: "Burnhamthorpe Community Centre" })
     .click();
-  await expect(page).toHaveURL(/\/centres\/\d+$/);
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Community Centre");
+  // Same list, other filters kept, centre added.
+  await expect(page).toHaveURL(/^[^?]*\/\?(?=.*type=enrol)(?=.*q=pickle)(?=.*centre=290)/);
+  if (isPhone(testInfo.project.name)) await page.getByRole("button", { name: /^Filters/ }).click();
+  await expect(page.getByRole("list", { name: "Chosen centres" }).getByRole("button")).toHaveText([
+    "Burnhamthorpe Community Centre ✕",
+  ]);
 });
 
-test("there is no week view or nav tabs", async ({ page }) => {
+test("a quick tick and untick in the picker doesn't hide a card's centre link later", async ({
+  page,
+}, testInfo) => {
+  const phone = isPhone(testInfo.project.name);
+  await page.goto("/?type=enrol");
+  if (phone) await page.getByRole("button", { name: /^Filters/ }).click();
+  const sheet = page.getByRole("region", { name: "Filters" });
+  await sheet.getByRole("combobox", { name: "Community centre" }).click();
+  const option = sheet.getByRole("option", { name: "Burnhamthorpe Community Centre" });
+  await option.click();
+  await option.click(); // untick before the URL has caught up
+  await page.keyboard.press("Escape"); // closes the list
+  await expect(page).not.toHaveURL(/centre=/);
+  if (phone) await page.keyboard.press("Escape"); // closes the sheet
+
+  await page
+    .getByRole("article")
+    .first()
+    .getByRole("link", { name: "Burnhamthorpe Community Centre" })
+    .click();
+  await expect(page).toHaveURL(/centre=290/);
+  if (phone) await page.getByRole("button", { name: /^Filters/ }).click();
+  await expect(page.getByRole("list", { name: "Chosen centres" }).getByRole("button")).toHaveText([
+    "Burnhamthorpe Community Centre ✕",
+  ]);
+});
+
+test("there is no week view, centre pages or nav tabs", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("navigation", { name: "Main" })).toHaveCount(0);
-  const response = await page.goto("/calendar");
-  expect(response?.status()).toBe(404);
+  for (const url of ["/calendar", "/centres", "/centres/290"]) {
+    expect((await page.goto(url))?.status(), url).toBe(404);
+  }
 });
 
 test("the GitHub icon links to the repo in a new tab", async ({ page }) => {
@@ -413,4 +435,39 @@ test("security headers are set, and the CSP doesn't break the page", async ({ pa
       .getByText(/spots? left|^Full$/),
   ).toBeVisible();
   expect(errors).toEqual([]);
+});
+
+test("tapping anywhere on a card opens its details; its own links still work", async ({
+  page,
+  context,
+}) => {
+  // Don't load the City's real pages in the new tabs.
+  await context.route(/activecommunities\.com/, (route) => route.fulfill({ body: "City page" }));
+  await page.goto("/?type=enrol");
+  const card = page.getByRole("article").first();
+  const details = await card.getByRole("link", { name: /Adult Pickleball/ }).getAttribute("href");
+  await expect(card.getByRole("link", { name: /Enrol now/ })).toBeVisible();
+
+  // Tapping a plain part of the card (beside the time) opens the details page.
+  const box = (await card.locator("time").boundingBox())!;
+  const [popup] = await Promise.all([
+    context.waitForEvent("page"),
+    page.mouse.click(box.x + box.width / 2, box.y + box.height / 2),
+  ]);
+  await popup.waitForLoadState();
+  expect(popup.url()).toBe(details);
+  await popup.close();
+
+  // Enrol now opens the enrol page, not the details page.
+  const [enrol] = await Promise.all([
+    context.waitForEvent("page"),
+    card.getByRole("link", { name: /Enrol now/ }).click(),
+  ]);
+  expect(enrol.url()).toContain("/enroll/");
+  await enrol.close();
+
+  // The centre name still does its own thing (filters, in this tab).
+  await card.getByRole("link", { name: /Community Centre/ }).click();
+  await expect(page).toHaveURL(/centre=\d+/);
+  expect(context.pages()).toHaveLength(1);
 });
