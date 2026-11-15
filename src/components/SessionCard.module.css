@@ -1,8 +1,28 @@
 .card {
+  position: relative;
   padding: 14px var(--space);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--bg);
+}
+
+/* The title link covers the whole card, so a tap anywhere opens the details;
+   the card's other links and buttons sit above it and keep working. */
+.title a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.card a:not(.title a),
+.card button {
+  position: relative;
+  z-index: 1;
+}
+
+.card:has(.title a):hover {
+  border-color: var(--accent);
 }
 
 .top {

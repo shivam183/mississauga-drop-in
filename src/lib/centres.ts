@@ -20,7 +20,3 @@ export const CENTRES_BY_TYPE: Record<SessionType, readonly Centre[]> = {
 export const ALL_CENTRES: readonly Centre[] = [
   ...new Map([...dropInCentres, ...enrolCentres].map((c) => [c.id, c])).values(),
 ].sort((a, b) => a.name.localeCompare(b.name, "en"));
-
-export function findCentre(id: number): Centre | undefined {
-  return ALL_CENTRES.find((c) => c.id === id);
-}

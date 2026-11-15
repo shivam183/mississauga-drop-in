@@ -7,7 +7,14 @@ import styles from "./SessionCard.module.css";
 import { TypeBadge } from "./TypeBadge";
 
 /** One result. Time first and largest, centre second, then spots and Enrol for "enrol" sessions. */
-export function SessionCard({ session }: { session: Session }) {
+export function SessionCard({
+  session,
+  centreHref,
+}: {
+  session: Session;
+  /** Where the centre name goes: the list filtered to that centre. */
+  centreHref: string;
+}) {
   const title = displayTitle(session.title);
   return (
     <article
@@ -27,7 +34,11 @@ export function SessionCard({ session }: { session: Session }) {
       </h3>
       <p className={styles.where}>
         <span aria-hidden="true">📍 </span>
-        <Link className={styles.centre} href={`/centres/${session.centreId}`}>
+        <Link
+          className={styles.centre}
+          href={centreHref}
+          title={`Add ${session.centreName} to the filter`}
+        >
           {session.centreName}
         </Link>
         {session.facility && <span className={styles.facility}> · {session.facility}</span>}

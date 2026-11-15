@@ -9,6 +9,9 @@ import styles from "./Search.module.css";
 const noop = () => () => {};
 const ALL = 0;
 
+/** Order-independent key for a set of centre ids. */
+const idsKey = (ids: readonly number[]) => [...ids].sort((a, b) => a - b).join(",");
+
 /**
  * Community centre picker: a dropdown you can type into to narrow the list,
  * where you tick one or more centres. Chosen centres show as removable chips.
@@ -61,6 +64,22 @@ function Combobox({
 
   const [chosen, setChosen] = useState<number[]>([...selectedIds]);
   const [text, setText] = useState("");
+
+  // Follow the URL when something else changes the centres (e.g. a card's
+  // centre link), but not when the URL is just catching up with our own picks.
+  const incoming = idsKey(selectedIds);
+  const [seen, setSeen] = useState(incoming);
+  const [pending, setPending] = useState<string[]>([]);
+  if (incoming !== seen) {
+    setSeen(incoming);
+    const ours = pending.indexOf(incoming);
+    if (ours >= 0) {
+      setPending(pending.slice(ours + 1));
+    } else {
+      setChosen([...selectedIds]);
+      setPending([]);
+    }
+  }
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
 
@@ -76,15 +95,20 @@ function Combobox({
     const form = root.current?.closest("form");
     const reset = () => {
       setChosen([]);
+      setPending((p) => (seen === "" ? [] : [...p, ""]));
       setText("");
       setOpen(false);
     };
     form?.addEventListener("filters:clear", reset);
     return () => form?.removeEventListener("filters:clear", reset);
-  }, []);
+  }, [seen]);
 
   function commit(next: number[]) {
     setChosen(next);
+    // A value the URL already shows never "arrives", so it can't stay pending.
+    const key = idsKey(next);
+    setPending((p) => (key === seen ? [] : [...p, key]));
+    // Written now (not on re-render) because apply() reads the form straight away.
     if (hidden.current) hidden.current.value = next.join(",");
     apply();
   }
@@ -129,7 +153,7 @@ function Combobox({
         if (!root.current?.contains(event.relatedTarget as Node | null)) close();
       }}
     >
-      <input ref={hidden} type="hidden" name="centre" defaultValue={selectedIds.join(",")} />
+      <input ref={hidden} type="hidden" name="centre" value={chosen.join(",")} readOnly />
       <div className={styles.comboBox}>
         <input
           ref={input}

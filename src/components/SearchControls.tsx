@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ALL_CENTRES, CENTRES_BY_TYPE, type Centre } from "@/lib/centres";
+import { ALL_CENTRES, CENTRES_BY_TYPE } from "@/lib/centres";
 import { addDays, formatDate, formatDayHeading } from "@/lib/format";
 import { activeFilterCount, hrefWith, type SearchState } from "@/lib/params";
 import type { TimeOfDay } from "@/models/filters";
@@ -31,11 +31,9 @@ function Hidden({ name, value }: { name: string; value: string | null | undefine
 }
 
 export interface SearchControlsProps {
-  /** Where the forms and links go, e.g. "/" or "/centres/290". */
+  /** Where the forms and links go, e.g. "/". */
   path: string;
   state: SearchState;
-  /** On a centre's page the centre is fixed by the URL, so there's no centre picker. */
-  lockedCentre?: Centre;
   /** Today in Toronto, "YYYY-MM-DD". */
   today: string;
 }
@@ -44,14 +42,7 @@ export interface SearchControlsProps {
  * Search box, type chips and the filter form. Everything is a plain GET form
  * or link, so filters live in the URL and work without JavaScript.
  */
-export function SearchControls({
-  path,
-  state: fullState,
-  lockedCentre,
-  today,
-}: SearchControlsProps) {
-  // On a centre page the centre is in the path, so leave it out of forms and links.
-  const state = lockedCentre ? { ...fullState, centreIds: [] } : fullState;
+export function SearchControls({ path, state, today }: SearchControlsProps) {
   const centres = state.type ? CENTRES_BY_TYPE[state.type] : ALL_CENTRES;
   const link = (changes: Partial<SearchState>) => hrefWith(path, state, changes);
   const centreValue = state.centreIds.join(",");
@@ -107,12 +98,10 @@ export function SearchControls({
           <Hidden name="q" value={state.q} />
           <Hidden name="type" value={state.type} />
 
-          {!lockedCentre && (
-            <div className={styles.field}>
-              <label htmlFor="centre">Community centre</label>
-              <CentrePicker id="centre" centres={centres} selectedIds={state.centreIds} />
-            </div>
-          )}
+          <div className={styles.field}>
+            <label htmlFor="centre">Community centre</label>
+            <CentrePicker id="centre" centres={centres} selectedIds={state.centreIds} />
+          </div>
 
           <div className={styles.field}>
             <label htmlFor="day">Day</label>
