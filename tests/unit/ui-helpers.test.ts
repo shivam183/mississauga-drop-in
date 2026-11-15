@@ -7,6 +7,7 @@ import {
   formatDateTime,
   formatDayHeading,
   formatTimeRange,
+  startsLabel,
 } from "@/lib/format";
 import {
   activeFilterCount,
@@ -37,6 +38,31 @@ describe("format", () => {
     expect(formatDayHeading("2026-11-15", "2026-11-14")).toBe("Tomorrow · Sun Nov 15");
     expect(formatDayHeading("2026-11-16", "2026-11-14")).toBe("Mon Nov 16");
     expect(formatDateTime("2026-12-30 07:00:00")).toBe("Wed Dec 30, 7:00 AM");
+  });
+
+  it("labels sessions that are on now or start within the hour", () => {
+    const now = "2026-11-14 18:30:00";
+    const label = (start: string, end: string, at = now) => startsLabel(start, end, at);
+    expect(label("2026-11-14 18:00:00", "2026-11-14 19:00:00")).toEqual({
+      text: "On now",
+      tone: "now",
+    });
+    expect(label("2026-11-14 18:35:00", "2026-11-14 19:00:00")).toEqual({
+      text: "Starts in 5 min",
+      tone: "soon",
+    });
+    expect(label("2026-11-14 18:45:00", "2026-11-14 19:00:00")?.tone).toBe("soon");
+    expect(label("2026-11-14 18:46:00", "2026-11-14 19:00:00")?.tone).toBe("later");
+    expect(label("2026-11-14 19:30:00", "2026-11-14 20:00:00")).toEqual({
+      text: "Starts in 60 min",
+      tone: "later",
+    });
+    expect(label("2026-11-14 19:31:00", "2026-11-14 20:00:00")).toBeNull();
+    expect(label("2026-11-14 17:00:00", "2026-11-14 18:30:00")).toBeNull();
+    // Across midnight.
+    expect(label("2026-11-15 00:10:00", "2026-11-15 01:00:00", "2026-11-14 23:50:00")?.text).toBe(
+      "Starts in 20 min",
+    );
   });
 
   it("does date arithmetic across months", () => {
