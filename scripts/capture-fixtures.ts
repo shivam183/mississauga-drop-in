@@ -18,9 +18,9 @@
  *   capture.json              when and from which sessions the above came
  */
 import path from "node:path";
-import { createActiveNetClient } from "../src/lib/activenet/client";
+import { activeNetClientFromEnv } from "../src/lib/activenet/client";
 import type { RawCentre, RawEvent } from "../src/lib/activenet/types";
-import { toTorontoLocal } from "../src/lib/dates";
+import { TORONTO_TIME_ZONE, toTorontoLocal } from "../src/lib/dates";
 import { run, writeJson } from "./lib";
 
 const OUT = path.resolve("tests/fixtures");
@@ -44,11 +44,7 @@ const lastEnvelope = (urlPart: string) => {
   return structuredClone(entries.at(-1)![1]) as { headers: unknown; body: Record<string, unknown> };
 };
 
-const client = createActiveNetClient({
-  baseUrl: process.env.ACTIVENET_BASE_URL || undefined,
-  userAgent: process.env.ACTIVENET_USER_AGENT || undefined,
-  fetch: recordingFetch,
-});
+const client = activeNetClientFromEnv(process.env, { fetch: recordingFetch });
 
 function trimEvents(envelope: { body: Record<string, unknown> }, keep: number) {
   const centres = envelope.body.center_events as Array<{ total: number; events: RawEvent[] }>;
@@ -63,7 +59,7 @@ function trimEvents(envelope: { body: Record<string, unknown> }, keep: number) {
 
 run(async () => {
   const now = toTorontoLocal(new Date());
-  const manifest: Record<string, unknown> = { capturedAt: now, timeZone: "America/Toronto" };
+  const manifest: Record<string, unknown> = { capturedAt: now, timeZone: TORONTO_TIME_ZONE };
 
   // Filters (both calendars share one URL, so save each right after its request).
   const centres: Record<number, RawCentre[]> = {};

@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { Centre } from "@/lib/centres";
 import { foldText } from "@/models/filters";
-import { useApplyFilters } from "./FilterForm";
+import { useApplyFilters, useHydrated } from "./FilterForm";
 import styles from "./Search.module.css";
 
-const noop = () => () => {};
 const ALL = 0;
 
 /** Order-independent key for a set of centre ids. */
@@ -27,11 +26,7 @@ export function CentrePicker({
   centres: readonly Centre[];
   selectedIds: readonly number[];
 }) {
-  const live = useSyncExternalStore(
-    noop,
-    () => true,
-    () => false,
-  );
+  const live = useHydrated();
   if (!live) {
     return (
       <select id={id} name="centre" defaultValue={selectedIds[0] ?? ""}>

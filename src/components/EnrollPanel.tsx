@@ -20,7 +20,7 @@ export function EnrollPanel({
   const ref = useRef<HTMLDivElement>(null);
   const { entry, refresh, refreshState } = useAvailability(activityId, ref);
   const status = entry.phase === "ready" ? entry.status : null;
-  const state = entry.phase === "ready" ? toEnrollState(status, toTorontoLocal(new Date())) : null;
+  const state = status && toEnrollState(status, toTorontoLocal(new Date()));
   // For the card's visual cue (see SessionCard.module.css). A stripe only when
   // you can enroll (now or later); faded when full.
   const level =
