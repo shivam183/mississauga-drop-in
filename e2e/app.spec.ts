@@ -43,9 +43,11 @@ test("Share copies a link to this session where the browser can't share", async 
   await expect(card.getByRole("status")).toHaveText("Copied");
 
   const copied = (await page.evaluate(() => (window as { copied?: string }).copied))!;
-  const [text, url] = copied.split("\n");
-  expect(text).toContain(`${title} · `);
-  expect(text).toContain("Burnhamthorpe Community Centre");
+  // One detail per line, then the link on its own line.
+  const [name, when, centre, url] = copied.split("\n");
+  expect(name).toBe(title);
+  expect(when).toMatch(/^\w{3} \w{3} \d{1,2}, \d{1,2}:\d{2}/);
+  expect(centre).toBe("Burnhamthorpe Community Centre");
   await page.goto(url);
   await expect(page.getByRole("article").first()).toHaveAttribute(
     "aria-label",

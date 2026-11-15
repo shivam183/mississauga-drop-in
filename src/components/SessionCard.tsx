@@ -37,7 +37,7 @@ export function SessionCard({
           <TypeBadge type={session.type} />
           <ShareButton
             title={title}
-            text={`${title} · ${formatDate(day)}, ${time} · ${session.centreName}`}
+            text={[title, `${formatDate(day)}, ${time}`, session.centreName].join("\n")}
             // The list filtered to this program, centre and day, so it shows live spots.
             href={hrefWith("/", EMPTY_SEARCH, {
               q: title,
