@@ -5,6 +5,17 @@ This file is updated automatically by
 Conventional Commit messages on `main`. Don't edit it by hand. The project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.3.0](https://github.com/shivam183/mississauga-drop-in/compare/v0.2.1...v0.3.0) (2026-11-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* add a clear button to search; spell "Enroll" with two Ls ([#19](https://github.com/shivam183/mississauga-drop-in/issues/19))
+
+### Features
+
+* add a clear button to search; spell "Enroll" with two Ls ([#19](https://github.com/shivam183/mississauga-drop-in/issues/19)) ([87ff430](https://github.com/shivam183/mississauga-drop-in/commit/87ff430d88aa8fbf60ea0ed6640451d5b3bebfa0))
+
 ## [0.2.1](https://github.com/shivam183/mississauga-drop-in/compare/v0.2.0...v0.2.1) (2026-11-15)
 
 
