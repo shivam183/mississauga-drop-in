@@ -442,7 +442,9 @@ test("tapping anywhere on a card opens its details; its own links still work", a
   context,
 }) => {
   // Don't load the City's real pages in the new tabs.
-  await context.route(/activecommunities\.com/, (route) => route.fulfill({ body: "City page" }));
+  await context.route("https://*.activecommunities.com/**", (route) =>
+    route.fulfill({ body: "City page" }),
+  );
   await page.goto("/?type=enrol");
   const card = page.getByRole("article").first();
   const details = await card.getByRole("link", { name: /Adult Pickleball/ }).getAttribute("href");
