@@ -5,6 +5,18 @@ This file is updated automatically by
 Conventional Commit messages on `main`. Don't edit it by hand. The project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.0](https://github.com/shivam183/mississauga-drop-in/compare/v0.1.0...v0.2.0) (2026-11-15)
+
+
+### Features
+
+* open details from anywhere on a card; centre name adds a filter ([#16](https://github.com/shivam183/mississauga-drop-in/issues/16)) ([cdfde4b](https://github.com/shivam183/mississauga-drop-in/commit/cdfde4b3008089261de20b0133a4d10200461da3))
+
+
+### Documentation
+
+* mark phase 5 done ([#14](https://github.com/shivam183/mississauga-drop-in/issues/14)) ([a938dde](https://github.com/shivam183/mississauga-drop-in/commit/a938ddeeb9af85f09be18e904fc942c5b712d170))
+
 ## 0.1.0 (2026-11-14)
 
 
