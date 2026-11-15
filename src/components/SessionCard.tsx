@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { displayTitle, formatTimeRange } from "@/lib/format";
+import type { LocalDateTime } from "@/lib/activenet/types";
+import { displayTitle, formatTimeRange, startsLabel } from "@/lib/format";
 import type { Session } from "@/models/session";
 import { EnrollPanel } from "./EnrollPanel";
 import { ExternalLink } from "./ExternalLink";
@@ -11,12 +12,17 @@ import { TypeBadge } from "./TypeBadge";
 export function SessionCard({
   session,
   centreHref,
+  now,
 }: {
   session: Session;
   /** Where the centre name goes: the list filtered to that centre. */
   centreHref: string;
+  /** Toronto time when the page was rendered, for "On now" / "Starts in". */
+  now: LocalDateTime;
 }) {
   const title = displayTitle(session.title);
+  // shortcut: computed at render time, so it can be a few minutes stale if the page sits open; move to a client tick if users notice.
+  const soon = startsLabel(session.start, session.end, now);
   return (
     <article
       className={styles.card}
@@ -30,6 +36,11 @@ export function SessionCard({
         </p>
         <TypeBadge type={session.type} />
       </div>
+      {soon && (
+        <p className={styles.soon} data-tone={soon.tone}>
+          {soon.text}
+        </p>
+      )}
       <h3 className={styles.title}>
         {session.url ? <ExternalLink href={session.url}>{title}</ExternalLink> : title}
       </h3>
