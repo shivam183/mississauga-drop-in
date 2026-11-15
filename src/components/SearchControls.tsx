@@ -12,11 +12,7 @@ import { SearchBox } from "./SearchBox";
 import { TYPE_LABEL } from "./TypeBadge";
 import styles from "./Search.module.css";
 
-const TYPES: Array<[SessionType | null, string]> = [
-  [null, "All"],
-  ["dropin", TYPE_LABEL.dropin],
-  ["enroll", TYPE_LABEL.enroll],
-];
+const TYPES: SessionType[] = ["dropin", "enroll"];
 
 /**
  * One-tap searches for the most common activities: Pickleball first (the most
@@ -59,7 +55,7 @@ export interface SearchControlsProps {
 }
 
 /**
- * Search box, type chips and the filter form. Everything is a plain GET form
+ * Search box, activity chips and the filter form. Everything is a plain GET form
  * or link, so filters live in the URL and work without JavaScript.
  */
 export function SearchControls({ path, state, today }: SearchControlsProps) {
@@ -96,21 +92,7 @@ export function SearchControls({ path, state, today }: SearchControlsProps) {
         }
       />
 
-      <nav aria-label="Program type" className={styles.chips}>
-        {TYPES.map(([type, label]) => (
-          <Link
-            key={label}
-            href={link({ type })}
-            className={styles.chip}
-            aria-current={state.type === type ? "page" : undefined}
-          >
-            {label}
-            <LinkPending />
-          </Link>
-        ))}
-      </nav>
-
-      <nav aria-label="Activity" className={`${styles.chips} ${styles.activities}`}>
+      <nav aria-label="Activity" className={styles.chips}>
         {ACTIVITIES.map(([q, label]) => {
           const on = state.q.toLowerCase() === q;
           return (
@@ -131,14 +113,25 @@ export function SearchControls({ path, state, today }: SearchControlsProps) {
         <FilterForm
           action={path}
           activeCount={activeFilterCount(state)}
-          clearHref={link({ centreIds: [], from: null, to: null, times: [] })}
+          clearHref={link({ type: null, centreIds: [], from: null, to: null, times: [] })}
         >
           <Hidden name="q" value={state.q} />
-          <Hidden name="type" value={state.type} />
 
           <div className={styles.field}>
             <label htmlFor="centre">Community centre</label>
             <CentrePicker id="centre" centres={centres} selectedIds={state.centreIds} />
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="type">Type</label>
+            <select id="type" name="type" defaultValue={state.type ?? ""}>
+              <option value="">All types</option>
+              {TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {TYPE_LABEL[type]}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className={styles.field}>
