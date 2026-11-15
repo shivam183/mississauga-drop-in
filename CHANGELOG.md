@@ -5,6 +5,27 @@ This file is updated automatically by
 Conventional Commit messages on `main`. Don't edit it by hand. The project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.4.0](https://github.com/shivam183/mississauga-drop-in/compare/v0.3.0...v0.4.0) (2026-11-15)
+
+
+### Features
+
+* add a "Report a problem" link to the footer ([#25](https://github.com/shivam183/mississauga-drop-in/issues/25)) ([15966a0](https://github.com/shivam183/mississauga-drop-in/commit/15966a05842ebcee8a59ac6da1ca22c399f00155))
+* Install Vercel Speed Insights ([#21](https://github.com/shivam183/mississauga-drop-in/issues/21)) ([cb37d14](https://github.com/shivam183/mississauga-drop-in/commit/cb37d148a7e9b1d832071a468e16b31fe895f859))
+
+
+### Bug Fixes
+
+* a refresh expires the cached spots so others don't keep the old count ([#31](https://github.com/shivam183/mississauga-drop-in/issues/31)) ([823d220](https://github.com/shivam183/mississauga-drop-in/commit/823d220fda09eb0181a9b874fb4d4cf1192523fb))
+* drop the redundant ActiveMississauga link on full sessions ([#34](https://github.com/shivam183/mississauga-drop-in/issues/34)) ([9220f18](https://github.com/shivam183/mississauga-drop-in/commit/9220f18446460e55daf039e5ce19d76eff168985))
+
+
+### Performance
+
+* cache the merged schedule, not just its batches ([#28](https://github.com/shivam183/mississauga-drop-in/issues/28)) ([5c92f17](https://github.com/shivam183/mississauga-drop-in/commit/5c92f177ad976c7c0d876b54f76aa67122105870))
+* fold each session's search text once, when it's cached ([#29](https://github.com/shivam183/mississauga-drop-in/issues/29)) ([1c5c45d](https://github.com/shivam183/mississauga-drop-in/commit/1c5c45daac58aa5c2b9df9a6fc5284bd7940cea5))
+* re-render only the Enroll panels whose availability changed ([#30](https://github.com/shivam183/mississauga-drop-in/issues/30)) ([6a1b40a](https://github.com/shivam183/mississauga-drop-in/commit/6a1b40a1f26effb4148c46685f692fd8fe65ba9b))
+
 ## [0.3.0](https://github.com/shivam183/mississauga-drop-in/compare/v0.2.1...v0.3.0) (2026-11-15)
 
 
