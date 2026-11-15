@@ -19,13 +19,14 @@ const TYPES: Array<[SessionType | null, string]> = [
 ];
 
 /**
- * One-tap searches for the most common activities, busiest first. Each `q`
- * matches every variant of the City's titles ("skat": Skate, Figure Skating).
+ * One-tap searches for the most common activities: Pickleball first (the most
+ * popular), then busiest first. Each `q` matches every variant of the City's
+ * titles ("skat": Skate, Figure Skating).
  */
 const ACTIVITIES: Array<[q: string, label: string]> = [
+  ["pickleball", "Pickleball"],
   ["swim", "Swim"],
   ["yoga", "Yoga"],
-  ["pickleball", "Pickleball"],
   ["skat", "Skate"],
   ["hockey", "Hockey"],
   ["basketball", "Basketball"],
