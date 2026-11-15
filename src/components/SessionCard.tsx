@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { displayTitle, formatTimeRange } from "@/lib/format";
 import type { Session } from "@/models/session";
-import { EnrolPanel } from "./EnrolPanel";
+import { EnrollPanel } from "./EnrollPanel";
 import { ExternalLink } from "./ExternalLink";
 import { LinkPending } from "./LinkPending";
 import styles from "./SessionCard.module.css";
 import { TypeBadge } from "./TypeBadge";
 
-/** One result. Time first and largest, centre second, then spots and Enrol for "enrol" sessions. */
+/** One result. Time first and largest, centre second, then spots and Enroll for "enroll" sessions. */
 export function SessionCard({
   session,
   centreHref,
@@ -45,8 +45,8 @@ export function SessionCard({
         </Link>
         {session.facility && <span className={styles.facility}> · {session.facility}</span>}
       </p>
-      {session.type === "enrol" && (
-        <EnrolPanel activityId={session.activityId} cityUrl={session.url} />
+      {session.type === "enroll" && (
+        <EnrollPanel activityId={session.activityId} cityUrl={session.url} />
       )}
     </article>
   );

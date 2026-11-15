@@ -78,7 +78,7 @@ export function parseSearchParams(params: RawSearchParams): SearchState {
 
   const state: SearchState = {
     q,
-    type: type === "dropin" || type === "enrol" ? type : null,
+    type: type === "dropin" || type === "enroll" ? type : null,
     centreIds: [
       ...new Set(
         values(params, "centre")

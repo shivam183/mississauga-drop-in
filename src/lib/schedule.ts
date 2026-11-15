@@ -45,7 +45,7 @@ function batches<T>(items: readonly T[], size: number): T[][] {
 
 /** Sessions of the given types (default both), merged into one list. */
 export async function getSchedule(
-  types: readonly SessionType[] = ["dropin", "enrol"],
+  types: readonly SessionType[] = ["dropin", "enroll"],
 ): Promise<Schedule> {
   const jobs = types.flatMap((type) =>
     batches(CENTRES_BY_TYPE[type], CENTRES_PER_REQUEST).map((centres) => ({ type, centres })),

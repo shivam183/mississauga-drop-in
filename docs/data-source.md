@@ -14,15 +14,15 @@ them. The client is `src/lib/activenet/client.ts`.
 
 ## Calendars
 
-| `calendar_id` | Contents                     | Centres | In this app          |
-| ------------- | ---------------------------- | ------- | -------------------- |
-| 1             | Drop-in programs             | 21      | "Drop-in" badge      |
-| 2             | Library programs             | –       | Not used             |
-| 3             | Programs you enrol in online | 10      | "Enrol online" badge |
+| `calendar_id` | Contents                      | Centres | In this app           |
+| ------------- | ----------------------------- | ------- | --------------------- |
+| 1             | Drop-in programs              | 21      | "Drop-in" badge       |
+| 2             | Library programs              | –       | Not used              |
+| 3             | Programs you enroll in online | 10      | "Enroll online" badge |
 
 On 2026-11-14, calendar 3 held only **"Drop In Adult Pickleball"**, with about
 480 sessions across its 10 centres. Centre ids are shared across calendars.
-`data/centres.dropin.json` and `data/centres.enrol.json` hold the current
+`data/centres.dropin.json` and `data/centres.enroll.json` hold the current
 lists; `npm run update-centres` refreshes them, and a weekly workflow does the
 same.
 
@@ -58,7 +58,7 @@ total, events[] }`. Each event has these fields:
 | `facilities[]`        | `{ facility_id, facility_name, center_id, center_name }`, sometimes several (e.g. Gym A, Gym B)                                                |
 | `description`         | Plain text                                                                                                                                     |
 
-`action_link` is always `null` here. Enrolment links come from `buttonstatus`.
+`action_link` is always `null` here. Enrollment links come from `buttonstatus`.
 
 **The answers to the Phase 1 open questions:**
 
@@ -92,13 +92,13 @@ The client uses `body.detail`:
   on, but it agrees with `space_status`.
 - `first_date` and `last_date`: the same day for a calendar 3 session.
 
-### Enrol status: `GET /activity/detail/buttonstatus/{id}?selected_date=YYYY-MM-DD HH:mm:ss&locale=en-US`
+### Enroll status: `GET /activity/detail/buttonstatus/{id}?selected_date=YYYY-MM-DD HH:mm:ss&locale=en-US`
 
 The client uses `body.button_status`. Four states have been seen:
 
 | State                | `action_link`                                                                   | `activity_online_start_time`                                      | `notification`                                                                                  |
 | -------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Enrolment open now   | `{ href: ".../activity/search/enroll/{id}?locale=en-US", label: "Enroll Now" }` | `""` (empty, **not** a past time)                                 | `""`                                                                                            |
+| Enrollment open now  | `{ href: ".../activity/search/enroll/{id}?locale=en-US", label: "Enroll Now" }` | `""` (empty, **not** a past time)                                 | `""`                                                                                            |
 | Opens later          | the same link, already present                                                  | e.g. `"2026-12-30 07:00:00"`: **7 am the day before** the session | `""`                                                                                            |
 | Full                 | `null`                                                                          | `""`                                                              | `<div>This activity is full and is not able to accept any more enrollments.</div>…`             |
 | Over                 | `null`                                                                          | `""`                                                              | `We're sorry, but this activity is over. The last meeting was …`                                |

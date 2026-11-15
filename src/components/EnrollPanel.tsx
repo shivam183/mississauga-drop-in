@@ -2,15 +2,15 @@
 
 import { useRef } from "react";
 import { toTorontoLocal } from "@/lib/dates";
-import { toEnrolState } from "@/models/availability";
+import { toEnrollState } from "@/models/availability";
 import { useAvailability } from "./AvailabilityProvider";
-import { EnrolButton } from "./EnrolButton";
+import { EnrollButton } from "./EnrollButton";
 import { ExternalLink } from "./ExternalLink";
-import styles from "./EnrolPanel.module.css";
+import styles from "./EnrollPanel.module.css";
 import { SpotsLeft } from "./SpotsLeft";
 
-/** Spots left and the Enrol button for one "enrol online" session. */
-export function EnrolPanel({
+/** Spots left and the Enroll button for one "enroll online" session. */
+export function EnrollPanel({
   activityId,
   cityUrl,
 }: {
@@ -20,20 +20,21 @@ export function EnrolPanel({
   const ref = useRef<HTMLDivElement>(null);
   const { entry, refresh, refreshState } = useAvailability(activityId, ref);
   const status = entry.phase === "ready" ? entry.status : null;
-  const state = entry.phase === "ready" ? toEnrolState(status, toTorontoLocal(new Date())) : null;
+  const state = entry.phase === "ready" ? toEnrollState(status, toTorontoLocal(new Date())) : null;
   // For the card's visual cue (see SessionCard.module.css). A stripe only when
-  // you can enrol (now or later); faded when full.
+  // you can enroll (now or later); faded when full.
   const level =
     state?.state === "full"
       ? "full"
-      : (state?.state === "enrol" || state?.state === "opens") && status?.spaces.level !== "unknown"
+      : (state?.state === "enroll" || state?.state === "opens") &&
+          status?.spaces.level !== "unknown"
         ? status?.spaces.level
         : undefined;
 
   return (
     <div ref={ref} className={styles.panel} data-level={level}>
       <SpotsLeft entry={entry} onRefresh={refresh} refreshState={refreshState} />
-      <EnrolButton
+      <EnrollButton
         state={entry.phase === "error" ? { state: "unknown" } : state}
         cityUrl={cityUrl}
       />

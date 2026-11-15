@@ -1,5 +1,5 @@
 /**
- * Refreshes data/centres.dropin.json (calendar 1) and data/centres.enrol.json
+ * Refreshes data/centres.dropin.json (calendar 1) and data/centres.enroll.json
  * (calendar 3) from the live API. Output is sorted so it only changes when the
  * City's list does. Run weekly by .github/workflows/update-centres.yml.
  *
@@ -12,7 +12,7 @@ import { run, writeJson } from "./lib";
 
 const OUTPUTS: Array<[CalendarId, string]> = [
   [1, "data/centres.dropin.json"],
-  [3, "data/centres.enrol.json"],
+  [3, "data/centres.enroll.json"],
 ];
 
 run(async () => {

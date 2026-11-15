@@ -15,7 +15,7 @@ import { fixture } from "./fixtures";
 
 const capture = fixture<{
   capturedAt: string;
-  enrol: Record<"enrol" | "opens" | "full", { activityId: number; start: string }>;
+  enroll: Record<"enroll" | "opens" | "full", { activityId: number; start: string }>;
 }>("capture.json");
 
 const bodyOf = (name: string) => {
@@ -34,7 +34,7 @@ describe("recorded fixtures match the validators", () => {
   );
   it.each([
     "buttonstatus.1.json",
-    "buttonstatus.3.enrol.json",
+    "buttonstatus.3.enroll.json",
     "buttonstatus.3.opens.json",
     "buttonstatus.3.full.json",
   ])("%s", (name) => assertButtonStatusBody(bodyOf(name)));
@@ -45,9 +45,9 @@ describe("facts about the API", () => {
     const ids = (name: string) =>
       fixture<Envelope<EventsBody>>(name).body.center_events[0].events.map((e) => e.event_item_id);
     const dropIn = ids("events.1.json");
-    const enrol = ids("events.3.json");
+    const enroll = ids("events.3.json");
     expect(new Set(dropIn).size).toBeLessThan(dropIn.length);
-    expect(new Set(enrol).size).toBe(enrol.length);
+    expect(new Set(enroll).size).toBe(enroll.length);
   });
 
   it("calendar 3 detail covers a single day; calendar 1 detail covers the whole run", () => {
@@ -67,8 +67,8 @@ describe("facts about the API", () => {
     expect(space("detail.3.open.json")).toMatch(/^\d+ openings? remaining$/);
   });
 
-  it("enrolment open now: an enrol link and an empty opening time", () => {
-    const s = status("buttonstatus.3.enrol.json");
+  it("enrollment open now: an enroll link and an empty opening time", () => {
+    const s = status("buttonstatus.3.enroll.json");
     expect(s.action_link?.href).toMatch(
       /^https:\/\/[^/]+\.activecommunities\.com\/.+\/enroll\/\d+/,
     );
@@ -76,11 +76,11 @@ describe("facts about the API", () => {
     expect(s.notification).toBe("");
   });
 
-  it("enrolment opens later: the link is already present with a future opening time", () => {
+  it("enrollment opens later: the link is already present with a future opening time", () => {
     const s = status("buttonstatus.3.opens.json");
-    expect(s.action_link?.href).toContain(`/enroll/${capture.enrol.opens.activityId}`);
+    expect(s.action_link?.href).toContain(`/enroll/${capture.enroll.opens.activityId}`);
     expect(s.activity_online_start_time > capture.capturedAt).toBe(true);
-    expect(s.activity_online_start_time < capture.enrol.opens.start).toBe(true);
+    expect(s.activity_online_start_time < capture.enroll.opens.start).toBe(true);
   });
 
   it("full: no link, and an HTML notice that says full", () => {

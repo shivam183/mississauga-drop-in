@@ -2,10 +2,10 @@
 // tests/fixtures/ so end-to-end tests are deterministic and never call the
 // City. Session dates are moved so the first one is tomorrow.
 //
-// For calendar 3 (enrol online), sessions sorted by start get:
-//   #0  open for enrolment; spots go down by one on every detail request
+// For calendar 3 (enroll online), sessions sorted by start get:
+//   #0  open for enrollment; spots go down by one on every detail request
 //   #1  full
-//   #2+ open, with enrolment opening at 7 am the day before
+//   #2+ open, with enrollment opening at 7 am the day before
 //
 //   node e2e/mock-activenet.mjs [port]   (default 3101)
 import { readFileSync } from "node:fs";
@@ -37,17 +37,17 @@ function shifted(name) {
 }
 
 const events = { 1: shifted("events.1.json"), 3: shifted("events.3.json") };
-const enrolSessions = events[3].body.center_events
+const enrollSessions = events[3].body.center_events
   .flatMap((c) => c.events)
   .sort((a, b) => a.start_time.localeCompare(b.start_time));
-const enrolIndex = new Map(enrolSessions.map((e, i) => [e.event_item_id, i]));
+const enrollIndex = new Map(enrollSessions.map((e, i) => [e.event_item_id, i]));
 const centreIds = (calendar) =>
   new Set(events[calendar].body.center_events.map((c) => c.center_id));
 
 let openSpots = 9;
 
 function detail(id) {
-  const index = enrolIndex.get(id);
+  const index = enrollIndex.get(id);
   const envelope = fixture(
     index === 1
       ? "detail.3.full.json"
@@ -66,14 +66,16 @@ function detail(id) {
 }
 
 function buttonStatus(id) {
-  const index = enrolIndex.get(id);
+  const index = enrollIndex.get(id);
   if (index === undefined) return fixture("buttonstatus.1.json");
   if (index === 1) return fixture("buttonstatus.3.full.json");
-  const envelope = fixture(index === 0 ? "buttonstatus.3.enrol.json" : "buttonstatus.3.opens.json");
+  const envelope = fixture(
+    index === 0 ? "buttonstatus.3.enroll.json" : "buttonstatus.3.opens.json",
+  );
   const status = envelope.body.button_status;
   status.action_link.href = status.action_link.href.replace(/enroll\/\d+/, `enroll/${id}`);
   if (index > 0) {
-    status.activity_online_start_time = `${shiftDay(enrolSessions[index].start_time.slice(0, 10), -1)} 07:00:00`;
+    status.activity_online_start_time = `${shiftDay(enrollSessions[index].start_time.slice(0, 10), -1)} 07:00:00`;
   }
   return envelope;
 }

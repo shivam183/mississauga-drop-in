@@ -41,14 +41,14 @@ describe("roomName", () => {
 });
 
 describe("normalizeEvents", () => {
-  it("turns calendar 3 events into enrol sessions", () => {
+  it("turns calendar 3 events into enroll sessions", () => {
     const sessions = normalizeEvents(events3, 3);
     const raw = events3.center_events[0].events.find(
       (e) => e.event_item_id === sessions[0].activityId,
     )!;
     expect(sessions[0]).toEqual({
-      id: sessionId("enrol", raw.event_item_id, raw.start_time),
-      type: "enrol",
+      id: sessionId("enroll", raw.event_item_id, raw.start_time),
+      type: "enroll",
       title: raw.title,
       centreId: events3.center_events[0].center_id,
       centreName: events3.center_events[0].center_name,
@@ -99,9 +99,9 @@ describe("normalizeEvents", () => {
 describe("mergeSessions", () => {
   it("merges both calendars into one sorted list without duplicates", () => {
     const dropIn = normalizeEvents(events1, 1);
-    const enrol = normalizeEvents(events3, 3);
-    const merged: Session[] = mergeSessions(dropIn, enrol, enrol);
-    expect(merged).toHaveLength(dropIn.length + enrol.length);
+    const enroll = normalizeEvents(events3, 3);
+    const merged: Session[] = mergeSessions(dropIn, enroll, enroll);
+    expect(merged).toHaveLength(dropIn.length + enroll.length);
     for (let i = 1; i < merged.length; i++) {
       expect(merged[i - 1].start <= merged[i].start).toBe(true);
     }

@@ -1,32 +1,32 @@
 "use client";
 
 import { formatDateTime } from "@/lib/format";
-import type { EnrolState } from "@/models/availability";
-import styles from "./EnrolPanel.module.css";
+import type { EnrollState } from "@/models/availability";
+import styles from "./EnrollPanel.module.css";
 import { ExternalLink } from "./ExternalLink";
 
-/** The full-width Enrol button, or what to do instead when it isn't available. */
-export function EnrolButton({
+/** The full-width Enroll button, or what to do instead when it isn't available. */
+export function EnrollButton({
   state,
   cityUrl,
 }: {
-  state: EnrolState | null;
+  state: EnrollState | null;
   cityUrl: string | null;
 }) {
   if (!state)
     return <span className={`${styles.button} ${styles.placeholder}`} aria-hidden="true" />;
 
   switch (state.state) {
-    case "enrol":
+    case "enroll":
       return (
         <ExternalLink className={`${styles.button} ${styles.primary}`} href={state.url}>
-          Enrol now <span aria-hidden="true">↗</span>
+          Enroll now <span aria-hidden="true">↗</span>
         </ExternalLink>
       );
     case "opens":
       return (
         <span className={`${styles.button} ${styles.disabled}`} aria-disabled="true">
-          Enrolment opens {formatDateTime(state.opensAt)}
+          Enrollment opens {formatDateTime(state.opensAt)}
         </span>
       );
     case "full":

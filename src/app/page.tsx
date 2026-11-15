@@ -7,7 +7,7 @@ export default function Home({ searchParams }: PageProps<"/">) {
     <>
       <h1 className="page-title">What&rsquo;s on at Mississauga community centres</h1>
       <p className="muted intro">
-        Drop-in and enrol-online sessions from{" "}
+        Drop-in and enroll-online sessions from{" "}
         <ExternalLink href="https://anc.ca.apm.activecommunities.com/activemississauga/home">
           ActiveMississauga
         </ExternalLink>

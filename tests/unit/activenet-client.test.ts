@@ -61,7 +61,7 @@ describe("ActiveNet client requests", () => {
   });
 
   it("getButtonStatus URL-encodes the session start", async () => {
-    const { client, call } = clientReturning(fixture("buttonstatus.3.enrol.json"));
+    const { client, call } = clientReturning(fixture("buttonstatus.3.enroll.json"));
     await client.getButtonStatus(166860, "2026-11-14 16:30:00");
     expect(call().url).toBe(
       `${DEFAULT_BASE_URL}/activity/detail/buttonstatus/166860?selected_date=2026-11-14+16%3A30%3A00&locale=en-US`,

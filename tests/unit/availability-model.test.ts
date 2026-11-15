@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { ActivityDetailBody, ButtonStatusBody, Envelope } from "@/lib/activenet/types";
 import {
   parseSpaces,
-  toEnrolState,
+  toEnrollState,
   toSessionStatus,
   type SessionStatus,
 } from "@/models/availability";
@@ -32,17 +32,17 @@ describe("parseSpaces", () => {
 });
 
 describe("toSessionStatus with recorded responses", () => {
-  it("open for enrolment now", () => {
+  it("open for enrollment now", () => {
     const status = toSessionStatus(
       166860,
       detail("detail.3.open.json"),
-      button("buttonstatus.3.enrol.json"),
+      button("buttonstatus.3.enroll.json"),
       checkedAt,
     );
     expect(status).toEqual({
       activityId: 166860,
       spaces: { level: "open", count: 8 },
-      enrolUrl: expect.stringMatching(
+      enrollUrl: expect.stringMatching(
         /^https:\/\/anc\.ca\.apm\.activecommunities\.com\/.+\/enroll\/166860/,
       ),
       opensAt: null,
@@ -59,7 +59,7 @@ describe("toSessionStatus with recorded responses", () => {
       checkedAt,
     );
     expect(status.spaces).toEqual({ level: "full", count: 0 });
-    expect(status.enrolUrl).toBeNull();
+    expect(status.enrollUrl).toBeNull();
     expect(status.notice).toBe(
       "This activity is full and is not able to accept any more enrollments.",
     );
@@ -71,47 +71,48 @@ describe("toSessionStatus with recorded responses", () => {
     expect(status.spaces.level).toBe("unknown");
   });
 
-  it("drops an enrol link that isn't the City's", () => {
-    const evil = structuredClone(button("buttonstatus.3.enrol.json"));
+  it("drops an enroll link that isn't the City's", () => {
+    const evil = structuredClone(button("buttonstatus.3.enroll.json"));
     evil.button_status.action_link!.href = "https://evil.example/enroll";
-    expect(toSessionStatus(1, null, evil, checkedAt).enrolUrl).toBeNull();
+    expect(toSessionStatus(1, null, evil, checkedAt).enrollUrl).toBeNull();
   });
 });
 
-describe("toEnrolState", () => {
+describe("toEnrollState", () => {
   const base: SessionStatus = {
     activityId: 1,
     spaces: { level: "open", count: 8 },
-    enrolUrl: "https://anc.ca.apm.activecommunities.com/activemississauga/activity/search/enroll/1",
+    enrollUrl:
+      "https://anc.ca.apm.activecommunities.com/activemississauga/activity/search/enroll/1",
     opensAt: null,
     notice: "",
     checkedAt: "2026-11-14T20:00:00.000Z",
   };
   const now = "2026-11-14 15:00:00";
 
-  it("enrol: link and no opening time", () => {
-    expect(toEnrolState(base, now)).toEqual({ state: "enrol", url: base.enrolUrl });
+  it("enroll: link and no opening time", () => {
+    expect(toEnrollState(base, now)).toEqual({ state: "enroll", url: base.enrollUrl });
   });
 
-  it("opens: before the opening time, then enrol once it has passed", () => {
+  it("opens: before the opening time, then enroll once it has passed", () => {
     const status = { ...base, opensAt: "2026-12-30 07:00:00" };
-    expect(toEnrolState(status, "2026-12-30 06:59:59")).toEqual({
+    expect(toEnrollState(status, "2026-12-30 06:59:59")).toEqual({
       state: "opens",
       opensAt: "2026-12-30 07:00:00",
-      url: base.enrolUrl,
+      url: base.enrollUrl,
     });
-    expect(toEnrolState(status, "2026-12-30 07:00:00")).toEqual({
-      state: "enrol",
-      url: base.enrolUrl,
+    expect(toEnrollState(status, "2026-12-30 07:00:00")).toEqual({
+      state: "enroll",
+      url: base.enrollUrl,
     });
   });
 
   it("full: from the count, or from the notice even with a link", () => {
-    expect(toEnrolState({ ...base, spaces: { level: "full", count: 0 } }, now)).toEqual({
+    expect(toEnrollState({ ...base, spaces: { level: "full", count: 0 } }, now)).toEqual({
       state: "full",
     });
     expect(
-      toEnrolState({ ...base, notice: "This activity is full and is not able…" }, now),
+      toEnrollState({ ...base, notice: "This activity is full and is not able…" }, now),
     ).toEqual({
       state: "full",
     });
@@ -119,7 +120,7 @@ describe("toEnrolState", () => {
 
   it("closed: another notice and no link", () => {
     const other = "Registration for this activity is closed.";
-    expect(toEnrolState({ ...base, enrolUrl: null, notice: other }, now)).toEqual({
+    expect(toEnrollState({ ...base, enrollUrl: null, notice: other }, now)).toEqual({
       state: "closed",
       message: other,
     });
@@ -128,27 +129,27 @@ describe("toEnrolState", () => {
   it("a session that has started passes on the City's notice word for word", () => {
     const over =
       "We're sorry, but this activity is over. The last meeting was Saturday, November 14, 2026.";
-    expect(toEnrolState({ ...base, enrolUrl: null, notice: over }, now)).toEqual({
+    expect(toEnrollState({ ...base, enrollUrl: null, notice: over }, now)).toEqual({
       state: "closed",
       message: over,
     });
   });
 
   it("unknown: lookup failed, or nothing to go on", () => {
-    expect(toEnrolState(null, now)).toEqual({ state: "unknown" });
-    expect(toEnrolState({ ...base, enrolUrl: null }, now)).toEqual({ state: "unknown" });
+    expect(toEnrollState(null, now)).toEqual({ state: "unknown" });
+    expect(toEnrollState({ ...base, enrollUrl: null }, now)).toEqual({ state: "unknown" });
   });
 
   it("the recorded responses map to the expected states", () => {
     const at = (d: string | null, b: string) =>
       toSessionStatus(1, d ? detail(d) : null, button(b), checkedAt);
-    expect(toEnrolState(at("detail.3.open.json", "buttonstatus.3.enrol.json"), now).state).toBe(
-      "enrol",
+    expect(toEnrollState(at("detail.3.open.json", "buttonstatus.3.enroll.json"), now).state).toBe(
+      "enroll",
     );
-    expect(toEnrolState(at("detail.3.full.json", "buttonstatus.3.full.json"), now).state).toBe(
+    expect(toEnrollState(at("detail.3.full.json", "buttonstatus.3.full.json"), now).state).toBe(
       "full",
     );
-    expect(toEnrolState(at(null, "buttonstatus.3.opens.json"), now).state).toBe("opens");
-    expect(toEnrolState(at("detail.1.json", "buttonstatus.1.json"), now).state).toBe("closed");
+    expect(toEnrollState(at(null, "buttonstatus.3.opens.json"), now).state).toBe("opens");
+    expect(toEnrollState(at("detail.1.json", "buttonstatus.1.json"), now).state).toBe("closed");
   });
 });

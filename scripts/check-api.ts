@@ -17,28 +17,28 @@ run(async () => {
   const now = toTorontoLocal(new Date());
 
   const dropInCentres = (await client.getFilters(1)).center;
-  const enrolCentres = (await client.getFilters(3)).center;
+  const enrollCentres = (await client.getFilters(3)).center;
   console.log(
-    `ok filters: ${dropInCentres.length} drop-in centres, ${enrolCentres.length} enrol centres`,
+    `ok filters: ${dropInCentres.length} drop-in centres, ${enrollCentres.length} enroll centres`,
   );
   if (dropInCentres.length === 0) problems.push("calendar 1 lists no centres");
-  if (enrolCentres.length === 0) problems.push("calendar 3 lists no centres");
+  if (enrollCentres.length === 0) problems.push("calendar 3 lists no centres");
 
   const dropIn = (await client.getEvents(1, [dropInCentres[0].id])).center_events;
   const dropInCount = dropIn.reduce((n, c) => n + c.events.length, 0);
   console.log(`ok events (calendar 1, ${dropInCentres[0].name}): ${dropInCount} sessions`);
   if (dropInCount === 0) problems.push(`calendar 1 has no sessions at ${dropInCentres[0].name}`);
 
-  const enrol = (await client.getEvents(3, [enrolCentres[0].id])).center_events;
-  const upcoming = enrol
+  const enroll = (await client.getEvents(3, [enrollCentres[0].id])).center_events;
+  const upcoming = enroll
     .flatMap((c) => c.events)
     .filter((e) => e.start_time > now)
     .sort((a, b) => a.start_time.localeCompare(b.start_time));
   console.log(
-    `ok events (calendar 3, ${enrolCentres[0].name}): ${upcoming.length} upcoming sessions`,
+    `ok events (calendar 3, ${enrollCentres[0].name}): ${upcoming.length} upcoming sessions`,
   );
 
-  // The soonest and the furthest session cover "enrol now / full" and "opens later".
+  // The soonest and the furthest session cover "enroll now / full" and "opens later".
   for (const session of [upcoming[0], upcoming.at(-1)].filter((s) => s !== undefined)) {
     const label = `${session.event_item_id} (${session.start_time})`;
     const { detail } = await client.getActivityDetail(session.event_item_id);
@@ -66,7 +66,7 @@ run(async () => {
     }
   }
   if (upcoming.length === 0)
-    problems.push(`calendar 3 has no upcoming sessions at ${enrolCentres[0].name}`);
+    problems.push(`calendar 3 has no upcoming sessions at ${enrollCentres[0].name}`);
 
   if (problems.length > 0) {
     throw new Error(

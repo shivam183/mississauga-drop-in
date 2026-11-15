@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Loads spots left for the "enrol online" cards that are on screen. Cards
+ * Loads spots left for the "enroll online" cards that are on screen. Cards
  * register with `useAvailability`; visible ones are batched into
  * /api/availability requests of up to 20 ids.
  */

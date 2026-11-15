@@ -2,7 +2,7 @@
 
 import { formatCheckedAt } from "@/lib/format";
 import type { AvailabilityEntry } from "./AvailabilityProvider";
-import styles from "./EnrolPanel.module.css";
+import styles from "./EnrollPanel.module.css";
 
 /** "12 spots left · as of 3:42 pm ↻", coloured by level but always spelled out. */
 export function SpotsLeft({

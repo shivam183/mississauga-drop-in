@@ -14,7 +14,7 @@ import styles from "./Search.module.css";
 const TYPES: Array<[SessionType | null, string]> = [
   [null, "All"],
   ["dropin", "Drop-in"],
-  ["enrol", "Enrol online"],
+  ["enroll", "Enroll online"],
 ];
 
 /** Labels and start-time ranges, matching TIME_OF_DAY_HOURS in models/filters. */

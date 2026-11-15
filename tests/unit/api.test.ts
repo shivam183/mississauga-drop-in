@@ -65,7 +65,7 @@ describe("toApiSession", () => {
   it("nests the centre and uses ISO times", () => {
     const session: Session = {
       id: "e164373-202612310830",
-      type: "enrol",
+      type: "enroll",
       title: "Drop In Adult Pickleball",
       centreId: 248,
       centreName: "Carmen Corbasson Community Centre",
@@ -77,7 +77,7 @@ describe("toApiSession", () => {
     };
     expect(toApiSession(session)).toEqual({
       id: "e164373-202612310830",
-      type: "enrol",
+      type: "enroll",
       title: "Drop In Adult Pickleball",
       centre: { id: 248, name: "Carmen Corbasson Community Centre" },
       facility: "Gym A",

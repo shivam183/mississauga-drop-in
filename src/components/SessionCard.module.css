@@ -77,9 +77,9 @@
 }
 
 /*
- * Enrol-online cards get a cue once spots are known (data-level on the
+ * Enroll-online cards get a cue once spots are known (data-level on the
  * panel): a green stripe with plenty of spots, amber with only a few (only
- * when you can enrol), and a faded card when full. The text always says it too. The stripe is an inset
+ * when you can enroll), and a faded card when full. The text always says it too. The stripe is an inset
  * shadow so nothing shifts when the count loads.
  */
 .card:has([data-level="open"]) {
