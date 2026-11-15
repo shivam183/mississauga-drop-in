@@ -40,6 +40,20 @@ test("type chips filter the list and live in the URL", async ({ page }) => {
   await expect(page.getByRole("article").getByText("Drop-in", { exact: true })).toHaveCount(0);
 });
 
+test("activity chips search for an activity and toggle off", async ({ page }) => {
+  await page.goto("/");
+  const chips = page.getByRole("navigation", { name: "Activity" });
+  await chips.getByRole("link", { name: "Swim" }).click();
+  await expect(page).toHaveURL(/[?&]q=swim\b/);
+  await expect(page.getByRole("searchbox")).toHaveValue("swim");
+  await expect(chips.getByRole("link", { name: "Swim" })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("article").first()).toContainText(/swim/i);
+
+  await chips.getByRole("link", { name: "Swim" }).click();
+  await expect(page).not.toHaveURL(/[?&]q=/);
+  await expect(page.getByRole("searchbox")).toHaveValue("");
+});
+
 test("searching starts as soon as typing pauses, with no Search button", async ({ page }) => {
   await page.goto("/?type=dropin");
   await expect(page.getByRole("button", { name: "Search", exact: true })).toHaveCount(0);

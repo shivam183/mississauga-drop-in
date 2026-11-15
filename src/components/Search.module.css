@@ -6,6 +6,7 @@
   grid-template-areas:
     "search filters"
     "chips chips"
+    "activities activities"
     "results results";
   gap: 10px;
 }
@@ -120,7 +121,17 @@
   gap: 8px;
 }
 
+/* One row you swipe sideways, so it doesn't push the results down on phones. */
+.activities {
+  grid-area: activities;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
 .chip {
+  flex-shrink: 0;
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   min-height: 44px;
@@ -511,6 +522,7 @@
     grid-template-areas:
       "side search"
       "side chips"
+      "side activities"
       "side results";
     align-items: start;
     gap: 16px 32px;

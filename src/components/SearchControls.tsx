@@ -18,6 +18,23 @@ const TYPES: Array<[SessionType | null, string]> = [
   ["enroll", TYPE_LABEL.enroll],
 ];
 
+/**
+ * One-tap searches for the most common activities, busiest first. Each `q`
+ * matches every variant of the City's titles ("skat": Skate, Figure Skating).
+ */
+const ACTIVITIES: Array<[q: string, label: string]> = [
+  ["swim", "Swim"],
+  ["yoga", "Yoga"],
+  ["pickleball", "Pickleball"],
+  ["skat", "Skate"],
+  ["hockey", "Hockey"],
+  ["basketball", "Basketball"],
+  ["badminton", "Badminton"],
+  ["volleyball", "Volleyball"],
+  ["table tennis", "Table tennis"],
+  ["soccer", "Soccer"],
+];
+
 /** Labels and start-time ranges, matching TIME_OF_DAY_HOURS in models/filters. */
 const TIMES: Array<[TimeOfDay, string, string]> = [
   ["morning", "Morning", "until 12 PM"],
@@ -90,6 +107,23 @@ export function SearchControls({ path, state, today }: SearchControlsProps) {
             <LinkPending />
           </Link>
         ))}
+      </nav>
+
+      <nav aria-label="Activity" className={`${styles.chips} ${styles.activities}`}>
+        {ACTIVITIES.map(([q, label]) => {
+          const on = state.q.toLowerCase() === q;
+          return (
+            <Link
+              key={q}
+              href={link({ q: on ? "" : q })}
+              className={styles.chip}
+              aria-current={on ? "page" : undefined}
+            >
+              {label}
+              <LinkPending />
+            </Link>
+          );
+        })}
       </nav>
 
       <FilterSheet activeCount={activeFilterCount(state)}>
