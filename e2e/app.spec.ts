@@ -390,6 +390,29 @@ test("centre picker: type to filter the list, pick one or more centres", async (
   await expect(centre).toHaveAttribute("placeholder", "All centres");
 });
 
+test("the last centres picked come back as a one-tap My centres chip", async ({ page }) => {
+  const chips = page.getByRole("navigation", { name: "Activity" });
+  const mine = chips.getByRole("link", { name: /^My centres/ });
+
+  // Nothing saved yet.
+  await page.goto("/");
+  await expect(chips.getByRole("link", { name: "Pickleball" })).toBeVisible();
+  await expect(mine).toHaveCount(0);
+
+  // Filtering by centres saves them; the chip hides while they're applied.
+  await page.goto("/?centre=290,119");
+  await expect(page.getByRole("article").first()).toBeVisible();
+  await expect(mine).toHaveCount(0);
+
+  // Next visit: offered, not applied, until tapped.
+  await page.goto("/");
+  await expect(mine).toHaveText(/My centres: Burnhamthorpe \+1/);
+  await expect(page).not.toHaveURL(/centre=/);
+  await mine.click();
+  await expect(page).toHaveURL(/[?&]centre=119%2C290\b|[?&]centre=119,290\b/);
+  await expect(mine).toHaveCount(0);
+});
+
 test("a card's centre name adds that centre to the filter", async ({ page }, testInfo) => {
   await page.goto("/?type=enroll&q=pickle");
   await page

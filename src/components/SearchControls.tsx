@@ -8,6 +8,7 @@ import { CentrePicker } from "./CentrePicker";
 import { FilterForm } from "./FilterForm";
 import { FilterSheet } from "./FilterSheet";
 import { LinkPending } from "./LinkPending";
+import { SavedCentres } from "./SavedCentres";
 import { SearchBox } from "./SearchBox";
 import { TYPE_LABEL } from "./TypeBadge";
 import styles from "./Search.module.css";
@@ -93,6 +94,7 @@ export function SearchControls({ path, state, today }: SearchControlsProps) {
       />
 
       <nav aria-label="Activity" className={styles.chips}>
+        <SavedCentres path={path} state={state} />
         {ACTIVITIES.map(([q, label]) => {
           const on = state.q.toLowerCase() === q;
           return (
