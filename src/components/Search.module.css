@@ -138,24 +138,17 @@
   color: var(--bg);
 }
 
-/* Bottom sheet on phones */
-.backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  background: rgb(0 0 0 / 0.45);
+/*
+ * The filters: a bottom sheet on phones, a sidebar from 900px (see the end of
+ * the file). The sheet-only styles live in the phone media query, so the
+ * sidebar doesn't have to undo them.
+ */
+.sheet {
+  background: var(--surface);
 }
 
-.sheet {
-  position: fixed;
-  inset: auto 0 0;
-  z-index: 21;
-  max-height: 85vh;
-  overflow-y: auto;
-  padding: 8px var(--space) 0;
-  border-radius: 16px 16px 0 0;
-  background: var(--surface);
-  box-shadow: 0 -8px 32px rgb(0 0 0 / 0.35);
+.grab {
+  margin-bottom: 8px;
 }
 
 .handle {
@@ -166,32 +159,59 @@
   background: var(--border);
 }
 
-.sheet[data-open="false"] {
-  display: none;
+@media (max-width: 899.98px) {
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background: rgb(0 0 0 / 0.45);
+  }
+
+  .sheet {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 21;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 8px var(--space) 0;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -8px 32px rgb(0 0 0 / 0.35);
+    transition: transform 0.2s ease-out;
+  }
+
+  .sheet[data-open="false"] {
+    display: none;
+  }
+
+  /* Handle and title: drag down to close. */
+  .grab {
+    margin: -8px calc(-1 * var(--space)) 8px;
+    padding: 8px var(--space) 4px;
+    touch-action: none;
+    cursor: grab;
+    user-select: none;
+  }
+
+  .sheet[data-dragging="true"] {
+    transition: none;
+  }
+
+  .sheet[data-dragging="true"] .grab {
+    cursor: grabbing;
+  }
+
+  /* Apply and Clear stay at the bottom of the sheet while it scrolls. */
+  .actions {
+    position: sticky;
+    bottom: 0;
+    margin: 0 calc(-1 * var(--space));
+    padding: 12px var(--space) max(12px, env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
 }
 
-/* Handle and title: drag down to close. */
-.grab {
-  margin: -8px calc(-1 * var(--space)) 8px;
-  padding: 8px var(--space) 4px;
-  touch-action: none;
-  cursor: grab;
-  user-select: none;
-}
-
-.sheet {
-  transition: transform 0.2s ease-out;
-}
-
-.sheet[data-dragging="true"] {
-  transition: none;
-}
-
-.sheet[data-dragging="true"] .grab {
-  cursor: grabbing;
-}
-
-@media (prefers-reduced-motion: reduce) {
+@media (max-width: 899.98px) and (prefers-reduced-motion: reduce) {
   .sheet {
     transition: none;
   }
@@ -416,15 +436,9 @@
 }
 
 .actions {
-  position: sticky;
-  bottom: 0;
   display: flex;
   align-items: center;
   gap: 16px;
-  margin: 0 calc(-1 * var(--space));
-  padding: 12px var(--space) max(12px, env(safe-area-inset-bottom));
-  border-top: 1px solid var(--border);
-  background: var(--surface);
 }
 
 .apply {
@@ -522,36 +536,15 @@
     text-align: left;
   }
 
-  .grab {
-    margin: 0 0 8px;
-    padding: 0;
-    touch-action: auto;
-    cursor: auto;
-    user-select: auto;
-  }
-
-  .actions {
-    position: static;
-    margin: 0;
-    padding: 0;
-    border: 0;
-  }
-
-  .sheet,
-  .sheet[data-open="false"] {
+  .sheet {
     grid-area: side;
     position: sticky;
     top: var(--space);
-    display: block;
-    /* The open centre list is never clipped, and draws over day headings (2) and cards (1). */
+    /* The open centre list draws over day headings (2) and cards (1). */
     z-index: 3;
-    max-height: none;
-    overflow: visible;
     padding: var(--space);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    box-shadow: none;
-    background: var(--surface);
   }
 
   .results:only-child {
