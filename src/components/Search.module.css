@@ -520,6 +520,11 @@
     gap: 16px 32px;
   }
 
+  /* A mouse can't easily swipe a row sideways, so it wraps instead. */
+  .chips {
+    flex-wrap: wrap;
+  }
+
   .filtersButton,
   .backdrop,
   .handle {
