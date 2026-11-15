@@ -1,4 +1,5 @@
 import type { CalendarId, EventsBody, LocalDateTime, RawFacility } from "@/lib/activenet/types";
+import { foldText } from "./filters";
 import { safeCityUrl } from "./links";
 
 /** "dropin" comes from calendar 1, "enroll" from calendar 3. */
@@ -23,6 +24,8 @@ export interface Session {
   activityId: number;
   /** The City's page for the activity (https *.activecommunities.com only). */
   url: string | null;
+  /** Title, centre and room folded with foldText, so searches don't redo it per query. */
+  searchText: string;
 }
 
 /**
@@ -80,17 +83,21 @@ export function normalizeEvents(body: EventsBody, calendar: CalendarId): Session
     for (const event of centre.events) {
       const id = sessionId(type, event.event_item_id, event.start_time);
       if (byId.has(id)) continue;
+      const title = event.title.trim();
+      const centreName = centre.center_name.trim();
+      const facility = facilityLabel(event.facilities, centreName);
       byId.set(id, {
         id,
         type,
-        title: event.title.trim(),
+        title,
         centreId: centre.center_id,
-        centreName: centre.center_name.trim(),
-        facility: facilityLabel(event.facilities, centre.center_name.trim()),
+        centreName,
+        facility,
         start: event.start_time,
         end: event.end_time,
         activityId: event.event_item_id,
         url: safeCityUrl(event.activity_detail_url),
+        searchText: foldText(`${title} ${centreName} ${facility}`),
       });
     }
   }

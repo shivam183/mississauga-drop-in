@@ -74,6 +74,7 @@ describe("toApiSession", () => {
       end: "2026-12-31 10:30:00",
       activityId: 164373,
       url: "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/x/164373",
+      searchText: "drop in adult pickleball carmen corbasson community centre gym a",
     };
     expect(toApiSession(session)).toEqual({
       id: "e164373-202612310830",
