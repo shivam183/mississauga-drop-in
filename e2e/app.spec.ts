@@ -357,6 +357,16 @@ test("there is no week view, centre pages or nav tabs", async ({ page }) => {
   }
 });
 
+test("the footer links to GitHub issues in a new tab", async ({ page }) => {
+  await page.goto("/");
+  const link = page.getByRole("contentinfo").getByRole("link", { name: /Report a problem/ });
+  await expect(link).toHaveAttribute(
+    "href",
+    "https://github.com/shivam183/mississauga-drop-in/issues/new/choose",
+  );
+  await expect(link).toHaveAttribute("target", "_blank");
+});
+
 test("the GitHub icon links to the repo in a new tab", async ({ page }) => {
   await page.goto("/");
   const link = page.getByRole("banner").getByRole("link", { name: /Source code on GitHub/ });
