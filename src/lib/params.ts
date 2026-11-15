@@ -130,9 +130,14 @@ export function hrefWith(path: string, state: SearchState, changes: Partial<Sear
 }
 
 /**
- * How many filter choices are on, beyond search text and type (for the
- * Filters badge): each centre, the day, and each time of day counts once.
+ * How many filter choices are on, beyond search text (for the Filters badge):
+ * the type, each centre, the day, and each time of day counts once.
  */
 export function activeFilterCount(state: SearchState): number {
-  return state.centreIds.length + (state.from || state.to ? 1 : 0) + state.times.length;
+  return (
+    (state.type ? 1 : 0) +
+    state.centreIds.length +
+    (state.from || state.to ? 1 : 0) +
+    state.times.length
+  );
 }

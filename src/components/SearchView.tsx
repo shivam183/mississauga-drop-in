@@ -69,7 +69,7 @@ export async function SearchView({
             <DayGroup
               key={group.date}
               group={group}
-              today={now.slice(0, 10)}
+              now={now}
               // A card's centre name adds that centre to the filter.
               centreHref={(id) =>
                 hrefWith(path, state, { centreIds: [...new Set([...state.centreIds, id])] })

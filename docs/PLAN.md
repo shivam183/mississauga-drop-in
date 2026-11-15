@@ -93,7 +93,7 @@ Dependabot (`dependabot.yml`) uses Conventional Commit prefixes (`fix(deps)`, `c
 
 - Results are grouped under sticky day headers ("Today · Sat Nov 14").
 - **Phone:** filters sit in a bottom sheet behind a "Filters" button. Desktop shows them in a sidebar.
-- **Filters:** type chips for All, Drop-in and Enroll online.
+- **Filters:** activity chips (Pickleball, Swim…) above the list; type (Drop-in or Enroll online) is in the filter sheet.
 - Times are always shown in Toronto time with am/pm.
 - There is no horizontal scrolling at 360px width.
 - The default font is 16px, and contrast meets WCAG AA in light and dark mode.
@@ -161,7 +161,7 @@ mississauga-drop-in/
 - Centre pages and a week view were built, then removed: the centre filter (a card's centre name adds it) and the day-grouped list cover them.
 - All filter state lives in the URL.
 - Add `lighthouse.yml` to run Lighthouse CI against each Vercel preview.
-- Done: one page, `/`. The header is just the site name and a GitHub icon. Tapping a card opens the City's details page; a card's centre name adds that centre to the filter. Search updates the results 300 ms after typing pauses (no Search button; Enter searches at once), and Enroll now opens the City's page in a new tab. The static shell renders first and results stream in. The search box, type chips and filter form are plain GET forms and links, so everything works without JavaScript except the phone filter sheet and live spot counts (a `<noscript>` link to the City page is shown instead). `/api/availability` is built here because the cards need it: at most 20 ids per call, and `fresh=1` is limited to 10 per IP per minute (429 after that). 30 results per page with "Show more".
+- Done: one page, `/`. The header is just the site name and a GitHub icon. Tapping a card opens the City's details page; a card's centre name adds that centre to the filter. Search updates the results 300 ms after typing pauses (no Search button; Enter searches at once), and Enroll now opens the City's page in a new tab. The static shell renders first and results stream in. The search box, chips and filter form are plain GET forms and links, so everything works without JavaScript except the phone filter sheet and live spot counts (a `<noscript>` link to the City page is shown instead). `/api/availability` is built here because the cards need it: at most 20 ids per call, and `fresh=1` is limited to 10 per IP per minute (429 after that). 30 results per page with "Show more".
 - Checked in a production build: no horizontal scroll at 375px, light and dark mode, and real data (spots, Full, Enroll now, Opens …). Local Lighthouse mobile: performance 97–99, accessibility 100, best practices 100, SEO 100. Showing 50 results per page scored 89, so the page size is 30.
 
 **4. Public JSON API** ✅

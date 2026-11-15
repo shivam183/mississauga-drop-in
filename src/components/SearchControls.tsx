@@ -12,10 +12,24 @@ import { SearchBox } from "./SearchBox";
 import { TYPE_LABEL } from "./TypeBadge";
 import styles from "./Search.module.css";
 
-const TYPES: Array<[SessionType | null, string]> = [
-  [null, "All"],
-  ["dropin", TYPE_LABEL.dropin],
-  ["enroll", TYPE_LABEL.enroll],
+const TYPES: SessionType[] = ["dropin", "enroll"];
+
+/**
+ * One-tap searches for the most common activities: Pickleball first (the most
+ * popular), then busiest first. Each `q` matches every variant of the City's
+ * titles ("skat": Skate, Figure Skating).
+ */
+const ACTIVITIES: Array<[q: string, label: string]> = [
+  ["pickleball", "Pickleball"],
+  ["swim", "Swim"],
+  ["yoga", "Yoga"],
+  ["skat", "Skate"],
+  ["hockey", "Hockey"],
+  ["basketball", "Basketball"],
+  ["badminton", "Badminton"],
+  ["volleyball", "Volleyball"],
+  ["table tennis", "Table tennis"],
+  ["soccer", "Soccer"],
 ];
 
 /** Labels and start-time ranges, matching TIME_OF_DAY_HOURS in models/filters. */
@@ -41,7 +55,7 @@ export interface SearchControlsProps {
 }
 
 /**
- * Search box, type chips and the filter form. Everything is a plain GET form
+ * Search box, activity chips and the filter form. Everything is a plain GET form
  * or link, so filters live in the URL and work without JavaScript.
  */
 export function SearchControls({ path, state, today }: SearchControlsProps) {
@@ -78,32 +92,46 @@ export function SearchControls({ path, state, today }: SearchControlsProps) {
         }
       />
 
-      <nav aria-label="Program type" className={styles.chips}>
-        {TYPES.map(([type, label]) => (
-          <Link
-            key={label}
-            href={link({ type })}
-            className={styles.chip}
-            aria-current={state.type === type ? "page" : undefined}
-          >
-            {label}
-            <LinkPending />
-          </Link>
-        ))}
+      <nav aria-label="Activity" className={styles.chips}>
+        {ACTIVITIES.map(([q, label]) => {
+          const on = state.q.toLowerCase() === q;
+          return (
+            <Link
+              key={q}
+              href={link({ q: on ? "" : q })}
+              className={styles.chip}
+              aria-current={on ? "page" : undefined}
+            >
+              {label}
+              <LinkPending />
+            </Link>
+          );
+        })}
       </nav>
 
       <FilterSheet activeCount={activeFilterCount(state)}>
         <FilterForm
           action={path}
           activeCount={activeFilterCount(state)}
-          clearHref={link({ centreIds: [], from: null, to: null, times: [] })}
+          clearHref={link({ type: null, centreIds: [], from: null, to: null, times: [] })}
         >
           <Hidden name="q" value={state.q} />
-          <Hidden name="type" value={state.type} />
 
           <div className={styles.field}>
             <label htmlFor="centre">Community centre</label>
             <CentrePicker id="centre" centres={centres} selectedIds={state.centreIds} />
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="type">Type</label>
+            <select id="type" name="type" defaultValue={state.type ?? ""}>
+              <option value="">All types</option>
+              {TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {TYPE_LABEL[type]}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className={styles.field}>

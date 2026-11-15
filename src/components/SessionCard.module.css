@@ -82,6 +82,21 @@
   white-space: nowrap;
 }
 
+/* Already under way: amber. Within 15 min: green, go now. Within the hour: blue. */
+.soon {
+  margin: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.soon[data-tone="now"] {
+  color: var(--few);
+}
+
+.soon[data-tone="soon"] {
+  color: var(--open);
+}
+
 .title {
   margin: 4px 0 2px;
   font-size: 1rem;
@@ -137,6 +152,7 @@
 }
 
 .card:has([data-level="full"]) .time,
+.card:has([data-level="full"]) .soon,
 .card:has([data-level="full"]) .title,
 .card:has([data-level="full"]) .centre {
   color: var(--muted);

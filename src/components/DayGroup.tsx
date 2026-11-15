@@ -1,3 +1,4 @@
+import type { LocalDateTime } from "@/lib/activenet/types";
 import { formatDayHeading } from "@/lib/format";
 import type { DayGroup as Group } from "@/models/filters";
 import styles from "./DayGroup.module.css";
@@ -6,13 +7,15 @@ import { SessionCard } from "./SessionCard";
 /** Sessions for one day under a sticky "Today · Sat Nov 14" heading. */
 export function DayGroup({
   group,
-  today,
+  now,
   centreHref,
 }: {
   group: Group;
-  today: string;
+  /** Toronto time, "YYYY-MM-DD HH:mm:ss". */
+  now: LocalDateTime;
   centreHref: (centreId: number) => string;
 }) {
+  const today = now.slice(0, 10);
   const id = `day-${group.date}`;
   return (
     <section className={styles.group} aria-labelledby={id}>
@@ -22,7 +25,7 @@ export function DayGroup({
       <ol className={styles.list}>
         {group.sessions.map((session) => (
           <li key={session.id}>
-            <SessionCard session={session} centreHref={centreHref(session.centreId)} />
+            <SessionCard session={session} centreHref={centreHref(session.centreId)} now={now} />
           </li>
         ))}
       </ol>

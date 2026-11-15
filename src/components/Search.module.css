@@ -113,14 +113,18 @@
   line-height: 1;
 }
 
+/* One row you swipe sideways, so it doesn't push the results down on phones. */
 .chips {
   grid-area: chips;
   display: flex;
-  flex-wrap: wrap;
   gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
 .chip {
+  flex-shrink: 0;
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   min-height: 44px;
@@ -514,6 +518,11 @@
       "side results";
     align-items: start;
     gap: 16px 32px;
+  }
+
+  /* A mouse can't easily swipe a row sideways, so it wraps instead. */
+  .chips {
+    flex-wrap: wrap;
   }
 
   .filtersButton,

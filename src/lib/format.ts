@@ -74,3 +74,24 @@ export function formatCheckedAt(iso: string): string {
 export function displayTitle(title: string): string {
   return title.replace(/^drop[\s-]?in\s+/i, "").trim() || title;
 }
+
+/** Minutes from a to b, both Toronto wall-clock times. */
+function minutesBetween(a: LocalDateTime, b: LocalDateTime): number {
+  const ms = (t: LocalDateTime) => Date.parse(`${t.replace(" ", "T")}Z`);
+  return (ms(b) - ms(a)) / 60_000;
+}
+
+/** How soon a session starts: under way, within 15 minutes, or within the hour. */
+export type StartsTone = "now" | "soon" | "later";
+
+/** "On now" or "Starts in 25 min" (within the hour) with its tone, or null. */
+export function startsLabel(
+  start: LocalDateTime,
+  end: LocalDateTime,
+  now: LocalDateTime,
+): { text: string; tone: StartsTone } | null {
+  if (start <= now) return now < end ? { text: "On now", tone: "now" } : null;
+  const minutes = Math.ceil(minutesBetween(now, start));
+  if (minutes > 60) return null;
+  return { text: `Starts in ${minutes} min`, tone: minutes <= 15 ? "soon" : "later" };
+}
