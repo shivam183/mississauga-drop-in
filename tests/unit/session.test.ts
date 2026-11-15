@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Envelope, EventsBody } from "@/lib/activenet/types";
+import { foldText } from "@/models/filters";
 import {
   mergeSessions,
   normalizeEvents,
@@ -57,6 +58,7 @@ describe("normalizeEvents", () => {
       end: raw.end_time,
       activityId: raw.event_item_id,
       url: raw.activity_detail_url,
+      searchText: foldText(`${raw.title} ${sessions[0].centreName} ${sessions[0].facility}`),
     });
     expect(sessions[0].facility).not.toMatch(/\bCC\b/);
   });

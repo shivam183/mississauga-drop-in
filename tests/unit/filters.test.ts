@@ -3,9 +3,9 @@ import { filterSessions, foldText, groupByDay, timeOfDay } from "@/models/filter
 import type { Session } from "@/models/session";
 
 function session(overrides: Partial<Session>): Session {
-  return {
+  const s = {
     id: overrides.id ?? `x-${Math.random()}`,
-    type: "dropin",
+    type: "dropin" as const,
     title: "Drop In Badminton",
     centreId: 290,
     centreName: "Burnhamthorpe Community Centre",
@@ -16,6 +16,7 @@ function session(overrides: Partial<Session>): Session {
     url: null,
     ...overrides,
   };
+  return { searchText: foldText(`${s.title} ${s.centreName} ${s.facility}`), ...s };
 }
 
 const now = "2026-11-15 12:00:00";
