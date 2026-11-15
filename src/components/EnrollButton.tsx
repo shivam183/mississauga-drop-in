@@ -30,11 +30,8 @@ export function EnrollButton({
         </span>
       );
     case "full":
-      return cityUrl ? (
-        <ExternalLink className={styles.link} href={cityUrl}>
-          See it on ActiveMississauga
-        </ExternalLink>
-      ) : null;
+      // The card itself already links to the City's page.
+      return null;
     case "closed":
       return (
         <p className={styles.notice}>

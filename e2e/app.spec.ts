@@ -106,7 +106,7 @@ test("a full session says Full and has no Enroll button", async ({ page }) => {
   const second = (await enrollCards(page)).nth(1);
   await expect(second.getByText("Full", { exact: true })).toBeVisible();
   await expect(second.getByRole("link", { name: /Enroll now/ })).toHaveCount(0);
-  await expect(second.getByRole("link", { name: "See it on ActiveMississauga" })).toBeVisible();
+  await expect(second.getByRole("link", { name: /ActiveMississauga/ })).toHaveCount(0);
 });
 
 test("the refresh button fetches a new count", async ({ page }) => {
