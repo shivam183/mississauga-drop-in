@@ -7,6 +7,7 @@ import type { SessionType } from "@/models/session";
 import { CentrePicker } from "./CentrePicker";
 import { FilterForm } from "./FilterForm";
 import { FilterSheet } from "./FilterSheet";
+import { LinkPending } from "./LinkPending";
 import { SearchBox } from "./SearchBox";
 import styles from "./Search.module.css";
 
@@ -85,6 +86,7 @@ export function SearchControls({ path, state, today }: SearchControlsProps) {
             aria-current={state.type === type ? "page" : undefined}
           >
             {label}
+            <LinkPending />
           </Link>
         ))}
       </nav>

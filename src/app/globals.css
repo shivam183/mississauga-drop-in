@@ -193,3 +193,29 @@ h1 {
     max-width: 1200px;
   }
 }
+
+/* Shown inside a link while its page loads (see LinkPending). */
+.link-pending[data-pending="true"] {
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  margin-left: 0.4em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  vertical-align: -0.1em;
+  animation: link-spin 0.7s linear infinite;
+}
+
+@keyframes link-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-pending[data-pending="true"] {
+    animation: none;
+    opacity: 0.6;
+  }
+}

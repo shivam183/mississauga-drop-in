@@ -12,6 +12,7 @@ import { getSchedule } from "@/lib/schedule";
 import { filterSessions, groupByDay } from "@/models/filters";
 import { AvailabilityProvider } from "./AvailabilityProvider";
 import { DayGroup } from "./DayGroup";
+import { LinkPending } from "./LinkPending";
 import styles from "./Search.module.css";
 import { SearchControls } from "./SearchControls";
 
@@ -84,6 +85,7 @@ export async function SearchView({
             scroll={false}
           >
             Show more
+            <LinkPending />
           </Link>
         )}
       </div>

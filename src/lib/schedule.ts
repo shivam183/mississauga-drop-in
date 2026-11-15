@@ -23,7 +23,7 @@ export async function getCentreBatch(
   calendar: CalendarId,
   centreIds: readonly number[],
 ): Promise<Session[]> {
-  "use cache";
+  "use cache: remote"; // shared across Vercel instances; in-memory "use cache" misses on serverless
   cacheLife("schedule");
   cacheTag("schedule", `schedule-${calendar}`);
   const body = await getActiveNetClient().getEvents(calendar, centreIds);

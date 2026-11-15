@@ -3,6 +3,7 @@ import { displayTitle, formatTimeRange } from "@/lib/format";
 import type { Session } from "@/models/session";
 import { EnrolPanel } from "./EnrolPanel";
 import { ExternalLink } from "./ExternalLink";
+import { LinkPending } from "./LinkPending";
 import styles from "./SessionCard.module.css";
 import { TypeBadge } from "./TypeBadge";
 
@@ -40,6 +41,7 @@ export function SessionCard({
           title={`Add ${session.centreName} to the filter`}
         >
           {session.centreName}
+          <LinkPending />
         </Link>
         {session.facility && <span className={styles.facility}> · {session.facility}</span>}
       </p>

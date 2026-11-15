@@ -24,7 +24,7 @@ async function fetchDetail(activityId: number): Promise<{ body: ActivityDetailBo
 
 /** Spots left for one session, cached 60 s. */
 export async function getCachedDetail(activityId: number) {
-  "use cache";
+  "use cache: remote"; // shared across Vercel instances; in-memory "use cache" misses on serverless
   cacheLife("spots");
   cacheTag("spots", `spots-${activityId}`);
   return fetchDetail(activityId);
@@ -35,7 +35,7 @@ export async function getCachedButtonStatus(
   activityId: number,
   sessionStart: LocalDateTime,
 ): Promise<ButtonStatusBody> {
-  "use cache";
+  "use cache: remote"; // shared across Vercel instances; in-memory "use cache" misses on serverless
   cacheLife("schedule");
   cacheTag("enrol", `enrol-${activityId}`);
   return getActiveNetClient().getButtonStatus(activityId, sessionStart);
