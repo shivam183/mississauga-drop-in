@@ -35,6 +35,7 @@ export function FilterSheet({
   const dragStart = useRef(0);
   const grab = {
     onPointerDown(event: PointerEvent<HTMLDivElement>) {
+      if (!open) return; // the desktop sidebar is never "open", so it can't be dragged
       dragStart.current = event.clientY;
       event.currentTarget.setPointerCapture(event.pointerId);
       setDrag(0);

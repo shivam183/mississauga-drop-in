@@ -143,6 +143,18 @@ test("Clear filters also drops a date range and centres that came from a link", 
   await expect(sheet.getByRole("checkbox", { name: "Morning" })).not.toBeChecked();
 });
 
+test("the desktop sidebar can't be dragged like the phone sheet", async ({ page }, testInfo) => {
+  test.skip(isPhone(testInfo.project.name), "desktop only");
+  await page.goto("/");
+  const sheet = page.getByRole("region", { name: "Filters" });
+  const title = (await sheet.getByRole("heading", { name: "Filters" }).boundingBox())!;
+  await page.mouse.move(title.x + 5, title.y + 5);
+  await page.mouse.down();
+  await page.mouse.move(title.x + 5, title.y + 150);
+  await expect(sheet).not.toHaveAttribute("style", /translateY/);
+  await page.mouse.up();
+});
+
 test("filters: bottom sheet on phones, sidebar on desktop", async ({ page }, testInfo) => {
   await page.goto("/");
   const button = page.getByRole("button", { name: /^Filters/ });
