@@ -3,6 +3,7 @@
  * replaced by recorded fixtures and Next's cache functions stubbed out.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { cacheLife } from "next/cache";
 import { setActiveNetClient } from "@/lib/activenet";
 import { createActiveNetClient } from "@/lib/activenet/client";
 import { createThrottle } from "@/lib/activenet/throttle";
@@ -103,6 +104,7 @@ describe("getSchedule", () => {
     expect(new Set(sessions.map((s) => s.type))).toEqual(new Set(["dropin", "enroll"]));
     const starts = sessions.map((s) => s.start);
     expect(starts).toEqual([...starts].sort());
+    expect(cacheLife).toHaveBeenLastCalledWith("schedule");
   });
 
   it("reports the centres of a batch that failed and keeps the rest", async () => {
@@ -113,6 +115,8 @@ describe("getSchedule", () => {
     );
     expect(sessions.length).toBeGreaterThan(0);
     expect(sessions.every((s) => s.type === "dropin")).toBe(true);
+    // A list with failures is cached only briefly, so the failed centres are retried soon.
+    expect(cacheLife).toHaveBeenLastCalledWith("minutes");
   });
 });
 
