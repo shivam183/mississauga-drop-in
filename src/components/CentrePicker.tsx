@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import type { Centre } from "@/lib/centres";
 import { foldText } from "@/models/filters";
 import { useApplyFilters, useHydrated } from "./FilterForm";
@@ -84,19 +84,6 @@ function Combobox({
     const matches = centres.filter((c) => words.every((w) => foldText(c.name).includes(w)));
     return words.length ? matches : [{ id: ALL, name: "All centres" }, ...matches];
   }, [centres, text]);
-
-  // "Clear filters" resets the form; follow it.
-  useEffect(() => {
-    const form = root.current?.closest("form");
-    const reset = () => {
-      setChosen([]);
-      setPending((p) => (seen === "" ? [] : [...p, ""]));
-      setText("");
-      setOpen(false);
-    };
-    form?.addEventListener("filters:clear", reset);
-    return () => form?.removeEventListener("filters:clear", reset);
-  }, [seen]);
 
   function commit(next: number[]) {
     setChosen(next);

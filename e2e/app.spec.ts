@@ -124,6 +124,25 @@ test("the refresh button fetches a new count", async ({ page }) => {
   expect(parseInt((await spots.textContent())!, 10)).toBeLessThan(before);
 });
 
+test("Clear filters also drops a date range and centres that came from a link", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/?type=dropin&from=2030-01-01&to=2030-01-31&centre=290&time=morning");
+  const sheet = page.getByRole("region", { name: "Filters" });
+  if (isPhone(testInfo.project.name)) await page.getByRole("button", { name: /^Filters/ }).click();
+  const day = sheet.getByLabel("Day");
+  await expect(day.locator('option[value="keep"]')).toHaveCount(1);
+  await expect(sheet.getByRole("list", { name: "Chosen centres" })).toBeVisible();
+
+  await sheet.getByRole("button", { name: "Clear filters" }).click();
+  await expect(page).not.toHaveURL(/[?&](from|to|centre|time)=/);
+  await expect(page).toHaveURL(/[?&]type=dropin\b/);
+  await expect(day).toHaveValue("any");
+  await expect(day.locator('option[value="keep"]')).toHaveCount(0);
+  await expect(sheet.getByRole("list", { name: "Chosen centres" })).toHaveCount(0);
+  await expect(sheet.getByRole("checkbox", { name: "Morning" })).not.toBeChecked();
+});
+
 test("the desktop sidebar can't be dragged like the phone sheet", async ({ page }, testInfo) => {
   test.skip(isPhone(testInfo.project.name), "desktop only");
   await page.goto("/");
