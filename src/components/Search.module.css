@@ -151,6 +151,11 @@
   background: var(--surface);
 }
 
+/* Focused only so keyboards start inside it; no ring around the whole sheet. */
+.sheet:focus {
+  outline: none;
+}
+
 .grab {
   margin-bottom: 8px;
 }
