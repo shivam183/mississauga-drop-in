@@ -224,6 +224,9 @@ test("filters: bottom sheet on phones, sidebar on desktop", async ({ page }, tes
     await button.click();
     await expect(sheet).toBeVisible();
     await expect(button).toHaveAttribute("aria-expanded", "true");
+    // Focus goes to the sheet, not a text field, so the phone keyboard stays down.
+    await expect(sheet).toBeFocused();
+    await expect(sheet.getByRole("combobox", { name: "Community centre" })).not.toBeFocused();
     await page.keyboard.press("Escape");
     await expect(sheet).toBeHidden();
     await expect(button).toBeFocused();

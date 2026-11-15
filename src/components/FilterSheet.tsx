@@ -54,7 +54,9 @@ export function FilterSheet({
 
   useEffect(() => {
     if (!open) return;
-    sheet.current?.querySelector<HTMLElement>("select, input:not([type=hidden])")?.focus();
+    // Focus the sheet, not its first field: focusing the centre box would pop
+    // up the phone's keyboard. Keyboards and screen readers still start inside.
+    sheet.current?.focus();
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape" && !event.defaultPrevented) close();
     };
@@ -120,6 +122,7 @@ export function FilterSheet({
         style={drag ? { transform: `translateY(${drag}px)` } : undefined}
         role="region"
         aria-label="Filters"
+        tabIndex={-1}
       >
         <div className={styles.grab} {...grab}>
           <div className={styles.handle} aria-hidden="true" />
