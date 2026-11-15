@@ -4,7 +4,7 @@
  * calendar 3 sessions are looked up, so callers can't make us query anything
  * else. Server-side only.
  */
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheLife, cacheTag, revalidateTag } from "next/cache";
 import { getActiveNetClient } from "@/lib/activenet";
 import type { ActivityDetailBody, ButtonStatusBody, LocalDateTime } from "@/lib/activenet/types";
 import { toTorontoLocal } from "@/lib/dates";
@@ -87,6 +87,9 @@ export async function getAvailability(
           fresh ? fetchDetail(id) : getCachedDetail(id),
           getCachedButtonStatus(id, start),
         ]);
+        // The cached count is now older than what this caller saw, so drop it:
+        // the next normal load fetches again instead of showing the old count.
+        if (fresh) revalidateTag(`spots-${id}`, { expire: 0 });
         const status = toSessionStatus(id, detail.body, button, new Date(detail.at));
         if (status.spaces.level === "unknown") {
           console.warn(`[availability] unknown space_status for ${id}:`, status.spaces.text);

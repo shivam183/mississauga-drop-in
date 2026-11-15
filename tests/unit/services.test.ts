@@ -2,6 +2,7 @@
  * The schedule and availability services end to end, with the City's API
  * replaced by recorded fixtures and Next's cache functions stubbed out.
  */
+import { revalidateTag } from "next/cache";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setActiveNetClient } from "@/lib/activenet";
 import { createActiveNetClient } from "@/lib/activenet/client";
@@ -13,7 +14,7 @@ import { CENTRES_PER_REQUEST, getSchedule } from "@/lib/schedule";
 import { toEnrollState } from "@/models/availability";
 import { fixture } from "./fixtures";
 
-vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
+vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn(), revalidateTag: vi.fn() }));
 
 // 3:00 pm in Toronto on the day the fixtures were captured.
 const NOW = new Date("2026-11-14T20:00:00Z");
@@ -130,6 +131,15 @@ describe("getAvailability", () => {
       opensAt: "2026-12-30 07:00:00",
     });
     expect(result.statuses[166860].checkedAt).toBe(NOW.toISOString());
+  });
+
+  it("a fresh lookup also expires the cached spots, so others don't keep the older count", async () => {
+    vi.mocked(revalidateTag).mockClear();
+    await getAvailability([166860]);
+    expect(revalidateTag).not.toHaveBeenCalled();
+    const result = await getAvailability([166860], { fresh: true });
+    expect(result.statuses[166860]).toBeDefined();
+    expect(revalidateTag).toHaveBeenCalledWith("spots-166860", { expire: 0 });
   });
 
   it("only looks up upcoming enroll-online sessions", async () => {
