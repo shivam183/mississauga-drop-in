@@ -55,6 +55,7 @@ export function SearchBox({
     if (q) params.set("q", q);
     else params.delete("q");
     params.delete("limit"); // a new search starts from the first page
+    params.delete("session"); // and leaves a shared session for the full list
     const query = params.toString();
     startTransition(() => {
       router.replace(`${pathname}${query ? `?${query}` : ""}`, { scroll: false });

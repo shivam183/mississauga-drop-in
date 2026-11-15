@@ -41,17 +41,18 @@ Cached for a day; the list changes rarely.
 
 Upcoming sessions (those that haven't ended), soonest first.
 
-| Parameter | Example           | Meaning                                                                            |
-| --------- | ----------------- | ---------------------------------------------------------------------------------- |
-| `q`       | `pickleball`      | Words that must all appear in the title, centre or room                            |
-| `type`    | `enroll`          | `dropin` or `enroll`                                                               |
-| `centre`  | `290,119`         | Centre ids (or exact names); repeat or comma-separate for several                  |
-| `day`     | `2026-11-16`      | One day (Toronto)                                                                  |
-| `from`    | `2026-11-16`      | First day, inclusive (with `to`, a range)                                          |
-| `to`      | `2026-11-20`      | Last day, inclusive                                                                |
-| `time`    | `morning,evening` | Start time: `morning` (before 12 PM), `afternoon` (12–5 PM), `evening` (from 5 PM) |
-| `limit`   | `100`             | Sessions per page, 1–200 (default 50)                                              |
-| `offset`  | `100`             | How many to skip (default 0)                                                       |
+| Parameter | Example                | Meaning                                                                            |
+| --------- | ---------------------- | ---------------------------------------------------------------------------------- |
+| `q`       | `pickleball`           | Words that must all appear in the title, centre or room                            |
+| `type`    | `enroll`               | `dropin` or `enroll`                                                               |
+| `centre`  | `290,119`              | Centre ids (or exact names); repeat or comma-separate for several                  |
+| `day`     | `2026-11-16`           | One day (Toronto)                                                                  |
+| `from`    | `2026-11-16`           | First day, inclusive (with `to`, a range)                                          |
+| `to`      | `2026-11-20`           | Last day, inclusive                                                                |
+| `time`    | `morning,evening`      | Start time: `morning` (before 12 PM), `afternoon` (12–5 PM), `evening` (from 5 PM) |
+| `session` | `e164373-202611160745` | One session by its `id` (what the site's Share links use)                          |
+| `limit`   | `100`                  | Sessions per page, 1–200 (default 50)                                              |
+| `offset`  | `100`                  | How many to skip (default 0)                                                       |
 
 Unknown or invalid filter values are ignored; an invalid `limit` or `offset`
 returns 400.

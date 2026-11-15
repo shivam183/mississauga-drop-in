@@ -38,13 +38,8 @@ export function SessionCard({
           <ShareButton
             title={title}
             text={[title, `${formatDate(day)}, ${time}`, session.centreName].join("\n")}
-            // The list filtered to this program, centre and day, so it shows live spots.
-            href={hrefWith("/", EMPTY_SEARCH, {
-              q: title,
-              centreIds: [session.centreId],
-              from: day,
-              to: day,
-            })}
+            // Opens our list showing just this session, with live spots and Enroll.
+            href={hrefWith("/", EMPTY_SEARCH, { session: session.id })}
           />
         </div>
       </div>

@@ -48,11 +48,24 @@ test("Share copies a link to this session where the browser can't share", async 
   expect(name).toBe(title);
   expect(when).toMatch(/^\w{3} \w{3} \d{1,2}, \d{1,2}:\d{2}/);
   expect(centre).toBe("Burnhamthorpe Community Centre");
+  // The link shows just that one session, with a way back to everything.
+  expect(url).toMatch(/\/\?session=[de]\d+-\d{12}$/);
   await page.goto(url);
-  await expect(page.getByRole("article").first()).toHaveAttribute(
-    "aria-label",
-    new RegExp(`^${title}, `),
-  );
+  await expect(page.getByRole("article")).toHaveCount(1);
+  await expect(page.getByRole("article")).toHaveAttribute("aria-label", new RegExp(`^${title}, `));
+  await expect(page.getByText("Shared session")).toBeVisible();
+  await page.getByRole("link", { name: "Show all sessions" }).click();
+  await expect(page).not.toHaveURL(/session=/);
+  await expect(page.getByRole("article").nth(1)).toBeVisible();
+});
+
+test("a shared link to a session that has ended says so", async ({ page }) => {
+  await page.goto("/?session=d1-200001010000");
+  await expect(page.getByRole("article")).toHaveCount(0);
+  await expect(
+    page.getByText("This shared session has ended or is no longer listed."),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Show all sessions" })).toHaveAttribute("href", "/");
 });
 
 test("the Type filter narrows the list and lives in the URL", async ({ page }, testInfo) => {
