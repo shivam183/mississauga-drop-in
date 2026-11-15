@@ -10,7 +10,7 @@ tap straight through to enroll on the City's site.
 > Registration and payment happen only on the City's site. Schedules can change;
 > check with the City before you go.
 
-**Live:** https://mississauga-drop-in.vercel.app · **Status:** working towards
+**Live:** https://mississaugadropin.com · **Status:** working towards
 v0.1. See the [plan](docs/PLAN.md).
 
 ## Features
