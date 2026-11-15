@@ -2,7 +2,7 @@
  * All filter state lives in the URL. This reads it defensively (anything
  * invalid is ignored) and builds links that change one thing at a time.
  */
-import { ALL_CENTRES } from "@/lib/centres";
+import { ALL_CENTRES, centreDistances, type LatLng } from "@/lib/centres";
 import { TIME_OF_DAY_HOURS, type SessionFilters, type TimeOfDay } from "@/models/filters";
 import type { SessionType } from "@/models/session";
 
@@ -23,6 +23,8 @@ export interface SearchState {
   limit: number;
   /** One session's id (see sessionId), from a shared link: show only it. */
   session: string | null;
+  /** "Near me": where the person is, rounded to about 1 km (2 decimals). */
+  near: LatLng | null;
 }
 
 export const EMPTY_SEARCH: SearchState = {
@@ -34,7 +36,25 @@ export const EMPTY_SEARCH: SearchState = {
   times: [],
   limit: PAGE_SIZE,
   session: null,
+  near: null,
 };
+
+/** "Near me" shows centres within this many km. */
+export const NEARBY_KM = 5;
+
+/** "43.59,-79.64" as a place rounded to 2 decimals, or null if it isn't one. */
+function parseNear(value: string | undefined): LatLng | null {
+  const match = value?.match(/^\s*(-?\d{1,2}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)\s*$/);
+  if (!match) return null;
+  const [lat, lng] = [Number(match[1]), Number(match[2])];
+  if (Math.abs(lat) > 90 || Math.abs(lng) > 180) return null;
+  return { lat: round2(lat), lng: round2(lng) };
+}
+
+const round2 = (n: number) => Math.round(n * 100) / 100;
+
+/** A place as the `near` param writes it: "43.59,-79.64". */
+export const formatNear = (near: LatLng) => `${round2(near.lat)},${round2(near.lng)}`;
 
 /** sessionId's shape: "d" or "e", the activity id, "-", then YYYYMMDDHHmm. */
 const SESSION_ID = /^[de]\d{1,12}-\d{12}$/;
@@ -101,6 +121,8 @@ export function parseSearchParams(params: RawSearchParams): SearchState {
         ? Math.min(Math.ceil(limit / PAGE_SIZE) * PAGE_SIZE, MAX_LIMIT)
         : PAGE_SIZE,
     session: session && SESSION_ID.test(session) ? session : null,
+    // Not values(): its comma is part of the value.
+    near: parseNear(Array.isArray(params.near) ? params.near[0] : params.near),
   };
   if (state.from && state.to && state.from > state.to)
     [state.from, state.to] = [state.to, state.from];
@@ -116,6 +138,9 @@ export function toFilters(state: SearchState): SessionFilters {
     to: state.to ?? undefined,
     timesOfDay: state.times,
     sessionId: state.session ?? undefined,
+    nearbyCentreIds: state.near
+      ? [...centreDistances(state.near)].filter(([, km]) => km <= NEARBY_KM).map(([id]) => id)
+      : undefined,
   };
 }
 
@@ -130,6 +155,7 @@ export function toQueryString(state: SearchState): string {
   if (state.times.length) params.set("time", state.times.join(","));
   if (state.limit !== PAGE_SIZE) params.set("limit", String(state.limit));
   if (state.session) params.set("session", state.session);
+  if (state.near) params.set("near", formatNear(state.near));
   const query = params.toString();
   return query ? `?${query}` : "";
 }

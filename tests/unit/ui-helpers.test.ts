@@ -19,6 +19,7 @@ import {
   toFilters,
   toQueryString,
 } from "@/lib/params";
+import { distanceKm } from "@/lib/centres";
 import { clientIp, createRateLimiter } from "@/lib/rate-limit";
 
 describe("format", () => {
@@ -111,7 +112,32 @@ describe("params", () => {
       times: ["morning", "evening"],
       limit: 4 * PAGE_SIZE, // rounded up to whole pages
       session: null,
+      near: null,
     });
+  });
+
+  it("reads Near me as a place rounded to ~1 km, and keeps only centres within 5 km", () => {
+    // Beside Burnhamthorpe Community Centre (290, at 43.6227,-79.5988).
+    const state = parseSearchParams({ near: "43.62312,-79.59944" });
+    expect(state.near).toEqual({ lat: 43.62, lng: -79.6 });
+    expect(toQueryString(state)).toBe("?near=43.62%2C-79.6");
+    const nearby = toFilters(state).nearbyCentreIds!;
+    expect(nearby).toContain(290);
+    expect(nearby).not.toContain(119); // Meadowvale, about 13 km west
+    // Far from every centre: none, which is not the same as "any centre".
+    expect(toFilters(parseSearchParams({ near: "45.42,-75.69" })).nearbyCentreIds).toEqual([]);
+    expect(toFilters(EMPTY_SEARCH).nearbyCentreIds).toBeUndefined();
+    for (const bad of ["43.6", "43.6,", "abc,def", "91,10", "43.6,-181", "43.6;-79.6"]) {
+      expect(parseSearchParams({ near: bad }).near).toBeNull();
+    }
+  });
+
+  it("measures straight-line distances", () => {
+    // Burnhamthorpe to Meadowvale Community Centre: about 13 km.
+    const km = distanceKm({ lat: 43.6227, lng: -79.5988 }, { lat: 43.5856, lng: -79.7558 });
+    expect(km).toBeGreaterThan(12.5);
+    expect(km).toBeLessThan(13.5);
+    expect(distanceKm({ lat: 43.6, lng: -79.6 }, { lat: 43.6, lng: -79.6 })).toBe(0);
   });
 
   it("reads the filter form's day picker", () => {

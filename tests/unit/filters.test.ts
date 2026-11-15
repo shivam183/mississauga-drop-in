@@ -58,6 +58,17 @@ describe("filterSessions", () => {
     expect(ids(filterSessions(sessions, { sessionId: "ended" }, now))).toEqual([]);
   });
 
+  it("keeps only nearby centres, in time order; an empty list means none", () => {
+    expect(ids(filterSessions(sessions, { nearbyCentreIds: [119] }, now))).toEqual(["pickle"]);
+    expect(ids(filterSessions(sessions, { nearbyCentreIds: [290, 119] }, now))).toEqual([
+      "running",
+      "pickle",
+      "zumba",
+      "swim",
+    ]);
+    expect(ids(filterSessions(sessions, { nearbyCentreIds: [] }, now))).toEqual([]);
+  });
+
   it("filters by type", () => {
     expect(ids(filterSessions(sessions, { type: "enroll" }, now))).toEqual(["pickle"]);
     expect(ids(filterSessions(sessions, { type: "dropin" }, now))).not.toContain("pickle");

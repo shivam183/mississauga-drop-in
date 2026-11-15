@@ -18,6 +18,9 @@ v0.1. See the [plan](docs/PLAN.md).
 - One list of drop-in sessions and online-enrollable programs, grouped by day.
 - Time and community centre shown first on every result.
 - Search as you type; filter by type, one or more centres, day and time of day.
+- **Near me**: sessions at centres within 5 km of you, still in time order. Your
+  location is asked for only when you tap it, and only a rounded position (about
+  1 km) goes into the page address.
 - Spots left per session, with an **Enroll now** button that opens the City's
   enrollment page.
 - Built for phones first; works without JavaScript except for live spot counts.

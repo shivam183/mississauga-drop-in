@@ -15,12 +15,15 @@ export function SessionCard({
   session,
   centreHref,
   now,
+  distanceKm,
 }: {
   session: Session;
   /** Where the centre name goes: the list filtered to that centre. */
   centreHref: string;
   /** Toronto time when the page was rendered, for "On now" / "Starts in". */
   now: LocalDateTime;
+  /** With "Near me": how far the centre is. */
+  distanceKm?: number;
 }) {
   const title = displayTitle(session.title);
   const time = formatTimeRange(session.start, session.end);
@@ -62,6 +65,9 @@ export function SessionCard({
           <LinkPending />
         </Link>
         {session.facility && <span className={styles.facility}> · {session.facility}</span>}
+        {distanceKm !== undefined && (
+          <span className={styles.facility}> · {distanceKm.toFixed(1)} km</span>
+        )}
       </p>
       {session.type === "enroll" && (
         <EnrollPanel activityId={session.activityId} cityUrl={session.url} />

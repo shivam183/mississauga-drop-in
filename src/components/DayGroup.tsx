@@ -8,11 +8,14 @@ import { SessionCard } from "./SessionCard";
 export function DayGroup({
   group,
   now,
+  distances,
   centreHref,
 }: {
   group: Group;
   /** Toronto time, "YYYY-MM-DD HH:mm:ss". */
   now: LocalDateTime;
+  /** With "Near me": each centre's distance in km. */
+  distances?: ReadonlyMap<number, number>;
   centreHref: (centreId: number) => string;
 }) {
   const today = now.slice(0, 10);
@@ -25,7 +28,12 @@ export function DayGroup({
       <ol className={styles.list}>
         {group.sessions.map((session) => (
           <li key={session.id}>
-            <SessionCard session={session} centreHref={centreHref(session.centreId)} now={now} />
+            <SessionCard
+              session={session}
+              centreHref={centreHref(session.centreId)}
+              now={now}
+              distanceKm={distances?.get(session.centreId)}
+            />
           </li>
         ))}
       </ol>

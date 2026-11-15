@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { ALL_CENTRES, CENTRES_BY_TYPE } from "@/lib/centres";
 import { addDays, formatDate, formatDayHeading } from "@/lib/format";
-import { activeFilterCount, hrefWith, type SearchState } from "@/lib/params";
+import { activeFilterCount, formatNear, hrefWith, type SearchState } from "@/lib/params";
 import type { TimeOfDay } from "@/models/filters";
 import type { SessionType } from "@/models/session";
 import { CentrePicker } from "./CentrePicker";
 import { FilterForm } from "./FilterForm";
 import { FilterSheet } from "./FilterSheet";
 import { LinkPending } from "./LinkPending";
+import { NearMe } from "./NearMe";
 import { SearchBox } from "./SearchBox";
 import { TYPE_LABEL } from "./TypeBadge";
 import styles from "./Search.module.css";
@@ -62,6 +63,7 @@ export function SearchControls({ path, state, today }: SearchControlsProps) {
   const centres = state.type ? CENTRES_BY_TYPE[state.type] : ALL_CENTRES;
   const link = (changes: Partial<SearchState>) => hrefWith(path, state, changes);
   const centreValue = state.centreIds.join(",");
+  const near = state.near && formatNear(state.near);
 
   // Day picker: today plus the next two weeks. A from/to range from a link
   // (or a single day further out) shows as an extra option that keeps it.
@@ -88,11 +90,13 @@ export function SearchControls({ path, state, today }: SearchControlsProps) {
             <Hidden name="from" value={state.from} />
             <Hidden name="to" value={state.to} />
             <Hidden name="time" value={state.times.join(",")} />
+            <Hidden name="near" value={near} />
           </>
         }
       />
 
       <nav aria-label="Activity" className={styles.chips}>
+        <NearMe path={path} state={state} />
         {ACTIVITIES.map(([q, label]) => {
           const on = state.q.toLowerCase() === q;
           return (
@@ -116,6 +120,7 @@ export function SearchControls({ path, state, today }: SearchControlsProps) {
           clearHref={link({ type: null, centreIds: [], from: null, to: null, times: [] })}
         >
           <Hidden name="q" value={state.q} />
+          <Hidden name="near" value={near} />
 
           <div className={styles.field}>
             <label htmlFor="centre">Community centre</label>

@@ -51,6 +51,7 @@ Upcoming sessions (those that haven't ended), soonest first.
 | `to`      | `2026-11-20`           | Last day, inclusive                                                                |
 | `time`    | `morning,evening`      | Start time: `morning` (before 12 PM), `afternoon` (12–5 PM), `evening` (from 5 PM) |
 | `session` | `e164373-202611160745` | One session by its `id` (what the site's Share links use)                          |
+| `near`    | `43.62,-79.60`         | Only centres within 5 km of this latitude,longitude (rounded to 2 decimals)        |
 | `limit`   | `100`                  | Sessions per page, 1–200 (default 50)                                              |
 | `offset`  | `100`                  | How many to skip (default 0)                                                       |
 

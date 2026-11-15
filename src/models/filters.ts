@@ -21,6 +21,8 @@ export interface SessionFilters {
   timesOfDay?: readonly TimeOfDay[];
   /** Only this session (Session.id), e.g. from a shared link. */
   sessionId?: string;
+  /** Only these centres, e.g. the ones near you. Unlike centreIds, empty means none. */
+  nearbyCentreIds?: readonly number[];
 }
 
 /** Lower-case and strip accents, so "Zumba®" or "Café" match plain typing. */
@@ -54,12 +56,14 @@ export function filterSessions(
   const words = filters.q ? foldText(filters.q).split(" ").filter(Boolean) : [];
   const centres = filters.centreIds?.length ? new Set(filters.centreIds) : null;
   const times = filters.timesOfDay?.length ? new Set(filters.timesOfDay) : null;
+  const nearby = filters.nearbyCentreIds ? new Set(filters.nearbyCentreIds) : null;
 
   return sessions.filter((s) => {
     if (s.end <= now) return false;
     if (filters.sessionId && s.id !== filters.sessionId) return false;
     if (filters.type && s.type !== filters.type) return false;
     if (centres && !centres.has(s.centreId)) return false;
+    if (nearby && !nearby.has(s.centreId)) return false;
     const day = s.start.slice(0, 10);
     if (filters.from && day < filters.from) return false;
     if (filters.to && day > filters.to) return false;

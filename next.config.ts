@@ -26,7 +26,8 @@ const SECURITY_HEADERS = [
     : []),
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
+  // Location only for our own pages ("Near me"); never for anything embedded.
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self), payment=()" },
 ];
 
 const nextConfig: NextConfig = {

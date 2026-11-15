@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { connection } from "next/server";
+import { centreDistances } from "@/lib/centres";
 import { toTorontoLocal } from "@/lib/dates";
 import {
   hrefWith,
+  NEARBY_KM,
   PAGE_SIZE,
   parseSearchParams,
   toFilters,
@@ -35,6 +37,7 @@ export async function SearchView({
   const now = toTorontoLocal(new Date());
   const matches = filterSessions(sessions, toFilters(state), now);
   const shown = matches.slice(0, state.limit);
+  const distances = state.near ? centreDistances(state.near) : undefined;
   const relevantFailures = failedCentres.filter(
     (c) => state.centreIds.length === 0 || state.centreIds.includes(c.id),
   );
@@ -55,8 +58,10 @@ export async function SearchView({
         ) : (
           <p className={styles.summary} role="status">
             {matches.length === 0
-              ? "No upcoming sessions match."
+              ? "No upcoming sessions match"
               : `${matches.length.toLocaleString("en-CA")} upcoming ${matches.length === 1 ? "session" : "sessions"}`}
+            {state.near && ` within ${NEARBY_KM} km`}
+            {matches.length === 0 && "."}
             {matches.length > shown.length && ` · showing the first ${shown.length}`}
           </p>
         )}
@@ -80,6 +85,7 @@ export async function SearchView({
               key={group.date}
               group={group}
               now={now}
+              distances={distances}
               // A card's centre name adds that centre to the filter.
               centreHref={(id) =>
                 hrefWith(path, state, { centreIds: [...new Set([...state.centreIds, id])] })

@@ -79,6 +79,52 @@ test("the Type filter narrows the list and lives in the URL", async ({ page }, t
   await expect(page.getByRole("article").getByText("Drop-in", { exact: true })).toHaveCount(0);
 });
 
+test("Near me shows centres within 5 km, in time order, and toggles off", async ({
+  page,
+  context,
+}) => {
+  // Standing beside Burnhamthorpe Community Centre (centre 290).
+  await context.grantPermissions(["geolocation"]);
+  await context.setGeolocation({ latitude: 43.6231, longitude: -79.5994 });
+  await page.goto("/");
+  const chips = page.getByRole("navigation", { name: "Activity" });
+  await chips.getByRole("button", { name: "Near me" }).click();
+
+  // Rounded to ~1 km in the URL; the chip becomes the way to turn it off.
+  await expect(page).toHaveURL(/[?&]near=43\.62%2C-79\.6\b/);
+  const on = chips.getByRole("link", { name: /Near me · 5 km/ });
+  await expect(on).toHaveAttribute("aria-current", "page");
+  await expect(page.getByText(/upcoming sessions? within 5 km/)).toBeVisible();
+  const card = page.getByRole("article").first();
+  await expect(card).toContainText("Burnhamthorpe Community Centre");
+  await expect(card).toContainText(/ · 0\.\d km/);
+  // Still in time order.
+  const times = await page
+    .locator("article time")
+    .evaluateAll((els) => els.map((el) => el.getAttribute("datetime")!));
+  expect(times).toEqual([...times].sort());
+
+  // Other filters keep it.
+  await chips.getByRole("link", { name: "Swim" }).click();
+  await expect(page).toHaveURL(/near=/);
+
+  await on.click();
+  await expect(page).not.toHaveURL(/near=/);
+  await expect(chips.getByRole("button", { name: "Near me" })).toBeVisible();
+});
+
+test("Near me says so when location is blocked", async ({ page }) => {
+  await page.goto("/");
+  await page
+    .getByRole("navigation", { name: "Activity" })
+    .getByRole("button", { name: "Near me" })
+    .click();
+  await expect(
+    page.getByRole("button", { name: /Location is off|Couldn’t find you/ }),
+  ).toBeVisible();
+  await expect(page).not.toHaveURL(/near=/);
+});
+
 test("activity chips search for an activity and toggle off", async ({ page }) => {
   await page.goto("/");
   const chips = page.getByRole("navigation", { name: "Activity" });
@@ -548,7 +594,8 @@ test("security headers are set, and the CSP doesn't break the page", async ({ pa
   expect(headers["content-security-policy"]).toContain("connect-src 'self'");
   expect(headers["x-content-type-options"]).toBe("nosniff");
   expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
-  expect(headers["permissions-policy"]).toContain("geolocation=()");
+  expect(headers["permissions-policy"]).toContain("geolocation=(self)");
+  expect(headers["permissions-policy"]).toContain("camera=()");
   expect(headers["x-powered-by"]).toBeUndefined();
 
   // The app still works under the policy: it hydrates and loads spots.
