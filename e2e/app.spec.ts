@@ -27,6 +27,32 @@ test("results are grouped by day and lead with time and centre", async ({ page }
   await expect(card.getByRole("link", { name: "Burnhamthorpe Community Centre" })).toBeVisible();
 });
 
+test("Share copies a link to this session where the browser can't share", async ({ page }) => {
+  // No share sheet (as on most desktops), and a clipboard we can read back.
+  await page.addInitScript(() => {
+    Object.defineProperty(Navigator.prototype, "share", { value: undefined });
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText: async (t: string) => ((window as { copied?: string }).copied = t) },
+    });
+  });
+  await page.goto("/");
+  const card = page.getByRole("article").first();
+  // The card is labelled "<title>, <time>".
+  const title = (await card.getAttribute("aria-label"))!.split(",")[0];
+  await card.getByRole("button", { name: `Share ${title}` }).click();
+  await expect(card.getByRole("status")).toHaveText("Link copied");
+
+  const copied = (await page.evaluate(() => (window as { copied?: string }).copied))!;
+  const [text, url] = copied.split("\n");
+  expect(text).toContain(`${title} · `);
+  expect(text).toContain("Burnhamthorpe Community Centre");
+  await page.goto(url);
+  await expect(page.getByRole("article").first()).toHaveAttribute(
+    "aria-label",
+    new RegExp(`^${title}, `),
+  );
+});
+
 test("type chips filter the list and live in the URL", async ({ page }) => {
   await page.goto("/");
   const chips = page.getByRole("navigation", { name: "Program type" });
