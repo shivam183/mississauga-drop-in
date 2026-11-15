@@ -64,6 +64,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </ExternalLink>{" "}
               site, where all enrollment happens. Always check there before you go.
             </p>
+            <p>
+              Something wrong or missing?{" "}
+              <ExternalLink href="https://github.com/shivam183/mississauga-drop-in/issues/new/choose">
+                Report a problem or suggest an idea
+              </ExternalLink>
+              .
+            </p>
           </div>
         </footer>
         <Analytics />
