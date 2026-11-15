@@ -3,8 +3,10 @@
 import { usePathname, useRouter } from "next/navigation";
 import {
   createContext,
+  Fragment,
   useContext,
   useRef,
+  useState,
   useSyncExternalStore,
   useTransition,
   type ReactNode,
@@ -31,8 +33,9 @@ export function useApplyFilters(): () => void {
 
 /**
  * The filter form. With JavaScript, every change applies at once and "Clear
- * filters" is a button that resets the fields too. Without JavaScript it's a
- * plain GET form with a submit button and a "Clear filters" link.
+ * filters" is a button that clears the URL and then resets the fields.
+ * Without JavaScript it's a plain GET form with a submit button and a "Clear
+ * filters" link.
  */
 export function FilterForm({
   action,
@@ -41,7 +44,7 @@ export function FilterForm({
   children,
 }: {
   action: string;
-  /** The current page without filters, for the no-JavaScript link. */
+  /** The current page without filters (the Clear filters target). */
   clearHref: string;
   activeCount: number;
   children: ReactNode;
@@ -69,29 +72,21 @@ export function FilterForm({
     });
   }
 
+  // "Clear filters" goes to clearHref, the same URL as the no-JavaScript link.
+  // The fields are uncontrolled, so once the cleared page arrives they're
+  // remounted (a new key) to pick up its empty defaults. Remounting earlier
+  // would show the old defaults; remounting on every change would close the
+  // centre list mid-pick.
+  const [clearing, setClearing] = useState(false);
+  const [generation, setGeneration] = useState(0);
+  if (clearing && activeCount === 0) {
+    setClearing(false);
+    setGeneration(generation + 1);
+  }
+
   function clear() {
-    const el = form.current;
-    if (!el) return;
-    for (const select of el.querySelectorAll("select")) {
-      select.value = select.name === "day" ? "any" : "";
-    }
-    for (const box of el.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')) {
-      box.checked = false;
-    }
-    for (const centre of el.querySelectorAll<HTMLInputElement>(
-      'input[type="hidden"][name="centre"]',
-    )) {
-      centre.value = "";
-    }
-    el.dispatchEvent(new Event("filters:clear")); // lets the centre picker reset its text
-    // A from/to range carried over from a link.
-    for (const hidden of el.querySelectorAll<HTMLInputElement>(
-      'input[type="hidden"][name="from"], input[type="hidden"][name="to"]',
-    )) {
-      hidden.remove();
-    }
-    el.querySelector('select[name="day"] option[value="keep"]')?.remove();
-    apply();
+    setClearing(true);
+    startTransition(() => router.replace(clearHref, { scroll: false }));
   }
 
   return (
@@ -109,7 +104,9 @@ export function FilterForm({
         apply();
       }}
     >
-      <ApplyFilters.Provider value={apply}>{children}</ApplyFilters.Provider>
+      <ApplyFilters.Provider value={apply}>
+        <Fragment key={generation}>{children}</Fragment>
+      </ApplyFilters.Provider>
       <div className={styles.actions}>
         {live ? (
           <button
