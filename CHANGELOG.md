@@ -5,6 +5,13 @@ This file is updated automatically by
 Conventional Commit messages on `main`. Don't edit it by hand. The project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.4.0](https://github.com/shivam183/mississauga-drop-in/compare/v0.3.0...v0.4.0) (2026-11-15)
+
+
+### Features
+
+* Install Vercel Speed Insights ([#21](https://github.com/shivam183/mississauga-drop-in/issues/21)) ([cb37d14](https://github.com/shivam183/mississauga-drop-in/commit/cb37d148a7e9b1d832071a468e16b31fe895f859))
+
 ## [0.3.0](https://github.com/shivam183/mississauga-drop-in/compare/v0.2.1...v0.3.0) (2026-11-15)
 
 
