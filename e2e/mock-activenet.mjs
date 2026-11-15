@@ -44,7 +44,8 @@ const enrollIndex = new Map(enrollSessions.map((e, i) => [e.event_item_id, i]));
 const centreIds = (calendar) =>
   new Set(events[calendar].body.center_events.map((c) => c.center_id));
 
-let openSpots = 9;
+// High enough that a whole run of lookups never takes it into "few" (5 or fewer).
+let openSpots = 50;
 
 function detail(id) {
   const index = enrollIndex.get(id);
