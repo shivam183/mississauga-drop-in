@@ -3,7 +3,9 @@
 /**
  * Loads spots left for the "enroll online" cards that are on screen. Cards
  * register with `useAvailability`; visible ones are batched into
- * /api/availability requests of up to 20 ids.
+ * /api/availability requests of up to 20 ids. Entries live in a small store
+ * that each card subscribes to by id, so an update re-renders only the cards
+ * it changes, not every card on the page.
  */
 import {
   createContext,
@@ -13,6 +15,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type ReactNode,
   type RefObject,
 } from "react";
@@ -26,11 +29,45 @@ export type AvailabilityEntry =
   | { phase: "ready"; status: SessionStatus }
   | { phase: "error"; message: string };
 
+const IDLE: AvailabilityEntry = { phase: "idle" };
+
+/** Entries and refresh states by session id, with listeners per id. */
+export function createStore() {
+  const entries = new Map<number, AvailabilityEntry>();
+  /** "": refresh in progress; text: the refresh failed. */
+  const refreshing = new Map<number, string>();
+  const listeners = new Map<number, Set<() => void>>();
+  const notify = (id: number) => listeners.get(id)?.forEach((listener) => listener());
+  return {
+    entry: (id: number) => entries.get(id) ?? IDLE,
+    refreshState: (id: number) => refreshing.get(id),
+    setEntry(id: number, entry: AvailabilityEntry) {
+      entries.set(id, entry);
+      notify(id);
+    },
+    setRefreshState(id: number, state: string | undefined) {
+      if (state === undefined) refreshing.delete(id);
+      else refreshing.set(id, state);
+      notify(id);
+    },
+    subscribe(id: number, listener: () => void) {
+      let set = listeners.get(id);
+      if (!set) listeners.set(id, (set = new Set()));
+      set.add(listener);
+      return () => {
+        set.delete(listener);
+        if (set.size === 0) listeners.delete(id);
+      };
+    },
+  };
+}
+
+type Store = ReturnType<typeof createStore>;
+
 interface AvailabilityContextValue {
-  entries: Record<number, AvailabilityEntry>;
+  store: Store;
   observe(id: number, element: Element): () => void;
   refresh(id: number): Promise<void>;
-  refreshing: Record<number, string | undefined>;
 }
 
 const AvailabilityContext = createContext<AvailabilityContextValue | null>(null);
@@ -51,34 +88,35 @@ async function fetchAvailability(ids: number[], fresh = false): Promise<ApiRespo
 }
 
 export function AvailabilityProvider({ children }: { children: ReactNode }) {
-  const [entries, setEntries] = useState<Record<number, AvailabilityEntry>>({});
-  const [refreshing, setRefreshing] = useState<Record<number, string | undefined>>({});
+  const [store] = useState(createStore);
   const requested = useRef(new Set<number>());
   const queue = useRef(new Set<number>());
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const elements = useRef(new Map<Element, number>());
   const observer = useRef<IntersectionObserver | null>(null);
 
-  const apply = useCallback((ids: number[], body: ApiResponse | Error) => {
-    setEntries((previous) => {
-      const next = { ...previous };
+  const apply = useCallback(
+    (ids: number[], body: ApiResponse | Error) => {
       for (const id of ids) {
         const status = body instanceof Error ? undefined : body.statuses?.[id];
-        next[id] = status
-          ? { phase: "ready", status }
-          : {
-              phase: "error",
-              message:
-                body instanceof Error
-                  ? body.message
-                  : body.unknownIds?.includes(id)
-                    ? "No longer listed"
-                    : "Couldn't check spots",
-            };
+        store.setEntry(
+          id,
+          status
+            ? { phase: "ready", status }
+            : {
+                phase: "error",
+                message:
+                  body instanceof Error
+                    ? body.message
+                    : body.unknownIds?.includes(id)
+                      ? "No longer listed"
+                      : "Couldn't check spots",
+              },
+        );
       }
-      return next;
-    });
-  }, []);
+    },
+    [store],
+  );
 
   const flush = useCallback(() => {
     timer.current = undefined;
@@ -98,10 +136,10 @@ export function AvailabilityProvider({ children }: { children: ReactNode }) {
       if (requested.current.has(id)) return;
       requested.current.add(id);
       queue.current.add(id);
-      setEntries((previous) => ({ ...previous, [id]: { phase: "loading" } }));
+      store.setEntry(id, { phase: "loading" });
       timer.current ??= setTimeout(flush, BATCH_DELAY_MS);
     },
-    [flush],
+    [flush, store],
   );
 
   useEffect(() => {
@@ -135,23 +173,19 @@ export function AvailabilityProvider({ children }: { children: ReactNode }) {
 
   const refresh = useCallback(
     async (id: number) => {
-      setRefreshing((previous) => ({ ...previous, [id]: "" }));
+      store.setRefreshState(id, "");
       try {
         const body = await fetchAvailability([id], true);
         apply([id], body);
-        setRefreshing((previous) => ({ ...previous, [id]: undefined }));
+        store.setRefreshState(id, undefined);
       } catch (cause) {
-        const message = cause instanceof Error ? cause.message : "Couldn't refresh";
-        setRefreshing((previous) => ({ ...previous, [id]: message }));
+        store.setRefreshState(id, cause instanceof Error ? cause.message : "Couldn't refresh");
       }
     },
-    [apply],
+    [apply, store],
   );
 
-  const value = useMemo(
-    () => ({ entries, observe, refresh, refreshing }),
-    [entries, observe, refresh, refreshing],
-  );
+  const value = useMemo(() => ({ store, observe, refresh }), [store, observe, refresh]);
   return <AvailabilityContext.Provider value={value}>{children}</AvailabilityContext.Provider>;
 }
 
@@ -159,7 +193,21 @@ export function AvailabilityProvider({ children }: { children: ReactNode }) {
 export function useAvailability(id: number, ref: RefObject<Element | null>) {
   const context = useContext(AvailabilityContext);
   if (!context) throw new Error("useAvailability must be used inside <AvailabilityProvider>");
-  const { observe, entries, refresh, refreshing } = context;
+  const { observe, refresh, store } = context;
+  const subscribe = useCallback(
+    (listener: () => void) => store.subscribe(id, listener),
+    [store, id],
+  );
+  const entry = useSyncExternalStore(
+    subscribe,
+    () => store.entry(id),
+    () => IDLE,
+  );
+  const refreshState = useSyncExternalStore(
+    subscribe,
+    () => store.refreshState(id),
+    () => undefined,
+  );
 
   useEffect(() => {
     if (!ref.current) return;
@@ -167,9 +215,9 @@ export function useAvailability(id: number, ref: RefObject<Element | null>) {
   }, [id, observe, ref]);
 
   return {
-    entry: entries[id] ?? ({ phase: "idle" } as AvailabilityEntry),
+    entry,
     refresh: () => refresh(id),
     /** undefined: not refreshing; "": in progress; text: the refresh failed. */
-    refreshState: refreshing[id],
+    refreshState,
   };
 }
