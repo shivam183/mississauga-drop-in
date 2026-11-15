@@ -5,18 +5,15 @@ import { useHydrated } from "./FilterForm";
 import styles from "./SessionCard.module.css";
 
 /**
- * Shares a session through the phone's share sheet, or copies the text and
- * link where the browser can't share. Needs JavaScript, so it shows only once
- * the page is hydrated.
+ * Shares a link to a session through the phone's share sheet, or copies it
+ * where the browser can't share. Only the link, so a pasted copy is always a
+ * working URL. Needs JavaScript, so it shows only once the page is hydrated.
  */
 export function ShareButton({
   title,
-  text,
   href,
 }: {
   title: string;
-  /** e.g. "Adult Pickleball · Mon Nov 16, 7:45 – 9:45 AM · Meadowvale Community Centre" */
-  text: string;
   /** Our list filtered to this session, relative to the site. */
   href: string;
 }) {
@@ -28,11 +25,11 @@ export function ShareButton({
     const url = new URL(href, window.location.href).href;
     if (navigator.share) {
       // Rejects when the person closes the sheet; nothing to do then.
-      await navigator.share({ title, text, url }).catch(() => {});
+      await navigator.share({ title, url }).catch(() => {});
       return;
     }
     try {
-      await navigator.clipboard.writeText(`${text}\n${url}`);
+      await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {

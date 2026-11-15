@@ -42,10 +42,10 @@ test("Share copies a link to this session where the browser can't share", async 
   await card.getByRole("button", { name: `Share ${title}` }).click();
   await expect(card.getByRole("status")).toHaveText("Link copied");
 
-  const copied = (await page.evaluate(() => (window as { copied?: string }).copied))!;
-  const [text, url] = copied.split("\n");
-  expect(text).toContain(`${title} · `);
-  expect(text).toContain("Burnhamthorpe Community Centre");
+  // Only the link, so pasting it anywhere gives a working URL.
+  const url = (await page.evaluate(() => (window as { copied?: string }).copied))!;
+  expect(url).toMatch(/^http:\/\/[^\s]+\/\?\S+$/);
+  expect(new URL(url).searchParams.get("q")).toBe(title);
   await page.goto(url);
   await expect(page.getByRole("article").first()).toHaveAttribute(
     "aria-label",

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { displayTitle, formatDate, formatTimeRange } from "@/lib/format";
+import { displayTitle, formatTimeRange } from "@/lib/format";
 import { EMPTY_SEARCH, hrefWith } from "@/lib/params";
 import type { Session } from "@/models/session";
 import { EnrollPanel } from "./EnrollPanel";
@@ -31,7 +31,6 @@ export function SessionCard({
           <TypeBadge type={session.type} />
           <ShareButton
             title={title}
-            text={`${title} · ${formatDate(day)}, ${time} · ${session.centreName}`}
             // The list filtered to this program, centre and day, so it shows live spots.
             href={hrefWith("/", EMPTY_SEARCH, {
               q: title,
