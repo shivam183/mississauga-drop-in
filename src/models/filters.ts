@@ -33,7 +33,11 @@ export function foldText(text: string): string {
 
 export function timeOfDay(start: LocalDateTime): TimeOfDay {
   const hour = Number(start.slice(11, 13));
-  return hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening";
+  return hour < TIME_OF_DAY_HOURS.morning[1]
+    ? "morning"
+    : hour < TIME_OF_DAY_HOURS.afternoon[1]
+      ? "afternoon"
+      : "evening";
 }
 
 /**
@@ -57,10 +61,7 @@ export function filterSessions(
     if (filters.from && day < filters.from) return false;
     if (filters.to && day > filters.to) return false;
     if (times && !times.has(timeOfDay(s.start))) return false;
-    if (words.length > 0) {
-      const haystack = foldText(`${s.title} ${s.centreName} ${s.facility}`);
-      if (!words.every((w) => haystack.includes(w))) return false;
-    }
+    if (words.length > 0 && !words.every((w) => s.searchText.includes(w))) return false;
     return true;
   });
 }

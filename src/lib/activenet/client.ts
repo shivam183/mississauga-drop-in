@@ -4,6 +4,7 @@
  * request goes through a shared throttle. Server-side only.
  */
 import { createThrottle, type Throttle } from "./throttle";
+import { LOCAL_DATE_TIME } from "./types";
 import type {
   ActivityDetailBody,
   ButtonStatusBody,
@@ -24,7 +25,6 @@ import {
 export const DEFAULT_BASE_URL = "https://anc.ca.apm.activecommunities.com/activemississauga/rest";
 
 const LOCALE = "en-US";
-const LOCAL_DATE_TIME = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
 
 export class ActiveNetError extends Error {
   constructor(
@@ -185,10 +185,14 @@ function assertId(id: number, name: string): void {
   if (!Number.isInteger(id) || id <= 0) throw new RangeError(`${name} must be a positive integer`);
 }
 
-/** A client configured from the environment (ACTIVENET_BASE_URL, ACTIVENET_USER_AGENT). */
-export function activeNetClientFromEnv(env: NodeJS.ProcessEnv = process.env): ActiveNetClient {
+/** A client configured from the environment (ACTIVENET_BASE_URL, ACTIVENET_USER_AGENT), plus any `overrides`. */
+export function activeNetClientFromEnv(
+  env: NodeJS.ProcessEnv = process.env,
+  overrides: ActiveNetClientOptions = {},
+): ActiveNetClient {
   return createActiveNetClient({
     baseUrl: env.ACTIVENET_BASE_URL || undefined,
     userAgent: env.ACTIVENET_USER_AGENT || undefined,
+    ...overrides,
   });
 }

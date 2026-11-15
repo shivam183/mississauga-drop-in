@@ -10,6 +10,7 @@ import type {
   EventsBody,
   FiltersBody,
 } from "./types";
+import { LOCAL_DATE_TIME } from "./types";
 
 export class ActiveNetShapeError extends Error {
   constructor(
@@ -21,8 +22,6 @@ export class ActiveNetShapeError extends Error {
     this.name = "ActiveNetShapeError";
   }
 }
-
-const LOCAL_DATE_TIME = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
 
 function describe(value: unknown): string {
   if (value === null) return "null";

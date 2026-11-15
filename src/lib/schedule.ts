@@ -43,10 +43,17 @@ function batches<T>(items: readonly T[], size: number): T[][] {
   return out;
 }
 
-/** Sessions of the given types (default both), merged into one list. */
+/**
+ * Sessions of the given types (default both), merged into one list. The merged
+ * list is cached too, so a page render or API call is one cache read instead
+ * of one per batch plus a merge and sort. A list with failed centres is only
+ * kept for a minute so they're retried soon.
+ */
 export async function getSchedule(
   types: readonly SessionType[] = ["dropin", "enroll"],
 ): Promise<Schedule> {
+  "use cache: remote";
+  cacheTag("schedule");
   const jobs = types.flatMap((type) =>
     batches(CENTRES_BY_TYPE[type], CENTRES_PER_REQUEST).map((centres) => ({ type, centres })),
   );
@@ -74,5 +81,9 @@ export async function getSchedule(
     }
   });
 
+  // shortcut: the merged list can be up to one schedule lifetime older than its batches
+  // (each is cached separately), so schedules may lag ~20 min at worst. Fine for timetables.
+  if (failed.size) cacheLife("minutes");
+  else cacheLife("schedule");
   return { sessions: mergeSessions(...lists), failedCentres: [...failed.values()] };
 }

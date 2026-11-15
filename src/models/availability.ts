@@ -1,4 +1,9 @@
-import type { ActivityDetailBody, ButtonStatusBody, LocalDateTime } from "@/lib/activenet/types";
+import {
+  LOCAL_DATE_TIME,
+  type ActivityDetailBody,
+  type ButtonStatusBody,
+  type LocalDateTime,
+} from "@/lib/activenet/types";
 import { noticeToText, safeCityUrl } from "./links";
 
 /** Openings at or below this count are shown as "few". */
@@ -39,8 +44,6 @@ export interface SessionStatus {
   /** When this was fetched from the City, as an ISO timestamp. */
   checkedAt: string;
 }
-
-const LOCAL_DATE_TIME = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
 
 /** Combines the detail and button-status responses for one session. */
 export function toSessionStatus(

@@ -7,9 +7,9 @@
  */
 import { activeNetClientFromEnv } from "../src/lib/activenet/client";
 import { toTorontoLocal } from "../src/lib/dates";
+import { parseSpaces } from "../src/models/availability";
+import { safeCityUrl } from "../src/models/links";
 import { run } from "./lib";
-
-const SPACE_STATUS = /^(Full|\d+ openings? remaining)$/;
 
 run(async () => {
   const client = activeNetClientFromEnv();
@@ -45,7 +45,8 @@ run(async () => {
     if (detail.activity_id !== session.event_item_id) {
       problems.push(`detail ${label} returned activity ${detail.activity_id}`);
     }
-    if (!SPACE_STATUS.test(detail.space_status ?? "")) {
+    // Same parser as the app, so the check flags exactly what the app can't read.
+    if (parseSpaces(detail.space_status).level === "unknown") {
       problems.push(
         `detail ${label} has unknown space_status ${JSON.stringify(detail.space_status)}`,
       );
@@ -58,10 +59,7 @@ run(async () => {
       `ok session ${label}: "${detail.space_status}", opens "${status.activity_online_start_time}", ` +
         `link ${status.action_link ? "yes" : "no"}`,
     );
-    if (
-      status.action_link &&
-      !/^https:\/\/[^/]*\.activecommunities\.com\//.test(status.action_link.href)
-    ) {
+    if (status.action_link && !safeCityUrl(status.action_link.href)) {
       problems.push(`buttonstatus ${label} links off-site: ${status.action_link.href}`);
     }
   }

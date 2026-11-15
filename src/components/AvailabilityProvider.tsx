@@ -99,12 +99,20 @@ export function AvailabilityProvider({ children }: { children: ReactNode }) {
     (ids: number[], body: ApiResponse | Error) => {
       for (const id of ids) {
         const status = body instanceof Error ? undefined : body.statuses?.[id];
-        if (status) store.setEntry(id, { phase: "ready", status });
-        else if (body instanceof Error)
-          store.setEntry(id, { phase: "error", message: body.message });
-        else if (body.unknownIds?.includes(id))
-          store.setEntry(id, { phase: "error", message: "No longer listed" });
-        else store.setEntry(id, { phase: "error", message: "Couldn't check spots" });
+        store.setEntry(
+          id,
+          status
+            ? { phase: "ready", status }
+            : {
+                phase: "error",
+                message:
+                  body instanceof Error
+                    ? body.message
+                    : body.unknownIds?.includes(id)
+                      ? "No longer listed"
+                      : "Couldn't check spots",
+              },
+        );
       }
     },
     [store],

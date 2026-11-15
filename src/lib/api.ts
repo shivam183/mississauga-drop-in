@@ -4,6 +4,7 @@
  * documented in docs/api.md, and kept stable when internals change.
  */
 import type { LocalDateTime } from "@/lib/activenet/types";
+import { TORONTO_TIME_ZONE } from "@/lib/dates";
 import type { RawSearchParams } from "@/lib/params";
 import type { Session, SessionType } from "@/models/session";
 
@@ -53,7 +54,7 @@ export function parsePage(params: URLSearchParams): Page {
 // --- Times -----------------------------------------------------------------
 
 const torontoParts = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "America/Toronto",
+  timeZone: TORONTO_TIME_ZONE,
   hourCycle: "h23",
   year: "numeric",
   month: "2-digit",
