@@ -40,7 +40,7 @@ test("Share copies a link to this session where the browser can't share", async 
   // The card is labelled "<title>, <time>".
   const title = (await card.getAttribute("aria-label"))!.split(",")[0];
   await card.getByRole("button", { name: `Share ${title}` }).click();
-  await expect(card.getByRole("status")).toHaveText("Link copied");
+  await expect(card.getByRole("status")).toHaveText("Copied");
 
   const copied = (await page.evaluate(() => (window as { copied?: string }).copied))!;
   const [text, url] = copied.split("\n");

@@ -53,7 +53,7 @@ export function ShareButton({
         />
       </svg>
       <span role="status" className={copied ? styles.copied : "visually-hidden"}>
-        {copied ? "Link copied" : ""}
+        {copied ? "Copied" : ""}
       </span>
     </button>
   );

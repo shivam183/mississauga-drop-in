@@ -47,7 +47,7 @@
   flex-shrink: 0;
 }
 
-/* Icon only, sized for a thumb. "Link copied" floats below it, so nothing shifts. */
+/* Icon only, sized for a thumb. "Copied" floats below it, so nothing shifts. */
 .share {
   display: inline-flex;
   align-items: center;
