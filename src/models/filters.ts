@@ -33,7 +33,11 @@ export function foldText(text: string): string {
 
 export function timeOfDay(start: LocalDateTime): TimeOfDay {
   const hour = Number(start.slice(11, 13));
-  return hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening";
+  return hour < TIME_OF_DAY_HOURS.morning[1]
+    ? "morning"
+    : hour < TIME_OF_DAY_HOURS.afternoon[1]
+      ? "afternoon"
+      : "evening";
 }
 
 /**

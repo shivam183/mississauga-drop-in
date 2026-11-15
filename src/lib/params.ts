@@ -3,7 +3,7 @@
  * invalid is ignored) and builds links that change one thing at a time.
  */
 import { ALL_CENTRES } from "@/lib/centres";
-import type { SessionFilters, TimeOfDay } from "@/models/filters";
+import { TIME_OF_DAY_HOURS, type SessionFilters, type TimeOfDay } from "@/models/filters";
 import type { SessionType } from "@/models/session";
 
 export type RawSearchParams = Record<string, string | string[] | undefined>;
@@ -33,7 +33,7 @@ export const EMPTY_SEARCH: SearchState = {
   limit: PAGE_SIZE,
 };
 
-const TIMES: readonly TimeOfDay[] = ["morning", "afternoon", "evening"];
+const TIMES = Object.keys(TIME_OF_DAY_HOURS) as TimeOfDay[];
 const CENTRE_IDS = new Set(ALL_CENTRES.map((c) => c.id));
 const CENTRE_BY_NAME = new Map(ALL_CENTRES.map((c) => [c.name.toLowerCase(), c.id]));
 
@@ -111,7 +111,7 @@ export function toFilters(state: SearchState): SessionFilters {
 }
 
 /** Query string for a state, leaving out defaults. Starts with "?" unless empty. */
-export function toQueryString(state: SearchState, extra: Record<string, string> = {}): string {
+export function toQueryString(state: SearchState): string {
   const params = new URLSearchParams();
   if (state.q) params.set("q", state.q);
   if (state.type) params.set("type", state.type);
@@ -120,7 +120,6 @@ export function toQueryString(state: SearchState, extra: Record<string, string> 
   if (state.to) params.set("to", state.to);
   if (state.times.length) params.set("time", state.times.join(","));
   if (state.limit !== PAGE_SIZE) params.set("limit", String(state.limit));
-  for (const [key, value] of Object.entries(extra)) params.set(key, value);
   const query = params.toString();
   return query ? `?${query}` : "";
 }

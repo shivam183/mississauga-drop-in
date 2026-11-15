@@ -9,12 +9,13 @@ import { FilterForm } from "./FilterForm";
 import { FilterSheet } from "./FilterSheet";
 import { LinkPending } from "./LinkPending";
 import { SearchBox } from "./SearchBox";
+import { TYPE_LABEL } from "./TypeBadge";
 import styles from "./Search.module.css";
 
 const TYPES: Array<[SessionType | null, string]> = [
   [null, "All"],
-  ["dropin", "Drop-in"],
-  ["enroll", "Enroll online"],
+  ["dropin", TYPE_LABEL.dropin],
+  ["enroll", TYPE_LABEL.enroll],
 ];
 
 /** Labels and start-time ranges, matching TIME_OF_DAY_HOURS in models/filters. */

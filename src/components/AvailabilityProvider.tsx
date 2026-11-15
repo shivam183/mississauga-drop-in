@@ -64,11 +64,17 @@ export function AvailabilityProvider({ children }: { children: ReactNode }) {
       const next = { ...previous };
       for (const id of ids) {
         const status = body instanceof Error ? undefined : body.statuses?.[id];
-        if (status) next[id] = { phase: "ready", status };
-        else if (body instanceof Error) next[id] = { phase: "error", message: body.message };
-        else if (body.unknownIds?.includes(id))
-          next[id] = { phase: "error", message: "No longer listed" };
-        else next[id] = { phase: "error", message: "Couldn't check spots" };
+        next[id] = status
+          ? { phase: "ready", status }
+          : {
+              phase: "error",
+              message:
+                body instanceof Error
+                  ? body.message
+                  : body.unknownIds?.includes(id)
+                    ? "No longer listed"
+                    : "Couldn't check spots",
+            };
       }
       return next;
     });

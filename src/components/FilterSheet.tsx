@@ -1,26 +1,10 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  type PointerEvent,
-  type ReactNode,
-} from "react";
+import { useEffect, useId, useRef, useState, type PointerEvent, type ReactNode } from "react";
 import styles from "./Search.module.css";
-
-const CloseSheet = createContext<() => void>(() => {});
 
 /** How far the sheet must be pulled down before letting go closes it. */
 const SWIPE_TO_CLOSE_PX = 80;
-
-/** Closes the bottom sheet (on desktop, where it's a sidebar, it does nothing visible). */
-export function useCloseSheet(): () => void {
-  return useContext(CloseSheet);
-}
 
 /**
  * On phones the filter form sits in a bottom sheet behind a "Filters"
@@ -71,11 +55,7 @@ export function FilterSheet({
     if (!open) return;
     sheet.current?.querySelector<HTMLElement>("select, input:not([type=hidden])")?.focus();
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !event.defaultPrevented) {
-        setOpen(false);
-        setDrag(null);
-        button.current?.focus();
-      }
+      if (event.key === "Escape" && !event.defaultPrevented) close();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
@@ -151,7 +131,7 @@ export function FilterSheet({
         >
           Close filters
         </button>
-        <CloseSheet.Provider value={close}>{children}</CloseSheet.Provider>
+        {children}
       </div>
     </>
   );

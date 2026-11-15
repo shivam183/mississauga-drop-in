@@ -101,7 +101,8 @@ export function normalizeEvents(body: EventsBody, calendar: CalendarId): Session
 export function sortSessions(sessions: readonly Session[]): Session[] {
   return [...sessions].sort(
     (a, b) =>
-      a.start.localeCompare(b.start) ||
+      // Fixed-width "YYYY-MM-DD HH:mm:ss", so a plain comparison sorts by time (and is much cheaper).
+      (a.start < b.start ? -1 : a.start > b.start ? 1 : 0) ||
       a.centreName.localeCompare(b.centreName) ||
       a.title.localeCompare(b.title) ||
       a.id.localeCompare(b.id),

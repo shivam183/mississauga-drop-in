@@ -13,6 +13,15 @@ import styles from "./Search.module.css";
 
 const noop = () => () => {};
 
+/** False on the server and during hydration, true once JavaScript runs. */
+export function useHydrated(): boolean {
+  return useSyncExternalStore(
+    noop,
+    () => true,
+    () => false,
+  );
+}
+
 const ApplyFilters = createContext<() => void>(() => {});
 
 /** Applies the filter form now, for controls that change it without a native event. */
@@ -41,12 +50,7 @@ export function FilterForm({
   const pathname = usePathname();
   const form = useRef<HTMLFormElement>(null);
   const [, startTransition] = useTransition();
-  // False on the server and during hydration, true once JavaScript runs.
-  const live = useSyncExternalStore(
-    noop,
-    () => true,
-    () => false,
-  );
+  const live = useHydrated();
 
   function apply() {
     if (!form.current) return;

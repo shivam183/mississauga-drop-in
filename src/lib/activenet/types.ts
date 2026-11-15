@@ -6,6 +6,7 @@
 
 /** "YYYY-MM-DD HH:mm:ss" in Toronto local time, with no time zone. */
 export type LocalDateTime = string;
+export const LOCAL_DATE_TIME = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
 
 /** The calendars this app reads: 1 = drop-in, 3 = enroll online. */
 export type CalendarId = 1 | 3;
