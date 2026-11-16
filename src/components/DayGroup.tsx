@@ -27,7 +27,6 @@ export function DayGroup({
       <DayDetails
         date={group.date}
         collapsed={group.collapsed}
-        className={styles.details}
         summaryClassName={styles.heading}
         summary={
           <>
@@ -38,16 +37,14 @@ export function DayGroup({
           </>
         }
       >
-        {group.collapsed && (
+        {group.collapsed ? (
           // Hidden while collapsed; shows only if the day is reopened, until its cards arrive.
           <div role="status" aria-busy="true">
             <span className="visually-hidden">Loading…</span>
-            {/* The same placeholder cards as the first page load. */}
             <div className={`${searchStyles.cardSkeleton} shimmer`} />
             <div className={`${searchStyles.cardSkeleton} shimmer`} />
           </div>
-        )}
-        {group.sessions.length > 0 && (
+        ) : (
           <ol className={styles.list}>
             {group.sessions.map((session) => (
               <li key={session.id}>

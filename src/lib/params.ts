@@ -152,6 +152,30 @@ export function hrefWith(path: string, state: SearchState, changes: Partial<Sear
   return `${path}${toQueryString({ ...state, limit: PAGE_SIZE, session: null, collapsed: [], ...changes })}`;
 }
 
+/** URLSearchParams as the page-style record that parseSearchParams reads. */
+export function toRawSearchParams(params: URLSearchParams): RawSearchParams {
+  const raw: RawSearchParams = {};
+  for (const key of new Set(params.keys())) {
+    const all = params.getAll(key);
+    raw[key] = all.length === 1 ? all[0] : all;
+  }
+  return raw;
+}
+
+/**
+ * `href` with `date` collapsed or opened, keeping everything else (including
+ * the page size), or null if it's already that way.
+ */
+export function withCollapsed(href: string, date: string, collapse: boolean): string | null {
+  const url = new URL(href, "http://x");
+  const state = parseSearchParams(toRawSearchParams(url.searchParams));
+  if (state.collapsed.includes(date) === collapse) return null;
+  const collapsed = collapse
+    ? [...state.collapsed, date].sort()
+    : state.collapsed.filter((d) => d !== date);
+  return `${url.pathname}${toQueryString({ ...state, collapsed })}`;
+}
+
 /**
  * How many filter choices are on, beyond search text (for the Filters badge):
  * the type, each centre, the day, and each time of day counts once.

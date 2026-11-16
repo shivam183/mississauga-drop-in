@@ -9,12 +9,20 @@ import { ExternalLink } from "./ExternalLink";
 export function EnrollButton({
   state,
   cityUrl,
+  loading = false,
 }: {
   state: EnrollState | null;
   cityUrl: string | null;
+  /** The lookup is in flight (not just waiting to scroll into view): animate the placeholder. */
+  loading?: boolean;
 }) {
   if (!state)
-    return <span className={`${styles.button} ${styles.placeholder} shimmer`} aria-hidden="true" />;
+    return (
+      <span
+        className={`${styles.button} ${styles.placeholder}${loading ? " shimmer" : ""}`}
+        aria-hidden="true"
+      />
+    );
 
   switch (state.state) {
     case "enroll":

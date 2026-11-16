@@ -1,12 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-  API_DEFAULT_LIMIT,
-  API_MAX_LIMIT,
-  parsePage,
-  toApiSession,
-  toRawSearchParams,
-  torontoIso,
-} from "@/lib/api";
+import { API_DEFAULT_LIMIT, API_MAX_LIMIT, parsePage, toApiSession, torontoIso } from "@/lib/api";
+import { toRawSearchParams } from "@/lib/params";
 import type { Session } from "@/models/session";
 
 describe("torontoIso", () => {

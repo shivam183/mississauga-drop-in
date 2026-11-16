@@ -669,6 +669,14 @@ test.describe("collapsible days", () => {
     await expect(page).toHaveURL(/[?&]q=swim\b/);
     await expect(page).not.toHaveURL(/collapsed=/);
     await expect(page.locator("details:not([open])")).toHaveCount(0);
+
+    // Typing a search (not just a chip) opens them too.
+    await day(page, 0).locator("summary").click();
+    await expect(page).toHaveURL(/collapsed=/);
+    await page.getByRole("searchbox").fill("lane");
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/[?&]q=lane(&|$)/);
+    await expect(page).not.toHaveURL(/collapsed=/);
   });
 
   test("a heading toggles from the keyboard", async ({ page }) => {

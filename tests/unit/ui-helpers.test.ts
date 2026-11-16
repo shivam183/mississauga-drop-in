@@ -19,8 +19,8 @@ import {
   parseSearchParams,
   toFilters,
   toQueryString,
+  withCollapsed,
 } from "@/lib/params";
-import { withCollapsed } from "@/components/DayDetails";
 import { clientIp, createRateLimiter } from "@/lib/rate-limit";
 
 describe("format", () => {
@@ -246,11 +246,14 @@ describe("rate limit", () => {
 });
 
 describe("withCollapsed", () => {
-  it("adds or removes one day and keeps the rest of the URL", () => {
+  it("adds or removes one day, keeping the rest of the URL in the same order as other links", () => {
     expect(withCollapsed("/?q=swim", "2026-11-17", true)).toBe("/?q=swim&collapsed=2026-11-17");
+    // The same URL Show more builds for this state (limit before collapsed).
     expect(withCollapsed("/?collapsed=2026-11-17&limit=60", "2026-11-16", true)).toBe(
-      "/?collapsed=2026-11-16%2C2026-11-17&limit=60",
+      "/?limit=60&collapsed=2026-11-16%2C2026-11-17",
     );
+    // Bad dates already in the URL are dropped.
+    expect(withCollapsed("/?collapsed=bogus", "2026-11-17", true)).toBe("/?collapsed=2026-11-17");
     expect(withCollapsed("/?collapsed=2026-11-16%2C2026-11-17", "2026-11-16", false)).toBe(
       "/?collapsed=2026-11-17",
     );

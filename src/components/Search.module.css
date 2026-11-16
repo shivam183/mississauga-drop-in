@@ -511,7 +511,7 @@
   height: 140px;
   margin-top: 10px;
   border-radius: var(--radius);
-  background-color: var(--surface);
+  background: var(--surface);
 }
 
 @media (min-width: 900px) {

@@ -56,6 +56,7 @@ export function SearchBox({
     else params.delete("q");
     params.delete("limit"); // a new search starts from the first page
     params.delete("session"); // and leaves a shared session for the full list
+    params.delete("collapsed"); // with every day open, so no new result is hidden
     const query = params.toString();
     startTransition(() => {
       router.replace(`${pathname}${query ? `?${query}` : ""}`, { scroll: false });

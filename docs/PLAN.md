@@ -114,7 +114,7 @@ Dependabot (`dependabot.yml`) uses Conventional Commit prefixes (`fix(deps)`, `c
 - There is no horizontal scrolling at 360px width.
 - The default font is 16px, and contrast meets WCAG AA in light and dark mode.
 - Spots-left colour: green for more than 5, amber for 1–5, red for full. The text label is always shown too, so colour is never the only signal.
-- **Loading placeholders** (result cards on first load or when a collapsed day reopens, the spots-left bar and the Enroll button) are grey shapes with a light band sweeping left to right. The band is off for anyone who prefers reduced motion.
+- **Loading placeholders** (result cards on first load or when a collapsed day reopens, the spots-left bar and the Enroll button) are grey shapes with a light band sweeping left to right while their data is loading (not while a card waits off screen). The band is a moving pseudo-element, so it doesn't repaint, and it's off for anyone who prefers reduced motion.
 
 ## Directory structure (open source conventions)
 
@@ -224,7 +224,7 @@ Unfiltered, one weekday has 220–250 sessions (weekends about 100; live schedul
   - A collapsed day keeps its heading in the list (headings appear for collapsed days up to the last session shown), so you can see it's there and open it again. Opening it brings its sessions back at the top, and the page keeps its size, so later sessions move below "Show more". Until they arrive, the reopened day shows two placeholder cards (the same skeleton as the first page load, sent hidden inside every collapsed day), not a blank space.
   - Pages stay at 30 sessions, not whole days: a whole weekday is too many cards for a phone (50 per page already cost Lighthouse points; see Phase 3). A heading can cover part of a day, as it does today, and "Show more" continues it.
   - **The next day is already started.** When every card on the page belongs to one open day, the page also shows the first 5 sessions of the next open day (so up to 35 cards). Collapsing that day reveals those cards at once, while the refill loads in the background. Found while testing: without it, collapsing Today left a blank screen until the server answered (about 0.8 s on the dev server).
-  - Collapsing a day from its stuck heading keeps that heading on screen, with the next day directly below it. The page holds its height from the tap until the refill arrives (at most 5 s); otherwise the shorter page makes the browser jump to the top, which was very visible on desktop (scroll position 1500 to 156).
+  - Collapsing a day from its stuck heading keeps that heading on screen, with the next day directly below it. The page holds its height from the tap until the refill navigation finishes; otherwise the shorter page makes the browser jump to the top, which was very visible on desktop (scroll position 1500 to 156).
   - **State lives in the URL:** `collapsed=2026-11-16,2026-11-17` (valid dates only, at most 14). "Show more" keeps it. A new search or filter change drops it, like `session`, so new results are never hidden. Nothing is stored in the browser.
 - **How it loads:** the collapse happens instantly in the browser. The client then replaces the URL without scrolling (`router.replace`, `scroll: false`), and the server renders the refilled page, the same path as "Show more". A pure function picks the page (the first `limit` sessions, skipping collapsed days) and is unit-tested.
 - **Without JavaScript:** the native element still collapses and opens days, but the page doesn't refill.

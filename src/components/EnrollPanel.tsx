@@ -37,6 +37,7 @@ export function EnrollPanel({
       <EnrollButton
         state={entry.phase === "error" ? { state: "unknown" } : state}
         cityUrl={cityUrl}
+        loading={entry.phase === "loading"}
       />
       <noscript>
         {cityUrl && (
