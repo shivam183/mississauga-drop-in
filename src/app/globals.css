@@ -15,6 +15,8 @@
   --radius: 12px;
   --space: 16px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* The light band that sweeps across loading placeholders. */
+  --shimmer: rgb(255 255 255 / 0.7);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,6 +31,7 @@
     --open: #5cc97a;
     --few: #f0b44c;
     --full: #ff7b6e;
+    --shimmer: rgb(255 255 255 / 0.12);
   }
 }
 
@@ -209,9 +212,35 @@ h1 {
   }
 }
 
+/* Loading placeholders: a light band sweeps left to right over the grey.
+   A moving pseudo-element, so the GPU animates it without repainting. */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--shimmer), transparent);
+  transform: translateX(-100%);
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .link-pending[data-pending="true"] {
     animation: none;
     opacity: 0.6;
+  }
+
+  .shimmer::after {
+    display: none;
   }
 }

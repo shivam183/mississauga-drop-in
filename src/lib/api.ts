@@ -5,7 +5,6 @@
  */
 import type { LocalDateTime } from "@/lib/activenet/types";
 import { TORONTO_TIME_ZONE } from "@/lib/dates";
-import type { RawSearchParams } from "@/lib/params";
 import type { Session, SessionType } from "@/models/session";
 
 export const API_DEFAULT_LIMIT = 50;
@@ -22,16 +21,6 @@ export function apiError(status: number, message: string, headers: Record<string
     { error: message },
     { status, headers: { ...CORS_HEADERS, "Cache-Control": "no-store", ...headers } },
   );
-}
-
-/** URLSearchParams as the page-style record that parseSearchParams reads. */
-export function toRawSearchParams(params: URLSearchParams): RawSearchParams {
-  const raw: RawSearchParams = {};
-  for (const key of new Set(params.keys())) {
-    const all = params.getAll(key);
-    raw[key] = all.length === 1 ? all[0] : all;
-  }
-  return raw;
 }
 
 export type Page = { limit: number; offset: number } | { error: string };

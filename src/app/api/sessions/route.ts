@@ -5,9 +5,9 @@
  * the site. Paginated: at most 200 per request. See docs/api.md.
  */
 import type { NextRequest } from "next/server";
-import { apiError, CORS_HEADERS, parsePage, toApiSession, toRawSearchParams } from "@/lib/api";
+import { apiError, CORS_HEADERS, parsePage, toApiSession } from "@/lib/api";
 import { toTorontoLocal } from "@/lib/dates";
-import { parseSearchParams, toFilters } from "@/lib/params";
+import { parseSearchParams, toFilters, toRawSearchParams } from "@/lib/params";
 import { getSchedule } from "@/lib/schedule";
 import { filterSessions } from "@/models/filters";
 

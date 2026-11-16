@@ -9,7 +9,7 @@ import {
   type RawSearchParams,
 } from "@/lib/params";
 import { getSchedule } from "@/lib/schedule";
-import { filterSessions, groupByDay } from "@/models/filters";
+import { filterSessions, pageDays } from "@/models/filters";
 import { AvailabilityProvider } from "./AvailabilityProvider";
 import { DayGroup } from "./DayGroup";
 import { LinkPending } from "./LinkPending";
@@ -34,7 +34,7 @@ export async function SearchView({
   await connection();
   const now = toTorontoLocal(new Date());
   const matches = filterSessions(sessions, toFilters(state), now);
-  const shown = matches.slice(0, state.limit);
+  const page = pageDays(matches, state.limit, state.collapsed);
   const relevantFailures = failedCentres.filter(
     (c) => state.centreIds.length === 0 || state.centreIds.includes(c.id),
   );
@@ -57,7 +57,7 @@ export async function SearchView({
             {matches.length === 0
               ? "No upcoming sessions match."
               : `${matches.length.toLocaleString("en-CA")} upcoming ${matches.length === 1 ? "session" : "sessions"}`}
-            {matches.length > shown.length && ` · showing the first ${shown.length}`}
+            {page.more && ` · showing the first ${page.shown}`}
           </p>
         )}
 
@@ -75,7 +75,7 @@ export async function SearchView({
         )}
 
         <AvailabilityProvider>
-          {groupByDay(shown).map((group) => (
+          {page.days.map((group) => (
             <DayGroup
               key={group.date}
               group={group}
@@ -88,10 +88,14 @@ export async function SearchView({
           ))}
         </AvailabilityProvider>
 
-        {matches.length > shown.length && (
+        {page.more && (
           <Link
             className={styles.more}
-            href={hrefWith(path, state, { limit: state.limit + PAGE_SIZE })}
+            // Collapsed days stay collapsed.
+            href={hrefWith(path, state, {
+              limit: state.limit + PAGE_SIZE,
+              collapsed: state.collapsed,
+            })}
             scroll={false}
           >
             Show more
@@ -110,7 +114,7 @@ export function SearchSkeleton() {
       <div className={styles.results}>
         <p className={styles.summary}>Loading sessions…</p>
         {Array.from({ length: 4 }, (_, i) => (
-          <div key={i} className={styles.cardSkeleton} />
+          <div key={i} className={`${styles.cardSkeleton} shimmer`} />
         ))}
       </div>
     </div>

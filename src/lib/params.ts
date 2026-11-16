@@ -11,6 +11,8 @@ export type RawSearchParams = Record<string, string | string[] | undefined>;
 export const PAGE_SIZE = 30;
 export const MAX_LIMIT = 500;
 export const MAX_QUERY_LENGTH = 100;
+/** No more collapsed days than the day picker offers. */
+export const MAX_COLLAPSED = 14;
 
 export interface SearchState {
   q: string;
@@ -23,6 +25,8 @@ export interface SearchState {
   limit: number;
   /** One session's id (see sessionId), from a shared link: show only it. */
   session: string | null;
+  /** Days ("YYYY-MM-DD") whose sessions are hidden and don't count toward `limit`. */
+  collapsed: string[];
 }
 
 export const EMPTY_SEARCH: SearchState = {
@@ -34,6 +38,7 @@ export const EMPTY_SEARCH: SearchState = {
   times: [],
   limit: PAGE_SIZE,
   session: null,
+  collapsed: [],
 };
 
 /** sessionId's shape: "d" or "e", the activity id, "-", then YYYYMMDDHHmm. */
@@ -101,6 +106,9 @@ export function parseSearchParams(params: RawSearchParams): SearchState {
         ? Math.min(Math.ceil(limit / PAGE_SIZE) * PAGE_SIZE, MAX_LIMIT)
         : PAGE_SIZE,
     session: session && SESSION_ID.test(session) ? session : null,
+    collapsed: [...new Set(values(params, "collapsed").filter(isIsoDate))]
+      .sort()
+      .slice(0, MAX_COLLAPSED),
   };
   if (state.from && state.to && state.from > state.to)
     [state.from, state.to] = [state.to, state.from];
@@ -130,16 +138,42 @@ export function toQueryString(state: SearchState): string {
   if (state.times.length) params.set("time", state.times.join(","));
   if (state.limit !== PAGE_SIZE) params.set("limit", String(state.limit));
   if (state.session) params.set("session", state.session);
+  if (state.collapsed.length) params.set("collapsed", state.collapsed.join(","));
   const query = params.toString();
   return query ? `?${query}` : "";
 }
 
 /**
  * Link to `path` with the state changed by `changes`. The result count resets,
- * and so does a shared session: any change goes back to the full list.
+ * collapsed days open again, and a shared session ends: any change goes back to
+ * the full list.
  */
 export function hrefWith(path: string, state: SearchState, changes: Partial<SearchState>): string {
-  return `${path}${toQueryString({ ...state, limit: PAGE_SIZE, session: null, ...changes })}`;
+  return `${path}${toQueryString({ ...state, limit: PAGE_SIZE, session: null, collapsed: [], ...changes })}`;
+}
+
+/** URLSearchParams as the page-style record that parseSearchParams reads. */
+export function toRawSearchParams(params: URLSearchParams): RawSearchParams {
+  const raw: RawSearchParams = {};
+  for (const key of new Set(params.keys())) {
+    const all = params.getAll(key);
+    raw[key] = all.length === 1 ? all[0] : all;
+  }
+  return raw;
+}
+
+/**
+ * `href` with `date` collapsed or opened, keeping everything else (including
+ * the page size), or null if it's already that way.
+ */
+export function withCollapsed(href: string, date: string, collapse: boolean): string | null {
+  const url = new URL(href, "http://x");
+  const state = parseSearchParams(toRawSearchParams(url.searchParams));
+  if (state.collapsed.includes(date) === collapse) return null;
+  const collapsed = collapse
+    ? [...state.collapsed, date].sort()
+    : state.collapsed.filter((d) => d !== date);
+  return `${url.pathname}${toQueryString({ ...state, collapsed })}`;
 }
 
 /**

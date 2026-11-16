@@ -2,16 +2,48 @@
   margin-top: 8px;
 }
 
+/* The <summary>: tap anywhere on the row to collapse or open the day. */
 .heading {
   position: sticky;
   top: 0;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
   margin: 0 calc(-1 * var(--space));
   padding: 10px var(--space);
   background: var(--bg);
   border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  list-style: none;
+}
+
+.heading::-webkit-details-marker {
+  display: none;
+}
+
+.title {
+  margin: 0;
   font-size: 1rem;
   font-weight: 800;
+  line-height: 1.5;
+}
+
+/* Points down when open, right when collapsed. */
+.chevron {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  margin-top: -4px;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg);
+}
+
+details:not([open]) > .heading .chevron {
+  margin-top: 0;
+  transform: rotate(-45deg);
 }
 
 .list {

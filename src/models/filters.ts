@@ -60,7 +60,7 @@ export function filterSessions(
     if (filters.sessionId && s.id !== filters.sessionId) return false;
     if (filters.type && s.type !== filters.type) return false;
     if (centres && !centres.has(s.centreId)) return false;
-    const day = s.start.slice(0, 10);
+    const day = dayOf(s);
     if (filters.from && day < filters.from) return false;
     if (filters.to && day > filters.to) return false;
     if (times && !times.has(timeOfDay(s.start))) return false;
@@ -69,20 +69,70 @@ export function filterSessions(
   });
 }
 
-export interface DayGroup {
+/** A session's date, "YYYY-MM-DD" (Toronto time). */
+export const dayOf = (session: Session) => session.start.slice(0, 10);
+
+export interface PageDay {
   /** "YYYY-MM-DD" */
   date: string;
   sessions: Session[];
+  /** Collapsed: shown as a heading only, with no sessions. */
+  collapsed: boolean;
 }
 
-/** Groups sessions by start date, keeping their order. Input should be sorted. */
-export function groupByDay(sessions: readonly Session[]): DayGroup[] {
-  const groups: DayGroup[] = [];
-  for (const session of sessions) {
-    const date = session.start.slice(0, 10);
-    const last = groups.at(-1);
-    if (last?.date === date) last.sessions.push(session);
-    else groups.push({ date, sessions: [session] });
+/** Sessions of the next day shown after a page that holds only one open day. */
+const NEXT_DAY_PREVIEW = 5;
+
+/**
+ * One page of results by day: up to `limit` sessions from days that aren't
+ * collapsed, plus a heading for each collapsed day among them. Collapsed days
+ * don't use up the page, so collapsing one brings in the next sessions.
+ *
+ * A page that's all one open day also shows the start of the next open day,
+ * so collapsing that day reveals cards at once instead of a blank screen.
+ * Input should be sorted.
+ */
+export function pageDays(
+  sessions: readonly Session[],
+  limit: number,
+  collapsed: readonly string[],
+): { days: PageDay[]; shown: number; more: boolean } {
+  const hidden = new Set(collapsed);
+  const days: PageDay[] = [];
+  let shown = 0;
+  const add = (session: Session) => {
+    const date = dayOf(session);
+    let day = days.at(-1);
+    if (day?.date !== date) days.push((day = { date, sessions: [], collapsed: hidden.has(date) }));
+    if (!day.collapsed) {
+      day.sessions.push(session);
+      shown++;
+    }
+  };
+
+  let i = 0;
+  for (; i < sessions.length && shown < limit; i++) add(sessions[i]);
+
+  const open = days.filter((d) => !d.collapsed);
+  if (open.length === 1) {
+    const long = open[0].date;
+    let next: string | null = null;
+    let previewed = 0;
+    for (; i < sessions.length && previewed < NEXT_DAY_PREVIEW; i++) {
+      const date = dayOf(sessions[i]);
+      if (date === long) continue; // the rest of the long day stays behind "Show more"
+      if (!hidden.has(date)) {
+        if (next !== null && date !== next) break; // only the next open day
+        next = date;
+        previewed++;
+      }
+      add(sessions[i]);
+    }
   }
-  return groups;
+
+  // Usually nothing is collapsed, so skip the count.
+  const openTotal = hidden.size
+    ? sessions.reduce((n, s) => (hidden.has(dayOf(s)) ? n : n + 1), 0)
+    : sessions.length;
+  return { days, shown, more: shown < openTotal };
 }
