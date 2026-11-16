@@ -4,8 +4,10 @@ import { foldText } from "@/models/filters";
 import {
   mergeSessions,
   normalizeEvents,
+  packSessions,
   roomName,
   sessionId,
+  unpackSessions,
   type Session,
 } from "@/models/session";
 import { fixture } from "./fixtures";
@@ -107,5 +109,15 @@ describe("mergeSessions", () => {
     for (let i = 1; i < merged.length; i++) {
       expect(merged[i - 1].start <= merged[i].start).toBe(true);
     }
+  });
+});
+
+describe("packSessions", () => {
+  it("round-trips through unpackSessions and is smaller", () => {
+    const sessions = mergeSessions(normalizeEvents(events1, 1), normalizeEvents(events3, 3));
+    const packed = packSessions(sessions);
+    expect(packed.length).toBeLessThan(sessions.length);
+    expect(unpackSessions(packed)).toEqual(sessions);
+    expect(JSON.stringify(packed).length).toBeLessThan(JSON.stringify(sessions).length);
   });
 });

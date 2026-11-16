@@ -116,6 +116,51 @@ export function sortSessions(sessions: readonly Session[]): Session[] {
   );
 }
 
+/**
+ * Sessions grouped by activity, for the remote cache (billed per 8 KB read).
+ * A weekly program repeats its title, centre, room and link on every
+ * occurrence, so this is about 4x smaller. id and searchText are rebuilt.
+ */
+export interface PackedActivity extends Omit<Session, "id" | "start" | "end" | "searchText"> {
+  times: [start: LocalDateTime, end: LocalDateTime][];
+}
+
+export function packSessions(sessions: readonly Session[]): PackedActivity[] {
+  const byKey = new Map<string, PackedActivity>();
+  for (const s of sessions) {
+    // Listed explicitly, so a new Session field fails to compile here instead of being dropped.
+    const rest: Omit<PackedActivity, "times"> = {
+      type: s.type,
+      title: s.title,
+      centreId: s.centreId,
+      centreName: s.centreName,
+      facility: s.facility,
+      activityId: s.activityId,
+      url: s.url,
+    };
+    const key = JSON.stringify(rest);
+    let packed = byKey.get(key);
+    if (!packed) byKey.set(key, (packed = { ...rest, times: [] }));
+    packed.times.push([s.start, s.end]);
+  }
+  return [...byKey.values()];
+}
+
+/** Undoes packSessions: one sorted list without duplicates. */
+export function unpackSessions(packed: readonly PackedActivity[]): Session[] {
+  return mergeSessions(
+    packed.flatMap(({ times, ...rest }) =>
+      times.map(([start, end]) => ({
+        ...rest,
+        id: sessionId(rest.type, rest.activityId, start),
+        start,
+        end,
+        searchText: foldText(`${rest.title} ${rest.centreName} ${rest.facility}`),
+      })),
+    ),
+  );
+}
+
 /** Merges session lists (e.g. both calendars) into one sorted list without duplicates. */
 export function mergeSessions(...lists: ReadonlyArray<readonly Session[]>): Session[] {
   const byId = new Map<string, Session>();

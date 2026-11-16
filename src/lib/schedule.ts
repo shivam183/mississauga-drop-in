@@ -1,7 +1,7 @@
 /**
  * Schedule service: loads sessions for both calendars in small batches and
- * caches the normalised result (the raw calendar 1 response is ~12 MB, so
- * only the small Session objects are cached). Server-side only.
+ * caches the normalised result packed by activity (the raw calendar 1 response
+ * is ~12 MB; the packed sessions are well under 1 MB). Server-side only.
  */
 import { cacheLife, cacheTag } from "next/cache";
 import { getActiveNetClient } from "@/lib/activenet";
@@ -9,8 +9,10 @@ import type { CalendarId } from "@/lib/activenet/types";
 import { CENTRES_BY_TYPE, type Centre } from "@/lib/centres";
 import {
   CALENDAR_FOR_TYPE,
-  mergeSessions,
   normalizeEvents,
+  packSessions,
+  unpackSessions,
+  type PackedActivity,
   type Session,
   type SessionType,
 } from "@/models/session";
@@ -18,16 +20,16 @@ import {
 /** Centres per events request. Keeps calendar 1 responses to ~2–3 MB each. */
 export const CENTRES_PER_REQUEST = 5;
 
-/** One batch of centres for one calendar, cached for 10 minutes. */
+/** One batch of centres for one calendar, packed, cached for 10 minutes. */
 export async function getCentreBatch(
   calendar: CalendarId,
   centreIds: readonly number[],
-): Promise<Session[]> {
+): Promise<PackedActivity[]> {
   "use cache: remote"; // shared across Vercel instances
   cacheLife("schedule");
   cacheTag("schedule", `schedule-${calendar}`);
   const body = await getActiveNetClient().getEvents(calendar, centreIds);
-  return normalizeEvents(body, calendar);
+  return packSessions(normalizeEvents(body, calendar));
 }
 
 export interface Schedule {
@@ -56,10 +58,13 @@ export async function getSchedule(
   // a miss. No cacheLife here, so the shorter lifetime after a failure carries over.
   "use cache";
   cacheTag("schedule");
-  return remoteSchedule(types);
+  const { packed, failedCentres } = await remoteSchedule(types);
+  return { sessions: unpackSessions(packed), failedCentres };
 }
 
-async function remoteSchedule(types: readonly SessionType[]): Promise<Schedule> {
+async function remoteSchedule(
+  types: readonly SessionType[],
+): Promise<{ packed: PackedActivity[]; failedCentres: Centre[] }> {
   "use cache: remote";
   cacheTag("schedule");
   const jobs = types.flatMap((type) =>
@@ -74,7 +79,7 @@ async function remoteSchedule(types: readonly SessionType[]): Promise<Schedule> 
     ),
   );
 
-  const lists: Session[][] = [];
+  const lists: PackedActivity[][] = [];
   const failed = new Map<number, Centre>();
   results.forEach((result, i) => {
     if (result.status === "fulfilled") {
@@ -93,5 +98,6 @@ async function remoteSchedule(types: readonly SessionType[]): Promise<Schedule> 
   // (each is cached separately), so schedules may lag ~20 min at worst. Fine for timetables.
   if (failed.size) cacheLife("minutes");
   else cacheLife("schedule");
-  return { sessions: mergeSessions(...lists), failedCentres: [...failed.values()] };
+  // Batches cover different centres, so concatenating is enough; unpackSessions sorts.
+  return { packed: lists.flat(), failedCentres: [...failed.values()] };
 }
