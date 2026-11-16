@@ -23,7 +23,7 @@ export async function getCentreBatch(
   calendar: CalendarId,
   centreIds: readonly number[],
 ): Promise<Session[]> {
-  "use cache: remote"; // shared across Vercel instances; in-memory "use cache" misses on serverless
+  "use cache: remote"; // shared across Vercel instances
   cacheLife("schedule");
   cacheTag("schedule", `schedule-${calendar}`);
   const body = await getActiveNetClient().getEvents(calendar, centreIds);
@@ -52,6 +52,14 @@ function batches<T>(items: readonly T[], size: number): T[][] {
 export async function getSchedule(
   types: readonly SessionType[] = ["dropin", "enroll"],
 ): Promise<Schedule> {
+  // This instance's memory first (free), the remote cache (billed per read) only on
+  // a miss. No cacheLife here, so the shorter lifetime after a failure carries over.
+  "use cache";
+  cacheTag("schedule");
+  return remoteSchedule(types);
+}
+
+async function remoteSchedule(types: readonly SessionType[]): Promise<Schedule> {
   "use cache: remote";
   cacheTag("schedule");
   const jobs = types.flatMap((type) =>

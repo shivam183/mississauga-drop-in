@@ -31,6 +31,12 @@ the API.
 | `getCachedButtonStatus` (availability.ts) | `schedule` | 10 min   | activity id + session start |
 | `getCachedDetail` (availability.ts)       | `spots`    | 60 s     | activity id                 |
 
+All of these use `"use cache: remote"` (Vercel's Runtime Cache, shared by all
+instances and billed per read). `getSchedule`, `getCachedDetail` and
+`getCachedButtonStatus` also have a plain `"use cache"` (in-memory) layer in front,
+so a warm instance answers repeat lookups without a billed read. As a result, a value can be up to
+about twice its lifetime old.
+
 Anything that depends on the current time, like hiding ended sessions or
 deciding whether enrollment has opened, runs at request time, outside the cache.
 Each spot count carries `checkedAt`, so the page can say "as of 3:42 pm".
