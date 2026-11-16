@@ -22,12 +22,31 @@ async function fetchDetail(activityId: number): Promise<{ body: ActivityDetailBo
   return { body, at: new Date().toISOString() };
 }
 
-/** Spots left for one session, cached 60 s. */
-export async function getCachedDetail(activityId: number) {
-  "use cache: remote"; // shared across Vercel instances; in-memory "use cache" misses on serverless
+async function remoteDetail(activityId: number) {
+  "use cache: remote"; // shared across Vercel instances
   cacheLife("spots");
   cacheTag("spots", `spots-${activityId}`);
   return fetchDetail(activityId);
+}
+
+async function remoteButtonStatus(
+  activityId: number,
+  sessionStart: LocalDateTime,
+): Promise<ButtonStatusBody> {
+  "use cache: remote"; // shared across Vercel instances
+  cacheLife("schedule");
+  cacheTag("enroll", `enroll-${activityId}`);
+  return getActiveNetClient().getButtonStatus(activityId, sessionStart);
+}
+
+// The exported lookups check this instance's memory first (free) and read the
+// remote cache (billed per read) only on a miss. Lifetimes carry over from the inner call.
+
+/** Spots left for one session, cached 60 s. */
+export async function getCachedDetail(activityId: number) {
+  "use cache";
+  cacheTag("spots", `spots-${activityId}`);
+  return remoteDetail(activityId);
 }
 
 /** Enroll link, opening time and notice for one session, cached 10 min. */
@@ -35,10 +54,9 @@ export async function getCachedButtonStatus(
   activityId: number,
   sessionStart: LocalDateTime,
 ): Promise<ButtonStatusBody> {
-  "use cache: remote"; // shared across Vercel instances; in-memory "use cache" misses on serverless
-  cacheLife("schedule");
+  "use cache";
   cacheTag("enroll", `enroll-${activityId}`);
-  return getActiveNetClient().getButtonStatus(activityId, sessionStart);
+  return remoteButtonStatus(activityId, sessionStart);
 }
 
 export interface AvailabilityResult {
