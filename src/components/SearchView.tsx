@@ -114,7 +114,7 @@ export function SearchSkeleton() {
       <div className={styles.results}>
         <p className={styles.summary}>Loading sessions…</p>
         {Array.from({ length: 4 }, (_, i) => (
-          <div key={i} className={styles.cardSkeleton} />
+          <div key={i} className={`${styles.cardSkeleton} shimmer`} />
         ))}
       </div>
     </div>

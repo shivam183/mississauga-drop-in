@@ -24,7 +24,7 @@ export function SpotsLeft({
   if (entry.phase !== "ready") {
     return (
       <p className={styles.spots} aria-busy="true">
-        <span className={styles.skeleton} />
+        <span className={`${styles.skeleton} shimmer`} />
         <span className="visually-hidden">Checking spots left…</span>
       </p>
     );

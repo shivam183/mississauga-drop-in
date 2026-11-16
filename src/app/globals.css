@@ -15,6 +15,8 @@
   --radius: 12px;
   --space: 16px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* The light band that sweeps across loading placeholders. */
+  --shimmer: rgb(255 255 255 / 0.7);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,6 +31,7 @@
     --open: #5cc97a;
     --few: #f0b44c;
     --full: #ff7b6e;
+    --shimmer: rgb(255 255 255 / 0.12);
   }
 }
 
@@ -209,9 +212,31 @@ h1 {
   }
 }
 
+/* Loading placeholders: a light band sweeps left to right over the grey. */
+.shimmer {
+  background-image: linear-gradient(90deg, transparent 40%, var(--shimmer) 50%, transparent 60%);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .link-pending[data-pending="true"] {
     animation: none;
     opacity: 0.6;
+  }
+
+  .shimmer {
+    animation: none;
+    background-image: none;
   }
 }

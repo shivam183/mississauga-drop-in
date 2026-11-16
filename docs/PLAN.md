@@ -114,6 +114,7 @@ Dependabot (`dependabot.yml`) uses Conventional Commit prefixes (`fix(deps)`, `c
 - There is no horizontal scrolling at 360px width.
 - The default font is 16px, and contrast meets WCAG AA in light and dark mode.
 - Spots-left colour: green for more than 5, amber for 1–5, red for full. The text label is always shown too, so colour is never the only signal.
+- **Loading placeholders** (result cards on first load or when a collapsed day reopens, the spots-left bar and the Enroll button) are grey shapes with a light band sweeping left to right. The band is off for anyone who prefers reduced motion.
 
 ## Directory structure (open source conventions)
 

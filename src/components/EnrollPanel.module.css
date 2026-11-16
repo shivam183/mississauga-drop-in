@@ -89,7 +89,7 @@
   width: 11rem;
   height: 1rem;
   border-radius: 6px;
-  background: var(--border);
+  background-color: var(--border);
 }
 
 .button {
@@ -127,7 +127,7 @@
 }
 
 .placeholder {
-  background: var(--surface);
+  background-color: var(--surface);
 }
 
 .notice {

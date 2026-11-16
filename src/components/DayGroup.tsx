@@ -43,8 +43,8 @@ export function DayGroup({
           <div role="status" aria-busy="true">
             <span className="visually-hidden">Loading…</span>
             {/* The same placeholder cards as the first page load. */}
-            <div className={searchStyles.cardSkeleton} />
-            <div className={searchStyles.cardSkeleton} />
+            <div className={`${searchStyles.cardSkeleton} shimmer`} />
+            <div className={`${searchStyles.cardSkeleton} shimmer`} />
           </div>
         )}
         {group.sessions.length > 0 && (

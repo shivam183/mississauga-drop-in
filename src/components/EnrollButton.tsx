@@ -14,7 +14,7 @@ export function EnrollButton({
   cityUrl: string | null;
 }) {
   if (!state)
-    return <span className={`${styles.button} ${styles.placeholder}`} aria-hidden="true" />;
+    return <span className={`${styles.button} ${styles.placeholder} shimmer`} aria-hidden="true" />;
 
   switch (state.state) {
     case "enroll":
