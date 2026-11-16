@@ -597,3 +597,88 @@ test("tapping anywhere on a card opens its details; its own links still work", a
   await expect(page).toHaveURL(/centre=\d+/);
   expect(context.pages()).toHaveLength(1);
 });
+
+test.describe("collapsible days", () => {
+  const day = (page: Page, n: number) => page.locator("details").nth(n);
+  /** Opens the page and waits for hydration (Share buttons appear only then). */
+  async function open(page: Page) {
+    await page.goto("/");
+    await expect(page.getByRole("button", { name: /^Share / }).first()).toBeVisible();
+  }
+
+  test("collapsing a day keeps its heading and refills the page; opening brings it back", async ({
+    page,
+  }) => {
+    await open(page);
+    const cards = page.getByRole("article");
+    await expect(cards).toHaveCount(30);
+    const first = day(page, 0);
+    const heading = first.getByRole("heading", { level: 2 });
+    const firstCards = await first.getByRole("article").count();
+    const days = await page.locator("details").count();
+
+    await first.locator("summary").click();
+    await expect(page).toHaveURL(/[?&]collapsed=\d{4}-\d{2}-\d{2}/);
+    await expect(first.getByRole("article")).toHaveCount(0);
+    await expect(heading).toBeVisible();
+    await expect(first.getByText("Loading…")).toBeHidden();
+    // Collapsed days don't use up the page, so later sessions fill it.
+    await expect(cards).toHaveCount(30);
+    await expect(page.locator("details")).not.toHaveCount(days);
+
+    await first.locator("summary").click();
+    await expect(page).not.toHaveURL(/collapsed=/);
+    await expect(first.getByRole("article")).toHaveCount(firstCards);
+  });
+
+  test("collapsing a day from its stuck heading keeps it at the top, with no jump", async ({
+    page,
+  }) => {
+    await open(page);
+    const first = day(page, 0);
+    await first.getByRole("article").nth(8).scrollIntoViewIfNeeded();
+    await page.mouse.wheel(0, 400);
+    const summary = first.locator("summary");
+    await expect(summary).toBeInViewport();
+    expect(await first.evaluate((d) => d.getBoundingClientRect().top)).toBeLessThan(0);
+
+    await summary.click();
+    // Right away, before the refill: no jump to the top of the page, the heading
+    // sits at the top of the screen, and the next day's cards are already there.
+    const top = await summary.evaluate((s) => s.getBoundingClientRect().top);
+    expect(Math.abs(top)).toBeLessThanOrEqual(2);
+    expect(await page.evaluate(() => scrollY)).toBeGreaterThan(100);
+    await expect(day(page, 1).getByRole("article").first()).toBeInViewport();
+
+    await expect(page).toHaveURL(/collapsed=/);
+    await expect(first.getByRole("article")).toHaveCount(0);
+    await expect(summary).toBeInViewport();
+  });
+
+  test("Show more keeps collapsed days; a new search opens them all", async ({ page }) => {
+    await open(page);
+    await day(page, 0).locator("summary").click();
+    await expect(page).toHaveURL(/collapsed=/);
+    await page.getByRole("link", { name: "Show more" }).click();
+    await expect(page).toHaveURL(/limit=60/);
+    await expect(page).toHaveURL(/collapsed=/);
+    await expect(day(page, 0)).not.toHaveAttribute("open");
+
+    const chips = page.getByRole("navigation", { name: "Activity" });
+    await chips.getByRole("link", { name: "Swim" }).click();
+    await expect(page).toHaveURL(/[?&]q=swim\b/);
+    await expect(page).not.toHaveURL(/collapsed=/);
+    await expect(page.locator("details:not([open])")).toHaveCount(0);
+  });
+
+  test("a heading toggles from the keyboard", async ({ page }) => {
+    await open(page);
+    const summary = day(page, 0).locator("summary");
+    await summary.focus();
+    await page.keyboard.press("Enter");
+    await expect(day(page, 0)).not.toHaveAttribute("open");
+    await expect(page).toHaveURL(/collapsed=/);
+    await page.keyboard.press("Enter");
+    await expect(day(page, 0)).toHaveAttribute("open");
+  });
+});

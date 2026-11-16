@@ -13,12 +13,14 @@ import {
   activeFilterCount,
   EMPTY_SEARCH,
   hrefWith,
+  MAX_COLLAPSED,
   MAX_LIMIT,
   PAGE_SIZE,
   parseSearchParams,
   toFilters,
   toQueryString,
 } from "@/lib/params";
+import { withCollapsed } from "@/components/DayDetails";
 import { clientIp, createRateLimiter } from "@/lib/rate-limit";
 
 describe("format", () => {
@@ -111,7 +113,26 @@ describe("params", () => {
       times: ["morning", "evening"],
       limit: 4 * PAGE_SIZE, // rounded up to whole pages
       session: null,
+      collapsed: [],
     });
+  });
+
+  it("reads collapsed days: valid dates only, sorted, at most MAX_COLLAPSED", () => {
+    const state = parseSearchParams({
+      collapsed: "2026-11-17,bogus,2026-11-16,2026-02-30,2026-11-17",
+      limit: "60",
+    });
+    expect(state.collapsed).toEqual(["2026-11-16", "2026-11-17"]);
+    expect(toQueryString(state)).toBe("?limit=60&collapsed=2026-11-16%2C2026-11-17");
+    const many = Array.from({ length: 20 }, (_, i) => addDays("2026-11-01", i));
+    expect(parseSearchParams({ collapsed: many.join(",") }).collapsed).toEqual(
+      many.slice(0, MAX_COLLAPSED),
+    );
+    // Any change opens every day again; Show more keeps them by passing them on.
+    expect(hrefWith("/", state, { q: "swim" })).toBe("/?q=swim");
+    expect(hrefWith("/", state, { limit: 90, collapsed: state.collapsed })).toBe(
+      "/?limit=90&collapsed=2026-11-16%2C2026-11-17",
+    );
   });
 
   it("reads the filter form's day picker", () => {
@@ -221,5 +242,23 @@ describe("rate limit", () => {
     );
     expect(clientIp(new Headers({ "x-real-ip": "203.0.113.9" }))).toBe("203.0.113.9");
     expect(clientIp(new Headers())).toBe("unknown");
+  });
+});
+
+describe("withCollapsed", () => {
+  it("adds or removes one day and keeps the rest of the URL", () => {
+    expect(withCollapsed("/?q=swim", "2026-11-17", true)).toBe("/?q=swim&collapsed=2026-11-17");
+    expect(withCollapsed("/?collapsed=2026-11-17&limit=60", "2026-11-16", true)).toBe(
+      "/?collapsed=2026-11-16%2C2026-11-17&limit=60",
+    );
+    expect(withCollapsed("/?collapsed=2026-11-16%2C2026-11-17", "2026-11-16", false)).toBe(
+      "/?collapsed=2026-11-17",
+    );
+    expect(withCollapsed("/?collapsed=2026-11-17", "2026-11-17", false)).toBe("/");
+  });
+
+  it("returns null when the URL already agrees, so a re-render doesn't navigate", () => {
+    expect(withCollapsed("/?collapsed=2026-11-17", "2026-11-17", true)).toBeNull();
+    expect(withCollapsed("/?q=swim", "2026-11-17", false)).toBeNull();
   });
 });

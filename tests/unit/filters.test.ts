@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { filterSessions, foldText, groupByDay, timeOfDay } from "@/models/filters";
+import { filterSessions, foldText, pageDays, timeOfDay } from "@/models/filters";
 import type { Session } from "@/models/session";
 
 function session(overrides: Partial<Session>): Session {
@@ -94,13 +94,72 @@ describe("helpers", () => {
   it("foldText removes accents and symbols", () => {
     expect(foldText("Café Zumba® 55+")).toBe("cafe zumba 55");
   });
+});
 
-  it("groupByDay keeps order and groups by start date", () => {
-    const groups = groupByDay(filterSessions(sessions, {}, now));
-    expect(groups.map((g) => [g.date, ids(g.sessions)])).toEqual([
+describe("pageDays", () => {
+  const all = () => filterSessions(sessions, {}, now);
+  const shape = (page: ReturnType<typeof pageDays>) =>
+    page.days.map((d) => [d.date, d.collapsed ? "collapsed" : ids(d.sessions)]);
+
+  it("with nothing collapsed, groups the first `limit` sessions by day, in order", () => {
+    expect(shape(pageDays(all(), 30, []))).toEqual([
       ["2026-11-15", ["running", "pickle"]],
       ["2026-11-16", ["zumba"]],
       ["2026-11-18", ["swim"]],
     ]);
+    const page = pageDays(all(), 3, []);
+    expect(shape(page)).toEqual([
+      ["2026-11-15", ["running", "pickle"]],
+      ["2026-11-16", ["zumba"]],
+    ]);
+    expect(page).toMatchObject({ shown: 3, more: true });
+    expect(pageDays(all(), 4, [])).toMatchObject({ shown: 4, more: false });
+  });
+
+  it("collapsed days keep their heading but don't use up the page", () => {
+    const page = pageDays(all(), 2, ["2026-11-15"]);
+    expect(shape(page)).toEqual([
+      ["2026-11-15", "collapsed"],
+      ["2026-11-16", ["zumba"]],
+      ["2026-11-18", ["swim"]],
+    ]);
+    expect(page).toMatchObject({ shown: 2, more: false });
+  });
+
+  it("a one-day page previews the next open day, past collapsed days", () => {
+    const page = pageDays(all(), 2, ["2026-11-16"]);
+    expect(shape(page)).toEqual([
+      ["2026-11-15", ["running", "pickle"]],
+      ["2026-11-16", "collapsed"],
+      ["2026-11-18", ["swim"]],
+    ]);
+    expect(page).toMatchObject({ shown: 3, more: false });
+  });
+
+  it("a one-day page with more of that day keeps the rest behind Show more", () => {
+    const page = pageDays(all(), 1, []);
+    expect(shape(page)).toEqual([
+      ["2026-11-15", ["running"]],
+      ["2026-11-16", ["zumba"]],
+    ]);
+    expect(page).toMatchObject({ shown: 2, more: true });
+  });
+
+  it("a page with two or more open days has no preview", () => {
+    const page = pageDays(all(), 3, []);
+    expect(shape(page)).toEqual([
+      ["2026-11-15", ["running", "pickle"]],
+      ["2026-11-16", ["zumba"]],
+    ]);
+  });
+
+  it("with every day collapsed, shows only headings and nothing more to load", () => {
+    const page = pageDays(all(), 30, ["2026-11-15", "2026-11-16", "2026-11-18"]);
+    expect(shape(page)).toEqual([
+      ["2026-11-15", "collapsed"],
+      ["2026-11-16", "collapsed"],
+      ["2026-11-18", "collapsed"],
+    ]);
+    expect(page).toMatchObject({ shown: 0, more: false });
   });
 });
