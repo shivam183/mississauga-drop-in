@@ -214,21 +214,23 @@ Goal: get a regular user from opening the site to the session they want in as fe
 
 **Spec: collapsible day sections**
 
-Today's list is long, and each day's sticky heading ("Today · Mon Nov 16") stays on screen while you scroll through it. Tapping a heading collapses that day, so you can skip past it to the next.
+Unfiltered, one weekday has 220–250 sessions (weekends about 100; live schedule, 2026-11-16), so the first page of 30 is all Today. Each day's sticky heading ("Today · Mon Nov 16") stays on screen while you scroll through it. Tapping a heading collapses that day, and the page refills with the next sessions, so there's always something below.
 
 - **What:** each day group becomes a native `<details open>` with the heading inside its `<summary>` (the `<h2>` stays, for heading navigation). A chevron after the heading shows the state: pointing down when open, right when collapsed.
 - **Behaviour:**
   - Every day starts open. Tapping or pressing Enter/Space on a heading collapses or opens that day only.
-  - A collapsed day keeps its heading in the list, so you can see it's there and open it again.
+  - **Collapsed days don't count toward the page.** The page still shows up to 30 sessions (more after "Show more"), taken from the open days only. Collapsing Today brings in Tomorrow's first sessions; collapsing Tomorrow brings in the next day's, and so on.
+  - A collapsed day keeps its heading in the list (headings appear for collapsed days up to the last session shown), so you can see it's there and open it again. Opening it brings its sessions back at the top, and the page keeps its size, so later sessions move below "Show more".
+  - Pages stay at 30 sessions, not whole days: a whole weekday is too many cards for a phone (50 per page already cost Lighthouse points; see Phase 3). A heading can cover part of a day, as it does today, and "Show more" continues it.
   - Collapsing a day from its stuck heading keeps that heading on screen, with the next day directly below it, instead of jumping the page to wherever the scroll position lands.
-  - "Show more" keeps collapsed days collapsed. A new search or filter change opens every day again, so new results are never hidden.
-  - Nothing is remembered between visits (no storage).
-- **Scope:** it skims what's on the current page (30 sessions). It doesn't fetch other days; to jump to a specific day, use the filter sheet's day picker.
-- **No JavaScript needed** for collapsing (native element). Keeping a collapsed stuck heading on screen is a small enhancement that needs JavaScript; without it, collapsing still works.
+  - **State lives in the URL:** `collapsed=2026-11-16,2026-11-17` (valid dates only, at most 14). "Show more" keeps it. A new search or filter change drops it, like `session`, so new results are never hidden. Nothing is stored in the browser.
+- **How it loads:** the collapse happens instantly in the browser. The client then replaces the URL without scrolling (`router.replace`, `scroll: false`), and the server renders the refilled page, the same path as "Show more". A pure function picks the page (the first `limit` sessions, skipping collapsed days) and is unit-tested.
+- **Without JavaScript:** the native element still collapses and opens days, but the page doesn't refill.
 - **Accessibility:** the summary is focusable and announces expanded/collapsed natively; the focus ring is visible; the whole heading row is a tap target of at least 44px.
-- **Cost:** no new data and no new cache entries.
+- **Cost (checked 2026-11-16):** each collapse is one page request, the same as tapping "Show more". No new cache entries: the schedule is one entry whatever the URL, so a warm server reads it from memory and a cold one makes one remote read. No extra requests to the City. Spots lookups stay the same or drop, since collapsed days' cards stop asking. A 60-card page response is 12.7 KB gzipped and took 0.43 s. While the Runtime Cache is paused, a cold server can take 3–6 s to refill; the collapse itself is still instant.
 - **Acceptance:**
-  - e2e at 375px: tapping a heading hides that day's cards and keeps its heading; tapping it again shows them; other days are unaffected.
+  - Unit: page selection with no collapsed days (unchanged from today), with collapsed days skipped, with every day collapsed, and with `limit` above 30. `collapsed` parsing rejects bad dates and caps the list.
+  - e2e at 375px: collapsing a heading hides that day's cards, keeps its heading, and refills the page with the next sessions; opening it brings them back; other days are unaffected.
   - e2e: collapsing a heading while it's stuck leaves that heading visible on screen.
   - e2e: after "Show more", a collapsed day is still collapsed; after a new search, every day is open.
   - e2e: keyboard, Tab to a heading and press Enter to toggle.
