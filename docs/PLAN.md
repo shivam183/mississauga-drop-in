@@ -49,23 +49,37 @@ Answered in Phase 1 (see `docs/data-source.md`):
 ## Tech stack
 
 - **Next.js (App Router) + TypeScript + React**, rendered on the server and styled with CSS modules.
-- **Caching:** this Next.js version uses Cache Components (`cacheComponents: true`), so caching uses `"use cache"` with `cacheLife` in the `src/lib/` services, not `fetch` revalidate options. The ActiveNet client itself never caches. Normalised schedules are cached for 10 minutes, and spot counts and button status for 60 seconds. The refresh button bypasses the cache with `?fresh=1`, rate-limited per IP.
+- **Caching:** this Next.js version uses Cache Components (`cacheComponents: true`), so caching uses `"use cache"` with `cacheLife` in the `src/lib/` services, not `fetch` revalidate options. The ActiveNet client itself never caches. Normalised schedules and button status (enroll link, opening time) are cached for 10 minutes, and spot counts for 60 seconds. The refresh button bypasses the cache with `?fresh=1`, rate-limited per IP.
+  - **Two layers** (#17, #44): each lookup checks the server's own memory first (`"use cache"`, free), then Vercel's shared Runtime Cache (`"use cache: remote"`, billed per 8 KB read). Memory alone isn't enough on serverless (every cold server refetched from the City, 3–6 s per page, fixed in #17); remote alone is costly. A value can be up to about twice its lifetime old.
+  - **Small entries** (#45): the Runtime Cache rejects items over **2 MB** (HTTP 413). The merged schedule is stored packed by activity (`packSessions`): about 780 KB instead of 3.4 MB. Keep any new remote entry well under 2 MB, and check its size against live data.
+  - Details and the cache table are in `docs/architecture.md`.
 - **Load on the City's servers:** request starts are throttled to at most 2 per second, with at most 4 lookups in flight at once (per server process).
 - **Tooling:** Vitest, ESLint and Prettier, Node 22.
-- **Hosting:** Vercel, connected through its GitHub integration. Every PR gets a preview URL, and every merge to `main` deploys to production.
+- **Hosting:** Vercel (free Hobby plan), connected through its GitHub integration. Every PR gets a preview URL, and every merge to `main` deploys to production at https://mississaugadropin.com.
+
+### Hosting limits
+
+The Hobby plan includes **1M Runtime Cache read units a month** (1 unit = 8 KB read), shared by all projects on the team. Going over isn't billed: the Runtime Cache is paused until the period resets, and the site falls back to server memory and the City's API (an occasional 3–6 s first load on a cold server, more requests to the City).
+
+**Incident, 2026-11-14 to 16:** the full 1M units were used in about two days, and the cache was paused on 2026-11-16 until the period resets (about 2026-12-14; check Vercel → Usage).
+
+- **Cause:** the merged schedule (3.4 MB) was over the 2 MB item limit, so it was never stored (`413` in the runtime logs). Every page render that missed memory read all the centre batches (about 426 units) and then failed to save the result. Most reads came in bursts right after deploys, when every cache starts empty.
+- **Fixes:** #44 (memory in front of the remote cache) and #45 (packed schedule, under 2 MB, confirmed with no `413` after deploy).
+- **Lessons:** measure the size of anything stored in the remote cache; every deploy empties the cache, so batch changes into fewer deploys; the free plan has 1 hour of runtime logs and no usage metrics by function, so check the runtime logs soon after a deploy.
+- **Before a publicity push** (such as a Reddit post): make sure the Runtime Cache isn't paused, or be on Pro for that month.
 
 ## GitHub automation
 
-| Workflow                   | Trigger                         | What it does                                                                                                                                                                                |
-| -------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ci.yml`                   | push to `main`, PRs             | lint, format check, typecheck, test, build                                                                                                                                                  |
-| `pr-title.yml`             | PR opened/edited                | Requires a Conventional Commit PR title (`feat:`, `fix(enroll):` …). PRs are squash-merged, so the title becomes the commit message on `main`.                                              |
-| `release-please.yml`       | push to `main`                  | Keeps a release PR open with the next version and `CHANGELOG.md`. Merging it tags `vX.Y.Z` and publishes a GitHub Release. `feat` bumps 0.x minor.                                          |
-| `codeql.yml`               | push to `main`, PRs, weekly     | CodeQL security scan (`security-extended` queries)                                                                                                                                          |
-| `dependabot-automerge.yml` | Dependabot PRs                  | Auto-merges patch updates, and minor updates to dev dependencies and Actions, once required checks pass. Major updates wait for a human.                                                    |
-| `api-health.yml`           | nightly cron, manual            | `npm run check-api`: 8 requests covering all four endpoints. Fails if a response shape or the `space_status` wording changes, so a broken unofficial API is noticed before users notice it. |
-| `update-centres.yml`       | weekly cron, manual             | Runs `scripts/update-centres.ts` and opens a PR if `data/centres.*.json` changed                                                                                                            |
-| `lighthouse.yml` _(Ph. 3)_ | Vercel preview deployment ready | Lighthouse CI on the preview URL; fails below 90 for mobile accessibility or performance                                                                                                    |
+| Workflow                   | Trigger                         | What it does                                                                                                                                                                                                                                            |
+| -------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ci.yml`                   | push to `main`, PRs             | lint, format check, typecheck, test, build                                                                                                                                                                                                              |
+| `pr-title.yml`             | PR opened/edited                | Requires a Conventional Commit PR title (`feat:`, `fix(enroll):` …). PRs are squash-merged, so the title becomes the commit message on `main`. Runs on `pull_request`, not `pull_request_target`, which GitHub blocks on public repos by default (#46). |
+| `release-please.yml`       | push to `main`                  | Keeps a release PR open with the next version and `CHANGELOG.md`. Merging it tags `vX.Y.Z` and publishes a GitHub Release. `feat` bumps 0.x minor.                                                                                                      |
+| `codeql.yml`               | push to `main`, PRs, weekly     | CodeQL security scan (`security-extended` queries)                                                                                                                                                                                                      |
+| `dependabot-automerge.yml` | Dependabot PRs                  | Auto-merges patch updates, and minor updates to dev dependencies and Actions, once required checks pass. Major updates wait for a human.                                                                                                                |
+| `api-health.yml`           | nightly cron, manual            | `npm run check-api`: 8 requests covering all four endpoints. Fails if a response shape or the `space_status` wording changes, so a broken unofficial API is noticed before users notice it.                                                             |
+| `update-centres.yml`       | weekly cron, manual             | Runs `scripts/update-centres.ts` and opens a PR if `data/centres.*.json` changed                                                                                                                                                                        |
+| `lighthouse.yml` _(Ph. 3)_ | Vercel preview deployment ready | Lighthouse CI on the preview URL; fails below 90 for mobile accessibility or performance                                                                                                                                                                |
 
 Dependabot (`dependabot.yml`) uses Conventional Commit prefixes (`fix(deps)`, `chore(deps)`, `ci(deps)`), so its PRs pass the title check.
 
@@ -94,6 +108,8 @@ Dependabot (`dependabot.yml`) uses Conventional Commit prefixes (`fix(deps)`, `c
 - Results are grouped under sticky day headers ("Today · Sat Nov 14").
 - **Phone:** filters sit in a bottom sheet behind a "Filters" button. Desktop shows them in a sidebar.
 - **Filters:** activity chips (Pickleball, Swim…) above the list; type (Drop-in or Enroll online) is in the filter sheet.
+- **Time labels:** a session that's under way says **On now** (amber); one starting within the hour says **Starts in N min** (green at 15 min or less, blue up to 60). Worked out when the page renders, so it can be a few minutes stale if the page sits open.
+- **Share:** each card has a share icon. Phones open the share sheet; elsewhere it copies the same text. The message is one detail per line (title, day and time, centre, link), and the link (`/?session=<id>`) opens exactly that session.
 - Times are always shown in Toronto time with am/pm.
 - There is no horizontal scrolling at 360px width.
 - The default font is 16px, and contrast meets WCAG AA in light and dark mode.
@@ -182,6 +198,37 @@ mississauga-drop-in/
   - Done: `v0.1.0` released (https://github.com/shivam183/mississauga-drop-in/releases/tag/v0.1.0).
   - Done: the "Protect main" ruleset requires a PR (squash only) and passing `check`, `e2e`, `analyze` and `conventional-title`, and blocks deletion and force pushes. All changes now go through PRs.
   - Done: the `RELEASE_PLEASE_TOKEN` secret (a fine-grained PAT) is set, so release PRs get their checks. Renew it before it expires.
+
+**6. Find it faster** (in progress)
+
+Goal: get a regular user from opening the site to the session they want in as few taps as possible, without accounts and without new data from the City.
+
+- ✅ **Activity chips** (#35): a row of one-tap chips (Pickleball, Swim, Yoga, Skate…) that set the search. Type moved into the filter sheet.
+- ✅ **"On now" and "Starts in N min" labels** (#36). See the result card section.
+- ✅ **Share button and session links** (#38, #39). See the result card section. `/api/sessions` accepts the same `session` parameter (`docs/api.md`).
+- ✅ **Fix:** opening the filter sheet on a phone no longer pops up the keyboard; the sheet focuses itself, not its first field (#41).
+- ❌ **"My centres" chip** (#40, closed): remembering the last centres in the browser and offering them as a chip. Decided it isn't worth adding.
+- ⬜ **Week strip day picker.** Spec below.
+- ⬜ **Age group and price on the card.** Investigate first: check whether the City's events or detail responses include an age range or a fee. Write a spec only if they do; otherwise drop both.
+
+**Spec: week strip day picker**
+
+Today, picking a day means opening the filter sheet. The strip puts the days one tap away.
+
+- **What:** a row of day chips above the results, under the activity chips: **All days**, **Today**, **Tomorrow**, then `Wed 18`, `Thu 19`… for 14 days in total (the same `DAYS_AHEAD` days as the filter sheet's day picker).
+- **Behaviour:**
+  - Tapping a day shows only that day (`from` and `to` both set to it). Tapping **All days** clears `from` and `to`.
+  - Other filters (search, activity, centres, type, times) are kept. Like any filter change, it leaves a shared-session view.
+  - The selected chip is highlighted and marked `aria-current`. With a `from`/`to` range from a link, no day chip is highlighted, and the range still works.
+  - The filter sheet's day picker stays, and both stay in sync because both read the URL.
+- **Layout:** the row scrolls sideways inside its own container on phones, so the page itself never scrolls sideways (360px rule). The selected chip is scrolled into view. Each chip is a tap target of at least 44px.
+- **No JavaScript needed:** each chip is a plain link, like the activity chips.
+- **Cost:** no new data and no new cache entries, so it doesn't change Runtime Cache usage.
+- **Acceptance:**
+  - e2e at 375px: tapping a day shows only that day's group; the chip is marked current; **All days** brings back every day; the page has no sideways scroll.
+  - e2e: a day chip keeps an active search and activity chip.
+  - Unit: the chip list (labels for today and tomorrow, 14 days, crossing a month end).
+  - Checked in a browser at phone width in light and dark mode.
 
 **Later:** favourites, an `.ics` calendar export, a PWA, and "notify me when spots open".
 
