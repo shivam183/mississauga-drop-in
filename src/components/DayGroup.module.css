@@ -57,8 +57,3 @@ details:not([open]) > .heading .chevron {
 .details {
   display: block;
 }
-
-.loading {
-  margin: 10px 0 0;
-  color: var(--muted);
-}

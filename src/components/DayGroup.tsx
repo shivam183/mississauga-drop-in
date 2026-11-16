@@ -3,6 +3,7 @@ import { formatDayHeading } from "@/lib/format";
 import type { PageDay } from "@/models/filters";
 import { DayDetails } from "./DayDetails";
 import styles from "./DayGroup.module.css";
+import searchStyles from "./Search.module.css";
 import { SessionCard } from "./SessionCard";
 
 /**
@@ -39,7 +40,12 @@ export function DayGroup({
       >
         {group.collapsed && (
           // Hidden while collapsed; shows only if the day is reopened, until its cards arrive.
-          <p className={styles.loading}>Loading…</p>
+          <div role="status" aria-busy="true">
+            <span className="visually-hidden">Loading…</span>
+            {/* The same placeholder cards as the first page load. */}
+            <div className={searchStyles.cardSkeleton} />
+            <div className={searchStyles.cardSkeleton} />
+          </div>
         )}
         {group.sessions.length > 0 && (
           <ol className={styles.list}>

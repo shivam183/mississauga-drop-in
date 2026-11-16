@@ -621,7 +621,7 @@ test.describe("collapsible days", () => {
     await expect(page).toHaveURL(/[?&]collapsed=\d{4}-\d{2}-\d{2}/);
     await expect(first.getByRole("article")).toHaveCount(0);
     await expect(heading).toBeVisible();
-    await expect(first.getByText("Loading…")).toBeHidden();
+    await expect(first.getByRole("status")).toBeHidden();
     // Collapsed days don't use up the page, so later sessions fill it.
     await expect(cards).toHaveCount(30);
     await expect(page.locator("details")).not.toHaveCount(days);
