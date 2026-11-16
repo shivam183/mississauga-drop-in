@@ -34,8 +34,11 @@ the API.
 All of these use `"use cache: remote"` (Vercel's Runtime Cache, shared by all
 instances and billed per read). `getSchedule`, `getCachedDetail` and
 `getCachedButtonStatus` also have a plain `"use cache"` (in-memory) layer in front,
-so a warm instance answers repeat lookups without a billed read. As a result, a value can be up to
-about twice its lifetime old.
+so a warm instance answers repeat lookups without a billed read. As a result, a value
+can be up to about twice its lifetime old.
+
+Reads are billed per 8 KB, so schedules are stored packed by activity
+(`packSessions` in `src/models/session.ts`): about 780 KB instead of 3.4 MB.
 
 Anything that depends on the current time, like hiding ended sessions or
 deciding whether enrollment has opened, runs at request time, outside the cache.
