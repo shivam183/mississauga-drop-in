@@ -3,8 +3,10 @@
 # Commits, e.g. "feat: add centre filter" or "fix(enroll): handle full sessions".
 name: PR title
 
+# Plain pull_request: this only reads the title, and GitHub blocks
+# pull_request_target on public repos by default.
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, edited, synchronize, reopened]
 
 permissions:
