@@ -208,27 +208,31 @@ Goal: get a regular user from opening the site to the session they want in as fe
 - ✅ **Share button and session links** (#38, #39). See the result card section. `/api/sessions` accepts the same `session` parameter (`docs/api.md`).
 - ✅ **Fix:** opening the filter sheet on a phone no longer pops up the keyboard; the sheet focuses itself, not its first field (#41).
 - ❌ **"My centres" chip** (#40, closed): remembering the last centres in the browser and offering them as a chip. Decided it isn't worth adding.
-- ⬜ **Week strip day picker.** Spec below.
+- ⬜ **Collapsible day sections.** Spec below.
+- ❌ **Week strip and header day menu** (2026-11-16, compared in an interactive mock): a row of day chips adds clutter to the home page, and chips are for activities only; a menu on the sticky day header is easy to miss and not a common pattern. Jumping to a specific day stays in the filter sheet's day picker.
 - ⬜ **Age group and price on the card.** Investigate first: check whether the City's events or detail responses include an age range or a fee. Write a spec only if they do; otherwise drop both.
 
-**Spec: week strip day picker**
+**Spec: collapsible day sections**
 
-Today, picking a day means opening the filter sheet. The strip puts the days one tap away.
+Today's list is long, and each day's sticky heading ("Today · Mon Nov 16") stays on screen while you scroll through it. Tapping a heading collapses that day, so you can skip past it to the next.
 
-- **What:** a row of day chips above the results, under the activity chips: **All days**, **Today**, **Tomorrow**, then `Wed 18`, `Thu 19`… for 14 days in total (the same `DAYS_AHEAD` days as the filter sheet's day picker).
+- **What:** each day group becomes a native `<details open>` with the heading inside its `<summary>` (the `<h2>` stays, for heading navigation). A chevron after the heading shows the state: pointing down when open, right when collapsed.
 - **Behaviour:**
-  - Tapping a day shows only that day (`from` and `to` both set to it). Tapping **All days** clears `from` and `to`.
-  - Other filters (search, activity, centres, type, times) are kept. Like any filter change, it leaves a shared-session view.
-  - The selected chip is highlighted and marked `aria-current`. With a `from`/`to` range from a link, no day chip is highlighted, and the range still works.
-  - The filter sheet's day picker stays, and both stay in sync because both read the URL.
-- **Layout:** the row scrolls sideways inside its own container on phones, so the page itself never scrolls sideways (360px rule). The selected chip is scrolled into view. Each chip is a tap target of at least 44px.
-- **No JavaScript needed:** each chip is a plain link, like the activity chips.
-- **Cost:** no new data and no new cache entries, so it doesn't change Runtime Cache usage.
+  - Every day starts open. Tapping or pressing Enter/Space on a heading collapses or opens that day only.
+  - A collapsed day keeps its heading in the list, so you can see it's there and open it again.
+  - Collapsing a day from its stuck heading keeps that heading on screen, with the next day directly below it, instead of jumping the page to wherever the scroll position lands.
+  - "Show more" keeps collapsed days collapsed. A new search or filter change opens every day again, so new results are never hidden.
+  - Nothing is remembered between visits (no storage).
+- **Scope:** it skims what's on the current page (30 sessions). It doesn't fetch other days; to jump to a specific day, use the filter sheet's day picker.
+- **No JavaScript needed** for collapsing (native element). Keeping a collapsed stuck heading on screen is a small enhancement that needs JavaScript; without it, collapsing still works.
+- **Accessibility:** the summary is focusable and announces expanded/collapsed natively; the focus ring is visible; the whole heading row is a tap target of at least 44px.
+- **Cost:** no new data and no new cache entries.
 - **Acceptance:**
-  - e2e at 375px: tapping a day shows only that day's group; the chip is marked current; **All days** brings back every day; the page has no sideways scroll.
-  - e2e: a day chip keeps an active search and activity chip.
-  - Unit: the chip list (labels for today and tomorrow, 14 days, crossing a month end).
-  - Checked in a browser at phone width in light and dark mode.
+  - e2e at 375px: tapping a heading hides that day's cards and keeps its heading; tapping it again shows them; other days are unaffected.
+  - e2e: collapsing a heading while it's stuck leaves that heading visible on screen.
+  - e2e: after "Show more", a collapsed day is still collapsed; after a new search, every day is open.
+  - e2e: keyboard, Tab to a heading and press Enter to toggle.
+  - Checked in a browser at phone width in light and dark mode, with no sideways scroll.
 
 **Later:** favourites, an `.ics` calendar export, a PWA, and "notify me when spots open".
 
