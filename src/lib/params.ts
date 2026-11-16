@@ -152,14 +152,18 @@ export function hrefWith(path: string, state: SearchState, changes: Partial<Sear
   return `${path}${toQueryString({ ...state, limit: PAGE_SIZE, session: null, collapsed: [], ...changes })}`;
 }
 
-/** URLSearchParams as the page-style record that parseSearchParams reads. */
+/**
+ * URLSearchParams as the page-style record that parseSearchParams reads.
+ * Object.fromEntries only defines own properties, so a key like "__proto__"
+ * from the URL can't reach the object's prototype.
+ */
 export function toRawSearchParams(params: URLSearchParams): RawSearchParams {
-  const raw: RawSearchParams = {};
-  for (const key of new Set(params.keys())) {
-    const all = params.getAll(key);
-    raw[key] = all.length === 1 ? all[0] : all;
-  }
-  return raw;
+  return Object.fromEntries(
+    [...new Set(params.keys())].map((key) => {
+      const all = params.getAll(key);
+      return [key, all.length === 1 ? all[0] : all];
+    }),
+  );
 }
 
 /**

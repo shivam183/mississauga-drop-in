@@ -53,6 +53,14 @@ describe("toRawSearchParams", () => {
       centre: ["290", "119"],
     });
   });
+
+  it("can't be used to change an object's prototype", () => {
+    const raw = toRawSearchParams(new URLSearchParams("__proto__=x&constructor=y&q=swim"));
+    expect(Object.getPrototypeOf(raw)).toBe(Object.prototype);
+    expect(Object.hasOwn(raw, "__proto__")).toBe(true);
+    expect(({} as Record<string, unknown>).x).toBeUndefined();
+    expect(raw.q).toBe("swim");
+  });
 });
 
 describe("toApiSession", () => {
