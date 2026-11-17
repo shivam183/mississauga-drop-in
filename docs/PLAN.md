@@ -198,13 +198,9 @@ mississauga-drop-in/
   - Done: squash-only merges with the PR title, auto-merge, and merged branches deleted.
   - Done: `v0.1.0` released (https://github.com/shivam183/mississauga-drop-in/releases/tag/v0.1.0).
   - Done: the "Protect main" ruleset requires a PR (squash only) and passing `check`, `e2e`, `analyze` and `conventional-title`, and blocks deletion and force pushes. All changes now go through PRs.
-  - Search engines (2026-11-17): static `robots.txt` (crawl everything but `/api/`) and `sitemap.xml` (just `/`) in `src/app/`, and a canonical URL of `/` so filter URLs aren't indexed as separate pages. The apex domain is canonical, so it must be the primary domain in Vercel (it redirected to `www.` before). Site verified and sitemap submitted in Google Search Console (done by hand).
-  - Logo (2026-11-17): a grey map pin with a red ring at its base and, in a white disc, a red Mississauga skyline (City Hall's clock spire and the two Absolute World towers); drawn for this site, not stock art. In `src/app/icon.svg` (tab and Google result icon) and `src/app/apple-icon.png` (180px, iOS home screen); also shown beside the site name in the header. Replaces the default Next.js `favicon.ico`.
-  - Share card and site name (2026-11-17): `src/app/opengraph-image.tsx` builds a 1200×630 card (logo, name, one-line pitch) at build time, used for Open Graph and as a large X/Twitter card. The home page carries `WebSite` JSON-LD so Google shows "Mississauga Drop-In" as the site name. Bing Webmaster Tools imported from Search Console (done by hand).
-  - Buy Me a Coffee (2026-11-17): Buy Me a Coffee's own cup logo (self-hosted as `public/bmc-logo.svg`, on a circle in their yellow so it shows on the dark theme) right of the GitHub icon in the header; every header logo has a hover tooltip (`title`) and, in the README, BMC's official yellow button near the top plus a "Support" section, all linking to https://buymeacoffee.com/shivam183. A plain link, not BMC's widget script, so the CSP, speed and privacy stay as they are.
   - Done: the `RELEASE_PLEASE_TOKEN` secret (a fine-grained PAT) is set, so release PRs get their checks. Renew it before it expires.
 
-**6. Find it faster** (in progress)
+**6. Find it faster** ✅
 
 Goal: get a regular user from opening the site to the session they want in as few taps as possible, without accounts and without new data from the City.
 
@@ -213,45 +209,80 @@ Goal: get a regular user from opening the site to the session they want in as fe
 - ✅ **Share button and session links** (#38, #39). See the result card section. `/api/sessions` accepts the same `session` parameter (`docs/api.md`).
 - ✅ **Fix:** opening the filter sheet on a phone no longer pops up the keyboard; the sheet focuses itself, not its first field (#41).
 - ❌ **"My centres" chip** (#40, closed): remembering the last centres in the browser and offering them as a chip. Decided it isn't worth adding.
-- ⬜ **Collapsible day sections.** Spec below.
+- ✅ **Collapsible day sections** (#48). Summary below.
 - ❌ **Week strip and header day menu** (2026-11-16, compared in an interactive mock): a row of day chips adds clutter to the home page, and chips are for activities only; a menu on the sticky day header is easy to miss and not a common pattern. Jumping to a specific day stays in the filter sheet's day picker.
-- ⬜ **Age group and price on the card.** Investigate first: check whether the City's events or detail responses include an age range or a fee. Write a spec only if they do; otherwise drop both.
+- ✅ **Age group and price on the card: investigated** (2026-11-17). Ages (`age_description`, e.g. "16 yrs +") are only in `/activity/detail`, per activity, not in the events list, so showing them on every card would cost a City call per card. They go in the details popup instead (Phase 7). Fees aren't published online for drop-ins (`/activity/detail/estimateprice/{id}` returns `show_price_info_online: false` and no prices), so price is dropped.
 
-**Spec: collapsible day sections**
+**Collapsible day sections (done, #48).** Each day is a native `<details open>` whose sticky heading collapses or opens that day. Collapsed days don't count toward the 30-session page, so the page refills with the next sessions; their headings stay so they can be reopened. State lives in the URL (`collapsed=` dates, at most 14), survives "Show more" and is dropped by any new search. When the page is all one day, the next open day's first 5 sessions are already shown, so a collapse never leaves a blank screen; the page keeps its scroll position. Without JavaScript the days still collapse but don't refill. Covered by unit tests (page selection, `collapsed` parsing) and e2e (refill, stuck heading, keyboard, "Show more").
 
-Unfiltered, one weekday has 220–250 sessions (weekends about 100; live schedule, 2026-11-16), so the first page of 30 is all Today. Each day's sticky heading ("Today · Mon Nov 16") stays on screen while you scroll through it. Tapping a heading collapses that day, and the page refills with the next sessions, so there's always something below.
+**7. Get found** (in progress)
 
-- **What:** each day group becomes a native `<details open>` with the heading inside its `<summary>` (the `<h2>` stays, for heading navigation). A chevron after the heading shows the state: pointing down when open, right when collapsed.
-- **Behaviour:**
-  - Every day starts open. Tapping or pressing Enter/Space on a heading collapses or opens that day only.
-  - **Collapsed days don't count toward the page.** The page still shows up to 30 sessions (more after "Show more"), taken from the open days only. Collapsing Today brings in Tomorrow's first sessions; collapsing Tomorrow brings in the next day's, and so on.
-  - A collapsed day keeps its heading in the list (headings appear for collapsed days up to the last session shown), so you can see it's there and open it again. Opening it brings its sessions back at the top, and the page keeps its size, so later sessions move below "Show more". Until they arrive, the reopened day shows two placeholder cards (the same skeleton as the first page load, sent hidden inside every collapsed day), not a blank space.
-  - Pages stay at 30 sessions, not whole days: a whole weekday is too many cards for a phone (50 per page already cost Lighthouse points; see Phase 3). A heading can cover part of a day, as it does today, and "Show more" continues it.
-  - **The next day is already started.** When every card on the page belongs to one open day, the page also shows the first 5 sessions of the next open day (so up to 35 cards). Collapsing that day reveals those cards at once, while the refill loads in the background. Found while testing: without it, collapsing Today left a blank screen until the server answered (about 0.8 s on the dev server).
-  - Collapsing a day from its stuck heading keeps that heading on screen, with the next day directly below it. The page holds its height from the tap until the refill navigation finishes; otherwise the shorter page makes the browser jump to the top, which was very visible on desktop (scroll position 1500 to 156).
-  - **State lives in the URL:** `collapsed=2026-11-16,2026-11-17` (valid dates only, at most 14). "Show more" keeps it. A new search or filter change drops it, like `session`, so new results are never hidden. Nothing is stored in the browser.
-- **How it loads:** the collapse happens instantly in the browser. The client then replaces the URL without scrolling (`router.replace`, `scroll: false`), and the server renders the refilled page, the same path as "Show more". A pure function picks the page (the first `limit` sessions, skipping collapsed days) and is unit-tested.
-- **Without JavaScript:** the native element still collapses and opens days, but the page doesn't refill.
-- **Accessibility:** the summary is focusable and announces expanded/collapsed natively; the focus ring is visible; the whole heading row is a tap target of at least 44px.
-- **Cost (checked 2026-11-16):** each collapse is one page request, the same as tapping "Show more". No new cache entries: the schedule is one entry whatever the URL, so a warm server reads it from memory and a cold one makes one remote read. No extra requests to the City. Spots lookups stay the same or drop, since collapsed days' cards stop asking. A 60-card page response is 12.7 KB gzipped and took 0.43 s. While the Runtime Cache is paused, a cold server can take 3–6 s to refill; the collapse itself is still instant.
+Goal: people searching Google for a drop-in in Mississauga land on a page that matches their search, and can see what a program is without leaving the site.
+
+Done (2026-11-17):
+
+- ✅ **Search engines** (#50): static `robots.txt` (crawl everything but `/api/`) and `sitemap.xml` in `src/app/`, and a canonical URL of `/` so filter URLs aren't indexed as separate pages. The apex domain is canonical and is the primary domain in Vercel (`www.` redirects to it). Verified in Google Search Console, sitemap submitted; Bing Webmaster Tools imported from Search Console (done by hand).
+- ✅ **Logo** (#51): a grey map pin with a red ring at its base and, in a white disc, a red Mississauga skyline (City Hall's clock spire and the two Absolute World towers); drawn for this site, not stock art. `src/app/icon.svg` (tab and Google result icon), `src/app/apple-icon.png` (180px, iOS home screen), and beside the site name in the header.
+- ✅ **Share card and site name** (#52): `src/app/opengraph-image.tsx` builds a 1200×630 card at build time, used for Open Graph and as a large X card. The home page carries `WebSite` JSON-LD so Google shows "Mississauga Drop-In" as the site name.
+- ✅ **Buy Me a Coffee** (#53): BMC's own cup logo (self-hosted `public/bmc-logo.svg`, on a circle in their yellow) right of the GitHub icon, with hover tooltips on every header logo; in the README, a logo, badges, a "Find a drop-in" button and BMC's button. A plain link, not BMC's widget script, so the CSP, speed and privacy are unchanged.
+
+To do, in this order (batch the code PRs into few deploys: each deploy empties the Runtime Cache, which is paused until about 2026-12-14; see **Hosting limits**):
+
+- ⬜ **Activity details popup and page.** Spec below.
+- ⬜ **Activity type pages** (`/swim`, `/pickleball`, …). Spec below.
+- ⬜ **Centre pages and Browse links** (`/centres/{slug}`). Spec below.
+- ⬜ **By hand after launch:** resubmit the sitemap in Search Console and Bing; about 2–3 weeks later, check Search Console → Performance for the queries people use and pick any further landing pages from them.
+
+**Spec: activity details popup and page**
+
+Tapping a card's title opens a popup over the list with what the City's activity page shows; opening the same URL directly (shared link, refresh, no JavaScript) shows it as a full page.
+
+- **Data:** `GET /activity/detail/{id}`, already called for spots, also has `catalog_description`, `age_description` ("16 yrs +,"), `allowed_gender`, `category`/`sub_category`, `season_name`, `first_date`/`last_date`, `online_notes` (HTML) / `user_notes`, `facilities[].name` and `centers[]` (address, postal code, phone, latitude/longitude). No fees (see Phase 6).
+- **Model:** `src/models/activity.ts` turns the raw detail into a small plain `ActivityInfo`: name (`displayTitle`), category, ages (trailing comma removed), gender (only if not "Mixed"), season and dates, description, notes (`noticeToText`, never rendered as HTML), rooms (`roomName`) and the centre's address, phone and coordinates. Every field is optional and read defensively; `assertActivityDetailBody` doesn't change.
+- **Service:** `src/lib/activity.ts` `getActivityInfo(id)`, memory then Runtime Cache like `getCachedDetail`, with a new `info` cache profile (revalidate 1 day, expire 7 days). It stores only the small `ActivityInfo` (about 1–2 KB). Only ids of upcoming sessions in the current schedule are looked up; anything else is a 404, so the route can't be used to query the City for arbitrary ids. It also returns that activity's upcoming sessions from the schedule.
+- **Content** (agreed in an HTML mockup, 2026-11-17), top to bottom:
+  - Drop-in/Enroll badge and ✕; the name; fact chips: category, ages, and season with dates. The **ages chip is highlighted** (accent tint, bold, 👤 icon) and gets **one sweep of shine** about 0.3 s after opening, never looped and skipped under `prefers-reduced-motion`.
+  - **The tapped session:** date and time ("On now" when on), centre · room, with two small icon buttons beside the centre: **Directions** (Google Maps, by coordinates) and **Call** (`tel:`), each at least 40px with an accessible name. For enroll sessions, spots left with "as of" and refresh (the existing `SpotsLeft`) sit inside this box.
+  - **Upcoming** (drop-ins): the next 4 sessions of this activity, then a summary line: "Every Tuesday until Dec 29 · 9 sessions this season" when all sessions fall on one weekday, otherwise just the count (`other_info.sessions`).
+  - **About:** the description. **Good to know:** the notes as plain text (for drop-ins, the City's "no registration, first come first served" note).
+  - **Where:** centre, room, the address as the Google Maps link, and the phone number labelled "(City of Mississauga)": the centres checked (Churchill Meadows, Malton) all list (905) 615-4100, the City's general line, not the centre's desk. No second set of buttons.
+  - **See more** (popup and full page): "More {activity} →" and "More at {centre} →", linking to the filtered list until the activity and centre pages exist, then to those pages. From the popup, following one closes it and shows that list.
+  - **A bar pinned to the bottom** (popup and full page alike), so the main action never needs scrolling: for enroll sessions the existing `EnrollButton` (Enroll now / Opens {time}, disabled / Full) with "View on ActiveMississauga" under it; for drop-ins just "View on ActiveMississauga". Enroll appears only here, not twice. Scrolled to the end, the last content keeps a 24px gap above the bar.
+  - Missing fields are left out. No share button in the popup; the card keeps its own.
+- **Routes:** `src/app/activity/[id]/page.tsx` is the full page (title "{name} at {centre}", description, `noindex, follow`, not in the sitemap). The popup is the same content through Next's intercepting and parallel routes (`src/app/@modal/(.)activity/[id]`, `@modal/default.tsx`, the `modal` slot in the root layout).
+- **Popup:** a native `<dialog>` (`showModal()`, focus moves in and back, Esc closes, labelled by the name). Close button, backdrop tap, Esc and Back all go back. A bottom sheet on phones, centred on desktop, light and dark. **Full page:** the same top row, with ✕ as a plain link to `/` (it works without JavaScript and when there's no history to go back to), so it looks like the popup opened full screen.
+- **Card:** the title links to `/activity/{id}` with `prefetch={false}` and `scroll={false}`. Without `prefetch={false}`, every card on screen would fetch its details from the City.
+- **Cost:** one City request per activity per day, only when a popup or page is opened (through the existing throttle). A calendar 3 session is its own activity, so its page shows one session and 404s once it has ended. If crawlers following card links show up in the logs, add `rel="nofollow"` to the title links.
 - **Acceptance:**
-  - Unit: page selection with no collapsed days (unchanged from today), with collapsed days skipped, with every day collapsed, and with `limit` above 30. A one-day page also shows the next open day's first 5 sessions, skipping collapsed days in between; a page with two or more open days doesn't. `collapsed` parsing rejects bad dates and caps the list.
-  - e2e at 375px: collapsing a heading hides that day's cards, keeps its heading, and refills the page with the next sessions; opening it brings them back; other days are unaffected.
-  - e2e (phone and desktop): collapsing a heading while it's stuck leaves that heading at the top of the screen, without jumping to the top of the page, and the next day's cards are visible right away.
-  - e2e: after "Show more", a collapsed day is still collapsed; after a new search, every day is open.
-  - e2e: keyboard, Tab to a heading and press Enter to toggle.
-  - Checked in a browser at phone width in light and dark mode, with no sideways scroll.
+  - Unit: `toActivityInfo` against `detail.1.json`, `detail.3.open.json` and `detail.3.full.json` (ages trimmed, "Mixed" hidden, HTML stripped from notes, no centre); `getActivityInfo` rejects ids that aren't upcoming sessions.
+  - e2e (phone and desktop): tapping a card title opens the popup with name, description and address; Esc, the close button and Back each close it and keep the scroll position; `/activity/{id}` loaded directly shows the full page; an unknown id is a 404; an enroll session's popup and full page show spots, and Enroll is visible at 375px without scrolling; keyboard: Tab to the title, Enter opens it, focus returns to the title on close.
+  - Checked at 375px in light and dark mode, with no sideways scroll; `noindex` in the page source.
 
-**Later:** favourites, an `.ics` calendar export, a PWA, and "notify me when spots open".
+**Spec: activity type pages**
+
+- The chip list moves from `SearchControls` to `src/models/activities.ts`, each with a `slug`, the search `q`, a label, an H1 ("Drop-in swimming in Mississauga"), a meta description and a one-line intro. Slugs: `pickleball`, `swim`, `yoga`, `skate`, `hockey`, `basketball`, `badminton`, `volleyball`, `table-tennis`, `soccer`.
+- `src/app/[activity]/page.tsx`: one static route per slug (`generateStaticParams`, `dynamicParams = false`, so other slugs 404). H1 and intro, then the usual search view with the activity's search filled in. Its own title, description, canonical (`/swim`) and OG title.
+- `SearchView` takes optional `defaults` that fill only fields the URL leaves empty. Every control still links to `/`, so the first filter change moves to the main list; no new navigation logic.
+- Chips link to their activity page (keeping other active filters), so the home page links to every one.
+- `sitemap.xml` becomes `src/app/sitemap.ts`, listing `/`, the activity pages and, once built, the centre pages.
+- **Acceptance:** unit: unique slugs, `defaults` fill only empty fields. e2e: `/swim` shows its H1 and only swim sessions; a chip links to its page; an unknown slug is a 404; the sitemap lists the pages. Lighthouse mobile SEO and accessibility stay at 100 on `/swim`.
+
+**Spec: centre pages and Browse links**
+
+- `src/app/centres/[slug]/page.tsx`: the slug is the centre's name in URL form (`churchill-meadows-community-centre`), from `ALL_CENTRES`; one static route per centre, others 404. H1 the centre's name; its address, phone and a map link from `getActivityInfo` of its first upcoming session (no new data file; left out if there's none), then the search view filtered to that centre. Own title, description and canonical; listed in the sitemap.
+- A **Browse** section at the bottom of the home page with two short link lists, "By activity" and "By centre", for people and crawlers. A card's centre name still adds that centre to the filter.
+- **Acceptance:** e2e: a centre page shows its name, address and only its sessions; `/centres/290` (an id, not a slug) is a 404, replacing the old check that `/centres` routes don't exist; the Browse links work. Lighthouse as above.
+
+**Later:** favourites, an `.ics` calendar export, a PWA, "notify me when spots open", activity detail pages as SEO pages (left out for now: thin, and they change every season), and fees if the City ever publishes them online.
 
 ## Verification
 
-- `npm run lint && npm run typecheck && npm test && npm run build` pass.
-- `npm run e2e` passes: Playwright (Chromium, 375px phone and desktop) against a production build and a mock of the City API (`e2e/mock-activenet.mjs`). It covers sideways scrolling, chips, search, the filter sheet, spots, Full, Enroll now, refresh, card taps and centre links, search-as-you-type and Enroll now opening a new tab. CI runs it in `.github/workflows/playwright.yml`.
+- `npm run format:check && npm run lint && npm run typecheck && npm test && npm run build` pass (CI's `check` job runs all of them, Prettier included).
+- `npm run e2e` passes: Playwright (Chromium, 375px phone and desktop) against a production build and a mock of the City API (`e2e/mock-activenet.mjs`). It covers sideways scrolling, chips, search, the filter sheet, spots, Full, Enroll now, refresh, card taps and centre links, search-as-you-type, collapsible days, share links, the header's GitHub and coffee links, security headers, and links to other sites opening a new tab. CI runs it in `.github/workflows/playwright.yml`.
 - `npm run capture-fixtures` gets live data for calendars 1 and 3.
 - **Manual checks in `npm run dev`** (Chrome devtools, iPhone SE width of 375px):
   - Searching "pickleball" shows Enroll online rows. Each has a time and centre you can read at a glance, a spots-left count with "as of", and an Enroll button that opens the right ActiveMississauga enroll page.
   - A full session shows "Full" with no Enroll button, while other sessions of the same activity still show their own counts.
   - The refresh button updates the count.
   - Drop-in rows have no Enroll button.
-- Lighthouse mobile accessibility and performance scores are both at least 90.
+- Lighthouse mobile: accessibility, best practices and SEO stay at 100, and performance at 90 or above (Lighthouse CI runs on each Vercel preview).
