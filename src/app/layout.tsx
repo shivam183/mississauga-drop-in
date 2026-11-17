@@ -46,6 +46,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <header className="site-header">
           <div className="container site-header-inner">
             <Link href="/" className="site-name">
+              {/* eslint-disable-next-line @next/next/no-img-element -- a static SVG gains nothing from next/image */}
+              <img src="/icon.svg" alt="" width={28} height={28} />
               Mississauga Drop-In
             </Link>
             <ExternalLink
