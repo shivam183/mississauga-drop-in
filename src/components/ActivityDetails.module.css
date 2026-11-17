@@ -138,6 +138,12 @@
   .dialog .close {
     display: none;
   }
+
+  /* The head row pulls the sheet down too (see Modal), so the browser mustn't take the gesture. */
+  .dialog .head {
+    touch-action: none;
+    cursor: grab;
+  }
 }
 
 .close:hover {
