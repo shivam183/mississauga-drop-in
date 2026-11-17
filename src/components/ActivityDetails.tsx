@@ -20,6 +20,7 @@ import { DETAILS_TITLE_ID } from "./detailsIds";
 import { DetailsEnrollButton, DetailsSpots } from "./DetailsEnroll";
 import { PreviewShown } from "./DetailsPreview";
 import { ExternalLink } from "./ExternalLink";
+import { MapsMenu, type MapApp } from "./MapsMenu";
 import { ShareButton } from "./ShareButton";
 import { TypeBadge } from "./TypeBadge";
 
@@ -77,13 +78,40 @@ function runSummary(sessions: Session[], info: ActivityInfo | null): string {
   return [every, count].filter(Boolean).join(" · ");
 }
 
-function mapUrl(session: Session, info: ActivityInfo | null): string {
+/**
+ * The centre for a maps app. Name and address find the app's own listing
+ * (photos, hours); coordinates only drop a bare pin, so they're the fallback
+ * without an address.
+ */
+function mapPlace(session: Session, info: ActivityInfo | null): string {
   const centre = info?.centre;
-  const query =
-    centre?.lat != null && centre.lng != null
-      ? `${centre.lat},${centre.lng}`
-      : [centre?.name ?? session.centreName, centre?.address || "Mississauga, ON"].join(", ");
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  const name = centre?.name ?? session.centreName;
+  if (centre?.address) return `${name}, ${centre.address}`;
+  if (centre?.lat != null && centre.lng != null) return `${centre.lat},${centre.lng}`;
+  return `${name}, Mississauga, ON`;
+}
+
+/** Directions in each maps app, for the Directions menu. */
+function mapApps(session: Session, info: ActivityInfo | null): MapApp[] {
+  const place = encodeURIComponent(mapPlace(session, info));
+  const { lat, lng } = info?.centre ?? {};
+  return [
+    {
+      id: "google",
+      label: "Google Maps",
+      href: `https://www.google.com/maps/dir/?api=1&destination=${place}`,
+    },
+    { id: "apple", label: "Apple Maps", href: `https://maps.apple.com/?daddr=${place}` },
+    {
+      id: "waze",
+      label: "Waze",
+      // Waze's search is weaker than its coordinates.
+      href:
+        lat != null && lng != null
+          ? `https://waze.com/ul?ll=${lat},${lng}&navigate=yes`
+          : `https://waze.com/ul?q=${place}&navigate=yes`,
+    },
+  ];
 }
 
 /** "Churchill Meadows Community Centre" -> "Churchill Meadows" */
@@ -116,7 +144,8 @@ export function ActivityDetails({
   const centre = info?.centre;
   const phone = centre?.phone ?? "";
   const tel = phone.replace(/[^\d+]/g, "");
-  const directions = mapUrl(shown, info);
+  const apps = mapApps(shown, info);
+  const listing = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapPlace(shown, info))}`;
   const chip = activityFor(shown.title);
   const enroll = shown.type === "enroll";
   const Heading = page ? "h1" : "h2";
@@ -177,14 +206,9 @@ export function ActivityDetails({
               {shown.facility && ` · ${shown.facility}`}
             </p>
             <span className={styles.quick}>
-              <ExternalLink
-                href={directions}
-                className={styles.iconLink}
-                aria-label={`Directions to ${shown.centreName} (opens in a new tab)`}
-                title="Directions"
-              >
+              <MapsMenu apps={apps} label={`Directions to ${shown.centreName}`}>
                 <Icon d={DIRECTIONS_ICON} />
-              </ExternalLink>
+              </MapsMenu>
               {tel && (
                 <a
                   href={`tel:${tel}`}
@@ -245,7 +269,7 @@ export function ActivityDetails({
             {centre?.address && (
               <>
                 <br />
-                <ExternalLink href={directions}>{centre.address}</ExternalLink>
+                <ExternalLink href={listing}>{centre.address}</ExternalLink>
               </>
             )}
             {tel && (

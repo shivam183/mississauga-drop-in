@@ -743,9 +743,10 @@ test.describe("details popup", () => {
     await expect(dialog.getByText(/Ages \d+/)).toBeVisible();
     await expect(dialog.getByText("Good to know", { exact: true })).toBeVisible();
     await expect(dialog.getByText(/, Mississauga, ON L\d[A-Z] \d[A-Z]\d/)).toBeVisible();
-    await expect(dialog.getByRole("link", { name: /^Directions to / })).toHaveAttribute(
+    // By name and address, so Google opens its listing for the centre, not a bare pin.
+    await expect(dialog.getByRole("link", { name: /Mississauga, ON L\d/ })).toHaveAttribute(
       "href",
-      /^https:\/\/www\.google\.com\/maps\/search\/\?api=1&query=/,
+      /^https:\/\/www\.google\.com\/maps\/search\/\?api=1&query=[^&]*Centre%2C%20\d+%20/,
     );
     await expect(dialog.getByRole("link", { name: /^Call / })).toHaveAttribute("href", /^tel:/);
     await expect(dialog.getByRole("link", { name: /View on ActiveMississauga/ })).toBeVisible();
@@ -800,6 +801,53 @@ test.describe("details popup", () => {
     await expect(dialog.getByText("About", { exact: true })).toHaveCount(0);
     release();
     await expect(dialog.getByText("About", { exact: true })).toBeVisible();
+  });
+
+  test("Directions offers each maps app and lists the last one used first", async ({
+    page,
+    context,
+  }) => {
+    const { dialog } = await openFirst(page);
+    const directions = dialog.getByRole("button", { name: /^Directions to / });
+    const apps = dialog.locator("[popover]").getByRole("link");
+    await directions.click();
+    // A dropdown under the button, not a card in the middle of the screen.
+    const button = (await directions.boundingBox())!;
+    const card = (await dialog.locator("[popover]").boundingBox())!;
+    expect(card.y).toBeGreaterThan(button.y + button.height);
+    expect(card.y).toBeLessThan(button.y + button.height + 20);
+    expect(Math.abs(card.x + card.width - (button.x + button.width))).toBeLessThan(2);
+    await expect(apps).toHaveText(
+      ["Google Maps", "Apple Maps", "Waze"].map((a) => `${a} (opens in a new tab)`),
+    );
+    // By name and address (Waze by coordinates), so each app finds the centre itself.
+    const place = /Centre%2C%20\d+%20[^&]*Mississauga/;
+    await expect(apps.nth(0)).toHaveAttribute(
+      "href",
+      /^https:\/\/www\.google\.com\/maps\/dir\/\?api=1&destination=/,
+    );
+    await expect(apps.nth(0)).toHaveAttribute("href", place);
+    await expect(apps.nth(1)).toHaveAttribute("href", /^https:\/\/maps\.apple\.com\/\?daddr=/);
+    await expect(apps.nth(1)).toHaveAttribute("href", place);
+    await expect(apps.nth(2)).toHaveAttribute(
+      "href",
+      /^https:\/\/waze\.com\/ul\?ll=-?[\d.]+,-?[\d.]+&navigate=yes$/,
+    );
+
+    // Picking one closes the card (the app opens in a new tab) and remembers it.
+    await context.route(/waze\.com/, (route) => route.fulfill({ body: "waze" }));
+    const opened = context.waitForEvent("page");
+    await apps.nth(2).click();
+    await (await opened).close();
+    await expect(apps.first()).toBeHidden();
+    await expect(dialog).toBeVisible();
+
+    await directions.click();
+    await expect(apps.first()).toHaveText(/^WazeLast used/);
+    // Esc closes just the card, not the popup.
+    await page.keyboard.press("Escape");
+    await expect(apps.first()).toBeHidden();
+    await expect(dialog).toBeVisible();
   });
 
   test("on phones, pulling the handle down closes it, and there's no ✕", async ({
