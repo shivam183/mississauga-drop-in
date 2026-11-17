@@ -15,7 +15,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: CI,
   retries: CI ? 2 : 0,
-  workers: CI ? 1 : undefined,
+  // GitHub's runners have 4 cores; one is left for the app server and the mock.
+  workers: CI ? 3 : undefined,
   reporter: CI
     ? [["github"], ["html", { open: "never" }]]
     : [["list"], ["html", { open: "never" }]],
@@ -28,6 +29,8 @@ export default defineConfig({
   projects: [
     {
       name: "phone",
+      // Tests tagged @any-size don't depend on the screen, so they run on desktop only.
+      grepInvert: /@any-size/,
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 375, height: 812 },

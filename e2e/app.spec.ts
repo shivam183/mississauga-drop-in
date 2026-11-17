@@ -2,6 +2,9 @@ import { expect, test, type Page } from "@playwright/test";
 
 const isPhone = (projectName: string) => projectName === "phone";
 
+/** Tests that behave the same at every size run once, at desktop size (see playwright.config.ts). */
+const ANY_SIZE = { tag: "@any-size" };
+
 /** The first "enroll online" card on /?type=enroll is the mock's open session; the second is full. */
 async function enrollCards(page: Page) {
   await page.goto("/?type=enroll");
@@ -27,39 +30,46 @@ test("results are grouped by day and lead with time and centre", async ({ page }
   await expect(card.getByRole("link", { name: "Burnhamthorpe Community Centre" })).toBeVisible();
 });
 
-test("Share copies a link to this session where the browser can't share", async ({ page }) => {
-  // No share sheet (as on most desktops), and a clipboard we can read back.
-  await page.addInitScript(() => {
-    Object.defineProperty(Navigator.prototype, "share", { value: undefined });
-    Object.defineProperty(navigator, "clipboard", {
-      value: { writeText: async (t: string) => ((window as { copied?: string }).copied = t) },
+test(
+  "Share copies a link to this session where the browser can't share",
+  ANY_SIZE,
+  async ({ page }) => {
+    // No share sheet (as on most desktops), and a clipboard we can read back.
+    await page.addInitScript(() => {
+      Object.defineProperty(Navigator.prototype, "share", { value: undefined });
+      Object.defineProperty(navigator, "clipboard", {
+        value: { writeText: async (t: string) => ((window as { copied?: string }).copied = t) },
+      });
     });
-  });
-  await page.goto("/");
-  const card = page.getByRole("article").first();
-  // The card is labelled "<title>, <time>".
-  const title = (await card.getAttribute("aria-label"))!.split(",")[0];
-  await card.getByRole("button", { name: `Share ${title}` }).click();
-  await expect(card.getByRole("status")).toHaveText("Copied");
+    await page.goto("/");
+    const card = page.getByRole("article").first();
+    // The card is labelled "<title>, <time>".
+    const title = (await card.getAttribute("aria-label"))!.split(",")[0];
+    await card.getByRole("button", { name: `Share ${title}` }).click();
+    await expect(card.getByRole("status")).toHaveText("Copied");
 
-  const copied = (await page.evaluate(() => (window as { copied?: string }).copied))!;
-  // One detail per line, then the link on its own line.
-  const [name, when, centre, url] = copied.split("\n");
-  expect(name).toBe(title);
-  expect(when).toMatch(/^\w{3} \w{3} \d{1,2}, \d{1,2}:\d{2}/);
-  expect(centre).toBe("Burnhamthorpe Community Centre");
-  // The link shows just that one session, with a way back to everything.
-  expect(url).toMatch(/\/\?session=[de]\d+-\d{12}$/);
-  await page.goto(url);
-  await expect(page.getByRole("article")).toHaveCount(1);
-  await expect(page.getByRole("article")).toHaveAttribute("aria-label", new RegExp(`^${title}, `));
-  await expect(page.getByText("Shared session")).toBeVisible();
-  await page.getByRole("link", { name: "Show all sessions" }).click();
-  await expect(page).not.toHaveURL(/session=/);
-  await expect(page.getByRole("article").nth(1)).toBeVisible();
-});
+    const copied = (await page.evaluate(() => (window as { copied?: string }).copied))!;
+    // One detail per line, then the link on its own line.
+    const [name, when, centre, url] = copied.split("\n");
+    expect(name).toBe(title);
+    expect(when).toMatch(/^\w{3} \w{3} \d{1,2}, \d{1,2}:\d{2}/);
+    expect(centre).toBe("Burnhamthorpe Community Centre");
+    // The link shows just that one session, with a way back to everything.
+    expect(url).toMatch(/\/\?session=[de]\d+-\d{12}$/);
+    await page.goto(url);
+    await expect(page.getByRole("article")).toHaveCount(1);
+    await expect(page.getByRole("article")).toHaveAttribute(
+      "aria-label",
+      new RegExp(`^${title}, `),
+    );
+    await expect(page.getByText("Shared session")).toBeVisible();
+    await page.getByRole("link", { name: "Show all sessions" }).click();
+    await expect(page).not.toHaveURL(/session=/);
+    await expect(page.getByRole("article").nth(1)).toBeVisible();
+  },
+);
 
-test("a shared link to a session that has ended says so", async ({ page }) => {
+test("a shared link to a session that has ended says so", ANY_SIZE, async ({ page }) => {
   await page.goto("/?session=d1-200001010000");
   await expect(page.getByRole("article")).toHaveCount(0);
   await expect(
@@ -93,25 +103,29 @@ test("activity chips search for an activity and toggle off", async ({ page }) =>
   await expect(page.getByRole("searchbox")).toHaveValue("");
 });
 
-test("searching starts as soon as typing pauses, with no Search button", async ({ page }) => {
-  await page.goto("/?type=dropin");
-  await expect(page.getByRole("button", { name: "Search", exact: true })).toHaveCount(0);
-  const box = page.getByRole("searchbox");
-  await box.click();
-  await box.pressSequentially("swim", { delay: 50 });
+test(
+  "searching starts as soon as typing pauses, with no Search button",
+  ANY_SIZE,
+  async ({ page }) => {
+    await page.goto("/?type=dropin");
+    await expect(page.getByRole("button", { name: "Search", exact: true })).toHaveCount(0);
+    const box = page.getByRole("searchbox");
+    await box.click();
+    await box.pressSequentially("swim", { delay: 50 });
 
-  // Not on every keystroke…
-  expect(page.url()).not.toMatch(/[?&]q=/);
+    // Not on every keystroke…
+    expect(page.url()).not.toMatch(/[?&]q=/);
 
-  // …but as soon as typing pauses. Other filters are kept.
-  await expect(page).toHaveURL(/[?&]q=swim\b/, { timeout: 1500 });
-  await expect(page).toHaveURL(/[?&]type=dropin\b/);
-  await expect(page.getByRole("article").first()).toContainText(/swim/i);
-  await expect(box).toBeFocused();
-  await expect(box).toHaveValue("swim");
-});
+    // …but as soon as typing pauses. Other filters are kept.
+    await expect(page).toHaveURL(/[?&]q=swim\b/, { timeout: 1500 });
+    await expect(page).toHaveURL(/[?&]type=dropin\b/);
+    await expect(page.getByRole("article").first()).toContainText(/swim/i);
+    await expect(box).toBeFocused();
+    await expect(box).toHaveValue("swim");
+  },
+);
 
-test("Enter searches straight away", async ({ page }) => {
+test("Enter searches straight away", ANY_SIZE, async ({ page }) => {
   await page.goto("/");
   const box = page.getByRole("searchbox");
   await box.fill("pickleball");
@@ -126,7 +140,7 @@ test("Enter searches straight away", async ({ page }) => {
   await expect(page).not.toHaveURL(/[?&]q=/);
 });
 
-test("the X button clears the search", async ({ page }) => {
+test("the X button clears the search", ANY_SIZE, async ({ page }) => {
   await page.goto("/?type=dropin&q=swim");
   const box = page.getByRole("searchbox");
   await page.getByRole("button", { name: "Clear search" }).click();
@@ -137,32 +151,34 @@ test("the X button clears the search", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Clear search" })).toHaveCount(0);
 });
 
-test("an open session shows spots left, when they were checked, and Enroll now", async ({
-  page,
-}) => {
-  const cards = await enrollCards(page);
-  const first = cards.first();
-  await expect(first.getByText(/^\d+ spots? left$/)).toBeVisible();
-  await expect(first.getByText(/as of \d{1,2}:\d{2} [ap]m/)).toBeVisible();
-  const enroll = first.getByRole("link", { name: /Enroll now/ });
-  await expect(enroll).toHaveAttribute(
-    "href",
-    /^https:\/\/[^/]+\.activecommunities\.com\/.+\/enroll\/\d+/,
-  );
-  // Opens the City's page in a new tab, so this list stays open.
-  await expect(enroll).toHaveAttribute("target", "_blank");
-  await expect(enroll).toHaveAttribute("rel", /noopener/);
-  await expect(enroll).toHaveAccessibleName(/opens in a new tab/);
-});
+test(
+  "an open session shows spots left, when they were checked, and Enroll now",
+  ANY_SIZE,
+  async ({ page }) => {
+    const cards = await enrollCards(page);
+    const first = cards.first();
+    await expect(first.getByText(/^\d+ spots? left$/)).toBeVisible();
+    await expect(first.getByText(/as of \d{1,2}:\d{2} [ap]m/)).toBeVisible();
+    const enroll = first.getByRole("link", { name: /Enroll now/ });
+    await expect(enroll).toHaveAttribute(
+      "href",
+      /^https:\/\/[^/]+\.activecommunities\.com\/.+\/enroll\/\d+/,
+    );
+    // Opens the City's page in a new tab, so this list stays open.
+    await expect(enroll).toHaveAttribute("target", "_blank");
+    await expect(enroll).toHaveAttribute("rel", /noopener/);
+    await expect(enroll).toHaveAccessibleName(/opens in a new tab/);
+  },
+);
 
-test("a full session says Full and has no Enroll button", async ({ page }) => {
+test("a full session says Full and has no Enroll button", ANY_SIZE, async ({ page }) => {
   const second = (await enrollCards(page)).nth(1);
   await expect(second.getByText("Full", { exact: true })).toBeVisible();
   await expect(second.getByRole("link", { name: /Enroll now/ })).toHaveCount(0);
   await expect(second.getByRole("link", { name: /ActiveMississauga/ })).toHaveCount(0);
 });
 
-test("the refresh button fetches a new count", async ({ page }) => {
+test("the refresh button fetches a new count", ANY_SIZE, async ({ page }) => {
   const first = (await enrollCards(page)).first();
   const spots = first.getByText(/^\d+ spots? left$/);
   await expect(spots).toBeVisible();
@@ -437,7 +453,7 @@ test("a quick tick and untick in the picker doesn't hide a card's centre link la
   ]);
 });
 
-test("there is no week view, centre pages or nav tabs", async ({ page }) => {
+test("there is no week view, centre pages or nav tabs", ANY_SIZE, async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("navigation", { name: "Main" })).toHaveCount(0);
   for (const url of ["/calendar", "/centres", "/centres/290"]) {
@@ -445,7 +461,7 @@ test("there is no week view, centre pages or nav tabs", async ({ page }) => {
   }
 });
 
-test("the footer links to GitHub issues in a new tab", async ({ page }) => {
+test("the footer links to GitHub issues in a new tab", ANY_SIZE, async ({ page }) => {
   await page.goto("/");
   const link = page.getByRole("contentinfo").getByRole("link", { name: /Report a problem/ });
   await expect(link).toHaveAttribute(
@@ -489,27 +505,31 @@ test("the coffee icon sits top right, after the GitHub icon, and opens Buy Me a 
   expect(Math.abs(c.y - g.y)).toBeLessThan(2);
 });
 
-test("links to other sites open in a new tab; links within the app don't", async ({ page }) => {
-  await page.goto("/?type=enroll");
-  await expect(page.getByRole("link", { name: /Enroll now/ }).first()).toBeVisible();
-  const links = await page.locator("a[href]").evaluateAll((anchors) =>
-    anchors.map((a) => ({
-      external: new URL((a as HTMLAnchorElement).href).host !== location.host,
-      target: a.getAttribute("target"),
-      rel: a.getAttribute("rel") ?? "",
-      text: a.textContent?.trim().slice(0, 40),
-    })),
-  );
-  const external = links.filter((l) => l.external);
-  expect(external.length).toBeGreaterThan(3);
-  for (const link of external) {
-    expect(link.target, `"${link.text}" should open a new tab`).toBe("_blank");
-    expect(link.rel).toContain("noopener");
-  }
-  for (const link of links.filter((l) => !l.external)) {
-    expect(link.target, `"${link.text}" should stay in this tab`).toBeNull();
-  }
-});
+test(
+  "links to other sites open in a new tab; links within the app don't",
+  ANY_SIZE,
+  async ({ page }) => {
+    await page.goto("/?type=enroll");
+    await expect(page.getByRole("link", { name: /Enroll now/ }).first()).toBeVisible();
+    const links = await page.locator("a[href]").evaluateAll((anchors) =>
+      anchors.map((a) => ({
+        external: new URL((a as HTMLAnchorElement).href).host !== location.host,
+        target: a.getAttribute("target"),
+        rel: a.getAttribute("rel") ?? "",
+        text: a.textContent?.trim().slice(0, 40),
+      })),
+    );
+    const external = links.filter((l) => l.external);
+    expect(external.length).toBeGreaterThan(3);
+    for (const link of external) {
+      expect(link.target, `"${link.text}" should open a new tab`).toBe("_blank");
+      expect(link.rel).toContain("noopener");
+    }
+    for (const link of links.filter((l) => !l.external)) {
+      expect(link.target, `"${link.text}" should stay in this tab`).toBeNull();
+    }
+  },
+);
 
 test("open enroll cards get a green stripe; full ones are faded", async ({ page }) => {
   const cards = await enrollCards(page);
@@ -554,7 +574,7 @@ test("open enroll cards get a green stripe; full ones are faded", async ({ page 
   expect((await look(page.getByRole("article").first())).shadow).toBe("none");
 });
 
-test("security headers are set, and the CSP doesn't break the page", async ({ page }) => {
+test("security headers are set, and the CSP doesn't break the page", ANY_SIZE, async ({ page }) => {
   const errors: string[] = [];
   page.on("console", (msg) => {
     if (msg.type() === "error" && /Content Security Policy|CSP/i.test(msg.text())) {
@@ -823,6 +843,16 @@ test.describe("collapsible days", () => {
   async function open(page: Page) {
     await page.goto("/");
     await expect(page.getByRole("button", { name: /^Share / }).first()).toBeVisible();
+    // The headings themselves must be hydrated: a tap before then collapses the
+    // day natively, without holding the page height, and the page jumps.
+    await expect
+      .poll(() =>
+        page
+          .locator("details summary")
+          .first()
+          .evaluate((el) => Object.keys(el).some((key) => key.startsWith("__reactProps"))),
+      )
+      .toBe(true);
   }
 
   test("collapsing a day keeps its heading and refills the page; opening brings it back", async ({
@@ -874,31 +904,35 @@ test.describe("collapsible days", () => {
     await expect(summary).toBeInViewport();
   });
 
-  test("Show more keeps collapsed days; a new search opens them all", async ({ page }) => {
-    await open(page);
-    await day(page, 0).locator("summary").click();
-    await expect(page).toHaveURL(/collapsed=/);
-    await page.getByRole("link", { name: "Show more" }).click();
-    await expect(page).toHaveURL(/limit=60/);
-    await expect(page).toHaveURL(/collapsed=/);
-    await expect(day(page, 0)).not.toHaveAttribute("open");
+  test(
+    "Show more keeps collapsed days; a new search opens them all",
+    ANY_SIZE,
+    async ({ page }) => {
+      await open(page);
+      await day(page, 0).locator("summary").click();
+      await expect(page).toHaveURL(/collapsed=/);
+      await page.getByRole("link", { name: "Show more" }).click();
+      await expect(page).toHaveURL(/limit=60/);
+      await expect(page).toHaveURL(/collapsed=/);
+      await expect(day(page, 0)).not.toHaveAttribute("open");
 
-    const chips = page.getByRole("navigation", { name: "Activity" });
-    await chips.getByRole("link", { name: "Swim" }).click();
-    await expect(page).toHaveURL(/[?&]q=swim\b/);
-    await expect(page).not.toHaveURL(/collapsed=/);
-    await expect(page.locator("details:not([open])")).toHaveCount(0);
+      const chips = page.getByRole("navigation", { name: "Activity" });
+      await chips.getByRole("link", { name: "Swim" }).click();
+      await expect(page).toHaveURL(/[?&]q=swim\b/);
+      await expect(page).not.toHaveURL(/collapsed=/);
+      await expect(page.locator("details:not([open])")).toHaveCount(0);
 
-    // Typing a search (not just a chip) opens them too.
-    await day(page, 0).locator("summary").click();
-    await expect(page).toHaveURL(/collapsed=/);
-    await page.getByRole("searchbox").fill("lane");
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/[?&]q=lane(&|$)/);
-    await expect(page).not.toHaveURL(/collapsed=/);
-  });
+      // Typing a search (not just a chip) opens them too.
+      await day(page, 0).locator("summary").click();
+      await expect(page).toHaveURL(/collapsed=/);
+      await page.getByRole("searchbox").fill("lane");
+      await page.keyboard.press("Enter");
+      await expect(page).toHaveURL(/[?&]q=lane(&|$)/);
+      await expect(page).not.toHaveURL(/collapsed=/);
+    },
+  );
 
-  test("a heading toggles from the keyboard", async ({ page }) => {
+  test("a heading toggles from the keyboard", ANY_SIZE, async ({ page }) => {
     await open(page);
     const summary = day(page, 0).locator("summary");
     await summary.focus();
