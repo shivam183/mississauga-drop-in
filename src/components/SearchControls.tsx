@@ -81,8 +81,8 @@ export function SearchControls({ path, state, today }: SearchControlsProps) {
           return (
             <Link
               key={slug}
-              // Each activity's own page, keeping the other filters; tapped again, back to all.
-              href={hrefWith(on ? path : `/${slug}`, state, { q: "" })}
+              // Filters in place (not the /swim page): another page would swap the whole view.
+              href={link({ q: on ? "" : q })}
               className={styles.chip}
               aria-current={on ? "page" : undefined}
             >
