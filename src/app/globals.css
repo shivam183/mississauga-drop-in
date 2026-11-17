@@ -45,6 +45,11 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* The list behind the details popup doesn't scroll. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
 body {
   margin: 0;
   background: var(--bg);

@@ -102,7 +102,32 @@ export interface RawActivityDetail {
   space_type?: number;
   first_date?: string;
   last_date?: string;
+  // Read only for the details popup (src/models/activity.ts); all optional.
+  category?: string | null;
+  season_name?: string | null;
+  /** e.g. "16 yrs +," */
+  age_description?: string | null;
+  /** "Mixed", "Male" or "Female" */
+  allowed_gender?: string | null;
+  catalog_description?: string | null;
+  /** Can be HTML. Never render as markup. */
+  online_notes?: string | null;
+  user_notes?: string | null;
+  centers?: RawDetailCentre[] | null;
+  other_info?: { sessions?: number | null } | null;
   [field: string]: unknown;
+}
+
+export interface RawDetailCentre {
+  name?: string | null;
+  address1?: string | null;
+  address2?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zip_code?: string | null;
+  phone?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export interface ActivityDetailBody {

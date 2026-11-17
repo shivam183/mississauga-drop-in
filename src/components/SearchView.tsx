@@ -10,8 +10,8 @@ import {
 } from "@/lib/params";
 import { getSchedule } from "@/lib/schedule";
 import { filterSessions, pageDays } from "@/models/filters";
-import { AvailabilityProvider } from "./AvailabilityProvider";
 import { DayGroup } from "./DayGroup";
+import { ReopenDetails } from "./DetailsPreview";
 import { LinkPending } from "./LinkPending";
 import styles from "./Search.module.css";
 import { SearchControls } from "./SearchControls";
@@ -44,6 +44,8 @@ export async function SearchView({
       <SearchControls path={path} state={state} today={now.slice(0, 10)} />
 
       <div className={styles.results}>
+        {/* After a refresh of an open popup: reopens it over this list. */}
+        <ReopenDetails />
         {state.session ? (
           // A shared link shows just that session (see ShareButton).
           <p className={styles.summary} role="status">
@@ -74,19 +76,17 @@ export async function SearchView({
           </p>
         )}
 
-        <AvailabilityProvider>
-          {page.days.map((group) => (
-            <DayGroup
-              key={group.date}
-              group={group}
-              now={now}
-              // A card's centre name adds that centre to the filter.
-              centreHref={(id) =>
-                hrefWith(path, state, { centreIds: [...new Set([...state.centreIds, id])] })
-              }
-            />
-          ))}
-        </AvailabilityProvider>
+        {page.days.map((group) => (
+          <DayGroup
+            key={group.date}
+            group={group}
+            now={now}
+            // A card's centre name adds that centre to the filter.
+            centreHref={(id) =>
+              hrefWith(path, state, { centreIds: [...new Set([...state.centreIds, id])] })
+            }
+          />
+        ))}
 
         {page.more && (
           <Link

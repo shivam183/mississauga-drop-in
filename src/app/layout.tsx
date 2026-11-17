@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { AvailabilityProvider } from "@/components/AvailabilityProvider";
+import { StandInDetails } from "@/components/DetailsPreview";
 import { ExternalLink } from "@/components/ExternalLink";
 import "./globals.css";
 
@@ -38,7 +40,7 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children, modal }: LayoutProps<"/">) {
   return (
     <html lang="en-CA">
       <body>
@@ -85,9 +87,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </div>
           </div>
         </header>
-        <main id="main" className="container">
-          {children}
-        </main>
+        {/* One spots store for the list and the details popup over it, so the popup reuses the card's counts. */}
+        <AvailabilityProvider>
+          <main id="main" className="container">
+            {children}
+          </main>
+          {/* The details popup, over the list (src/app/@modal), and its stand-in while it loads. */}
+          {modal}
+          <StandInDetails />
+        </AvailabilityProvider>
         <footer className="site-footer">
           <div className="container">
             <p>

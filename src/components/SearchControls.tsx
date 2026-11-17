@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ALL_CENTRES, CENTRES_BY_TYPE } from "@/lib/centres";
 import { addDays, formatDate, formatDayHeading } from "@/lib/format";
 import { activeFilterCount, hrefWith, type SearchState } from "@/lib/params";
+import { ACTIVITIES } from "@/models/activities";
 import type { TimeOfDay } from "@/models/filters";
 import type { SessionType } from "@/models/session";
 import { CentrePicker } from "./CentrePicker";
@@ -13,24 +14,6 @@ import { TYPE_LABEL } from "./TypeBadge";
 import styles from "./Search.module.css";
 
 const TYPES: SessionType[] = ["dropin", "enroll"];
-
-/**
- * One-tap searches for the most common activities: Pickleball first (the most
- * popular), then busiest first. Each `q` matches every variant of the City's
- * titles ("skat": Skate, Figure Skating).
- */
-const ACTIVITIES: Array<[q: string, label: string]> = [
-  ["pickleball", "Pickleball"],
-  ["swim", "Swim"],
-  ["yoga", "Yoga"],
-  ["skat", "Skate"],
-  ["hockey", "Hockey"],
-  ["basketball", "Basketball"],
-  ["badminton", "Badminton"],
-  ["volleyball", "Volleyball"],
-  ["table tennis", "Table tennis"],
-  ["soccer", "Soccer"],
-];
 
 /** Labels and start-time ranges, matching TIME_OF_DAY_HOURS in models/filters. */
 const TIMES: Array<[TimeOfDay, string, string]> = [
