@@ -25,6 +25,7 @@ export const metadata: Metadata = {
     url: "/",
     locale: "en_CA",
   },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = {

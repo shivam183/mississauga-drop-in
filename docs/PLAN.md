@@ -200,6 +200,7 @@ mississauga-drop-in/
   - Done: the "Protect main" ruleset requires a PR (squash only) and passing `check`, `e2e`, `analyze` and `conventional-title`, and blocks deletion and force pushes. All changes now go through PRs.
   - Search engines (2026-11-17): static `robots.txt` (crawl everything but `/api/`) and `sitemap.xml` (just `/`) in `src/app/`, and a canonical URL of `/` so filter URLs aren't indexed as separate pages. The apex domain is canonical, so it must be the primary domain in Vercel (it redirected to `www.` before). Site verified and sitemap submitted in Google Search Console (done by hand).
   - Logo (2026-11-17): a grey map pin with a red ring at its base and, in a white disc, a red Mississauga skyline (City Hall's clock spire and the two Absolute World towers); drawn for this site, not stock art. In `src/app/icon.svg` (tab and Google result icon) and `src/app/apple-icon.png` (180px, iOS home screen); also shown beside the site name in the header. Replaces the default Next.js `favicon.ico`.
+  - Share card and site name (2026-11-17): `src/app/opengraph-image.tsx` builds a 1200×630 card (logo, name, one-line pitch) at build time, used for Open Graph and as a large X/Twitter card. The home page carries `WebSite` JSON-LD so Google shows "Mississauga Drop-In" as the site name. Bing Webmaster Tools imported from Search Console (done by hand).
   - Done: the `RELEASE_PLEASE_TOKEN` secret (a fine-grained PAT) is set, so release PRs get their checks. Renew it before it expires.
 
 **6. Find it faster** (in progress)
