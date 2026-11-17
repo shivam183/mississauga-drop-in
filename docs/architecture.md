@@ -30,12 +30,19 @@ the API.
 | `getCentreBatch` (schedule.ts)            | `schedule` | 10 min   | calendar + up to 5 centres  |
 | `getCachedButtonStatus` (availability.ts) | `schedule` | 10 min   | activity id + session start |
 | `getCachedDetail` (availability.ts)       | `spots`    | 60 s     | activity id                 |
+| `getActivityInfo` (activity.ts)           | `info`     | 1 day    | activity id                 |
 
 All of these use `"use cache: remote"` (Vercel's Runtime Cache, shared by all
-instances and billed per read). `getSchedule`, `getCachedDetail` and
-`getCachedButtonStatus` also have a plain `"use cache"` (in-memory) layer in front,
+instances and billed per read). `getSchedule`, `getCachedDetail`,
+`getCachedButtonStatus` and `getActivityInfo` also have a plain `"use cache"` (in-memory) layer in front,
 so a warm instance answers repeat lookups without a billed read. As a result, a value
 can be up to about twice its lifetime old.
+
+`getActivityInfo` (the details popup) stores only the small `ActivityInfo` (about
+1–2 KB, one read unit), not the City's raw response, and is only called for
+drop-in activities with an upcoming session in the schedule. An enroll-online
+session's details come from `getCachedDetail` instead, which its spots need
+anyway, so the popup makes one City call, not two.
 
 Reads are billed per 8 KB, so schedules are stored packed by activity
 (`packSessions` in `src/models/session.ts`): about 780 KB instead of 3.4 MB.

@@ -39,6 +39,8 @@ const nextConfig: NextConfig = {
     schedule: { stale: 300, revalidate: 600, expire: 3600 },
     // Spots left: refreshed every 60 seconds; each count shows when it was checked.
     spots: { stale: 30, revalidate: 60, expire: 600 },
+    // Activity descriptions, ages and centres (details popup): they change at most each season.
+    info: { stale: 3600, revalidate: 86400, expire: 604800 },
   },
   headers() {
     return [{ source: "/:path*", headers: SECURITY_HEADERS }];

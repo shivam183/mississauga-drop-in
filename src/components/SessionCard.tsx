@@ -1,10 +1,10 @@
 import Link from "next/link";
 import type { LocalDateTime } from "@/lib/activenet/types";
-import { displayTitle, formatDate, formatTimeRange, startsLabel } from "@/lib/format";
+import { displayTitle, formatDate, formatTimeRange, sessionWhen, startsLabel } from "@/lib/format";
 import { EMPTY_SEARCH, hrefWith } from "@/lib/params";
 import type { Session } from "@/models/session";
+import { DetailsLink } from "./DetailsPreview";
 import { EnrollPanel } from "./EnrollPanel";
-import { ExternalLink } from "./ExternalLink";
 import { LinkPending } from "./LinkPending";
 import styles from "./SessionCard.module.css";
 import { ShareButton } from "./ShareButton";
@@ -49,7 +49,20 @@ export function SessionCard({
         </p>
       )}
       <h3 className={styles.title}>
-        {session.url ? <ExternalLink href={session.url}>{title}</ExternalLink> : title}
+        {/* Opens the details popup, which shows this card's name, time and place straight away. */}
+        <DetailsLink
+          preview={{
+            href: `/activity/${session.activityId}?session=${session.id}`,
+            type: session.type,
+            title,
+            when: sessionWhen(session.start, session.end, now.slice(0, 10)),
+            where: session.facility
+              ? `${session.centreName} · ${session.facility}`
+              : session.centreName,
+          }}
+        >
+          {title}
+        </DetailsLink>
       </h3>
       <p className={styles.where}>
         <span aria-hidden="true">📍 </span>

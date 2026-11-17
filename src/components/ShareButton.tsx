@@ -13,12 +13,15 @@ export function ShareButton({
   title,
   text,
   href,
+  className = styles.share,
 }: {
   title: string;
   /** One detail per line, e.g. "Adult Pickleball\nMon Nov 16, 7:45 – 9:45 AM\nMeadowvale Community Centre" */
   text: string;
-  /** Our list filtered to this session, relative to the site. */
+  /** The page to share, relative to the site: the list showing this session, or its details. */
   href: string;
+  /** The button's look; the card's quiet icon by default. */
+  className?: string;
 }) {
   const live = useHydrated();
   const [copied, setCopied] = useState(false);
@@ -43,7 +46,13 @@ export function ShareButton({
   }
 
   return (
-    <button type="button" className={styles.share} aria-label={`Share ${title}`} onClick={share}>
+    <button
+      type="button"
+      className={className}
+      aria-label={`Share ${title}`}
+      title="Share"
+      onClick={share}
+    >
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
         <path
           d="M12 15V3m0 0L7.5 7.5M12 3l4.5 4.5M7 11H5v10h14V11h-2"

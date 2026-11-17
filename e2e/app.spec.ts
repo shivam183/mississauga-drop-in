@@ -330,6 +330,7 @@ test("centre picker: type to filter the list, pick one or more centres", async (
   page,
 }, testInfo) => {
   await page.goto("/");
+  await hydrated(page); // the picker only opens once the page is interactive
   const phone = isPhone(testInfo.project.name);
   const sheet = page.getByRole("region", { name: "Filters" });
   if (phone) await page.getByRole("button", { name: /^Filters/ }).click();
@@ -413,6 +414,7 @@ test("a quick tick and untick in the picker doesn't hide a card's centre link la
 }, testInfo) => {
   const phone = isPhone(testInfo.project.name);
   await page.goto("/?type=enroll");
+  await hydrated(page); // the picker only opens once the page is interactive
   if (phone) await page.getByRole("button", { name: /^Filters/ }).click();
   const sheet = page.getByRole("region", { name: "Filters" });
   await sheet.getByRole("combobox", { name: "Community centre" }).click();
@@ -587,32 +589,232 @@ test("tapping anywhere on a card opens its details; its own links still work", a
     route.fulfill({ body: "City page" }),
   );
   await page.goto("/?type=enroll");
+  await hydrated(page);
   const card = page.getByRole("article").first();
-  const details = await card.getByRole("link", { name: /Adult Pickleball/ }).getAttribute("href");
   await expect(card.getByRole("link", { name: /Enroll now/ })).toBeVisible();
 
-  // Tapping a plain part of the card (beside the time) opens the details page.
+  // Tapping a plain part of the card (beside the time) opens the details popup, in this tab.
   const box = (await card.locator("time").boundingBox())!;
-  const [popup] = await Promise.all([
-    context.waitForEvent("page"),
-    page.mouse.click(box.x + box.width / 2, box.y + box.height / 2),
-  ]);
-  await popup.waitForLoadState();
-  expect(popup.url()).toBe(details);
-  await popup.close();
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(page).toHaveURL(/\/activity\/\d+\?session=e\d+-\d{12}$/);
+  await page.goBack();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
 
-  // Enroll now opens the enroll page, not the details page.
+  // Enroll now opens the enroll page in a new tab, not the details.
   const [enroll] = await Promise.all([
     context.waitForEvent("page"),
     card.getByRole("link", { name: /Enroll now/ }).click(),
   ]);
   expect(enroll.url()).toContain("/enroll/");
   await enroll.close();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
 
   // The centre name still does its own thing (filters, in this tab).
   await card.getByRole("link", { name: /Community Centre/ }).click();
   await expect(page).toHaveURL(/centre=\d+/);
   expect(context.pages()).toHaveLength(1);
+});
+
+/** Waits for hydration (Share buttons appear only then), so taps are handled by the app. */
+async function hydrated(page: Page) {
+  await expect(page.getByRole("button", { name: /^Share / }).first()).toBeVisible();
+}
+
+test.describe("details popup", () => {
+  async function openFirst(page: Page, url = "/") {
+    await page.goto(url);
+    await hydrated(page);
+    const title = page.getByRole("article").first().getByRole("heading").getByRole("link");
+    const name = (await title.textContent())!.trim();
+    await title.click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog.getByText("About", { exact: true })).toBeVisible();
+    return { dialog, name, title };
+  }
+
+  test("shows what the program is and where, with directions", async ({ page }) => {
+    const { dialog } = await openFirst(page);
+    await expect(dialog).toHaveAccessibleName(/\S/);
+    await expect(dialog.getByText(/Ages \d+/)).toBeVisible();
+    await expect(dialog.getByText("Good to know", { exact: true })).toBeVisible();
+    await expect(dialog.getByText(/, Mississauga, ON L\d[A-Z] \d[A-Z]\d/)).toBeVisible();
+    await expect(dialog.getByRole("link", { name: /^Directions to / })).toHaveAttribute(
+      "href",
+      /^https:\/\/www\.google\.com\/maps\/search\/\?api=1&query=/,
+    );
+    await expect(dialog.getByRole("link", { name: /^Call / })).toHaveAttribute("href", /^tel:/);
+    await expect(dialog.getByRole("link", { name: /View on ActiveMississauga/ })).toBeVisible();
+    // The list behind doesn't scroll while it's open.
+    expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).toBe(
+      "hidden",
+    );
+  });
+
+  test("Esc, the close button (desktop) and Back each close it and keep the list's place", async ({
+    page,
+  }, testInfo) => {
+    await page.goto("/");
+    await hydrated(page);
+    await page.evaluate(() => window.scrollTo(0, 300));
+    // Phones have no ✕ in the popup: the handle, a swipe, a tap outside or Back close it.
+    const closers = isPhone(testInfo.project.name)
+      ? (["Escape", "back"] as const)
+      : (["Escape", "button", "back"] as const);
+    for (const close of closers) {
+      await page.getByRole("article").nth(2).getByRole("heading").getByRole("link").click();
+      const dialog = page.getByRole("dialog");
+      await expect(dialog.getByText("About", { exact: true })).toBeVisible();
+      if (close === "Escape") await page.keyboard.press("Escape");
+      else if (close === "button") await dialog.getByRole("button", { name: "Close" }).click();
+      else await page.goBack();
+      await expect(dialog).toHaveCount(0);
+      await expect(page).toHaveURL(/\/$/);
+      expect(await page.evaluate(() => Math.round(window.scrollY)), close).toBe(300);
+    }
+  });
+
+  test("opens at once with what the card already shows, before the details arrive", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await hydrated(page);
+    const card = page.getByRole("article").first();
+    const title = card.getByRole("heading").getByRole("link");
+    const name = (await title.textContent())!.trim();
+    // Hold the server's answer back until released.
+    let release = () => {};
+    const held = new Promise<void>((resolve) => (release = resolve));
+    await page.route("**/activity/**", async (route) => {
+      await held;
+      await route.continue();
+    });
+    await title.click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog.getByRole("heading", { name })).toBeVisible();
+    await expect(dialog.getByText(/^(Today|Tomorrow|\w{3} \w{3} \d+) · /)).toBeVisible();
+    await expect(dialog.getByText("About", { exact: true })).toHaveCount(0);
+    release();
+    await expect(dialog.getByText("About", { exact: true })).toBeVisible();
+  });
+
+  test("on phones, pulling the handle down closes it, and there's no ✕", async ({
+    page,
+  }, testInfo) => {
+    test.skip(!isPhone(testInfo.project.name), "phone only");
+    await openFirst(page);
+    await expect(page.getByRole("dialog").getByRole("button", { name: "Close" })).toBeHidden();
+    const handle = page.getByRole("dialog").locator("[class*=grab]");
+    const box = (await handle.boundingBox())!;
+    const x = box.x + box.width / 2;
+    await page.mouse.move(x, box.y + 8);
+    await page.mouse.down();
+    await page.mouse.move(x, box.y + 60, { steps: 4 });
+    await page.mouse.move(x, box.y + 160, { steps: 4 });
+    await page.mouse.up();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await expect(page).toHaveURL(/\/$/);
+  });
+
+  test("Share in the popup copies a link to these details", async ({ page, context }) => {
+    // No share sheet, and a clipboard we can read back (as in the card's Share test).
+    await page.addInitScript(() => {
+      Object.defineProperty(Navigator.prototype, "share", { value: undefined });
+      Object.defineProperty(navigator, "clipboard", {
+        value: { writeText: async (t: string) => ((window as { copied?: string }).copied = t) },
+      });
+    });
+    const { dialog } = await openFirst(page);
+    const name = (await dialog.getByRole("heading", { level: 2 }).first().textContent())!.trim();
+    await expect(dialog.getByRole("button", { name: /^Share / })).toHaveAttribute("title", "Share");
+    await dialog.getByRole("button", { name: /^Share / }).click();
+    await expect(dialog.getByRole("status")).toHaveText("Copied");
+    const copied = (await page.evaluate(() => (window as { copied?: string }).copied))!;
+    const [first, , , url] = copied.split("\n");
+    expect(first).toBe(name);
+    expect(url).toMatch(/\/activity\/\d+\?session=[de]\d+-\d{12}$/);
+    // Whoever opens it gets the full details page.
+    const shared = await context.newPage();
+    await shared.goto(url);
+    await expect(shared.getByRole("heading", { level: 1 })).toHaveText(name);
+  });
+
+  test("an enroll session shows spots and Enroll without scrolling", async ({ page }) => {
+    const { dialog } = await openFirst(page, "/?type=enroll");
+    await expect(dialog.getByText(/^\d+ spots? left$/)).toBeVisible();
+    const enroll = dialog.getByRole("link", { name: /Enroll now/ });
+    await expect(enroll).toBeInViewport();
+    await expect(enroll).toHaveAttribute("target", "_blank");
+  });
+
+  test("from the keyboard: Enter opens it, focus moves in, and returns on close", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await hydrated(page);
+    const title = page.getByRole("article").first().getByRole("heading").getByRole("link");
+    await title.focus();
+    await page.keyboard.press("Enter");
+    const dialog = page.getByRole("dialog");
+    await expect(dialog.getByText("About", { exact: true })).toBeVisible();
+    expect(await dialog.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+    await page.keyboard.press("Escape");
+    await expect(dialog).toHaveCount(0);
+    await expect(title).toBeFocused();
+  });
+
+  test("a refresh keeps the list, with the popup open over it where it was", async ({ page }) => {
+    await page.goto("/?type=enroll");
+    await hydrated(page);
+    await page.evaluate(() => window.scrollTo(0, 200));
+    await page.getByRole("article").nth(1).getByRole("heading").getByRole("link").click();
+    await expect(page.getByRole("dialog").getByText("About", { exact: true })).toBeVisible();
+    const url = page.url();
+
+    await page.reload();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog.getByText("About", { exact: true })).toBeVisible();
+    await expect(page).toHaveURL(url);
+    await page.keyboard.press("Escape");
+    await expect(dialog).toHaveCount(0);
+    await expect(page).toHaveURL(/\/\?type=enroll$/);
+    await expect(page.getByRole("article").first()).toBeVisible();
+    expect(await page.evaluate(() => Math.round(window.scrollY))).toBe(200);
+  });
+
+  test("a shared link (a new tab) is a full page that isn't indexed, with ✕ back to the list", async ({
+    page,
+    context,
+  }) => {
+    await openFirst(page);
+    const shared = await context.newPage(); // its own sessionStorage, like another device
+    await shared.goto(page.url());
+    await page.close();
+    page = shared;
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/\S/);
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/\S/);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+    await expect(page.getByRole("link", { name: /More at / })).toBeVisible();
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(0);
+    await page.getByRole("link", { name: "Close, show all sessions" }).click();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByRole("article").first()).toBeVisible();
+  });
+
+  test("an unknown or ended activity shows the not-found page, not indexed", async ({ page }) => {
+    for (const url of ["/activity/999999999", "/activity/abc"]) {
+      await page.goto(url);
+      await expect(page.getByText(/could not be found/i)).toBeVisible();
+      await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute(
+        "content",
+        /noindex/,
+      );
+    }
+  });
 });
 
 test.describe("collapsible days", () => {

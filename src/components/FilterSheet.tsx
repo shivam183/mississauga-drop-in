@@ -1,10 +1,8 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type PointerEvent, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import styles from "./Search.module.css";
-
-/** How far the sheet must be pulled down before letting go closes it. */
-const SWIPE_TO_CLOSE_PX = 80;
+import { useSwipeToClose } from "./useSwipeToClose";
 
 /**
  * On phones the filter form sits in a bottom sheet behind a "Filters"
@@ -26,31 +24,11 @@ export function FilterSheet({
 
   const close = () => {
     setOpen(false);
-    setDrag(null);
     button.current?.focus();
   };
 
-  // Swipe down on the handle/title to close. `drag` is how far it's been pulled.
-  const [drag, setDrag] = useState<number | null>(null);
-  const dragStart = useRef(0);
-  const grab = {
-    onPointerDown(event: PointerEvent<HTMLDivElement>) {
-      if (!open) return; // the desktop sidebar is never "open", so it can't be dragged
-      dragStart.current = event.clientY;
-      event.currentTarget.setPointerCapture(event.pointerId);
-      setDrag(0);
-    },
-    onPointerMove(event: PointerEvent<HTMLDivElement>) {
-      if (drag !== null) setDrag(Math.max(0, event.clientY - dragStart.current));
-    },
-    onPointerUp() {
-      if (drag !== null && drag > SWIPE_TO_CLOSE_PX) close();
-      else setDrag(null);
-    },
-    onPointerCancel() {
-      setDrag(null);
-    },
-  };
+  // Swipe down on the handle/title to close (the desktop sidebar is never "open").
+  const { drag, grab } = useSwipeToClose(close, { enabled: open });
 
   useEffect(() => {
     if (!open) return;

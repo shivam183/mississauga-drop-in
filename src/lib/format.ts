@@ -40,10 +40,29 @@ export function addDays(date: string, days: number): string {
   return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
 }
 
+/** "Nov 14" */
+export function formatMonthDay(date: string): string {
+  return `${MONTHS[Number(date.slice(5, 7)) - 1]} ${Number(date.slice(8, 10))}`;
+}
+
 /** "Sat Nov 14" */
 export function formatDate(date: string): string {
-  const month = MONTHS[Number(date.slice(5, 7)) - 1];
-  return `${WEEKDAYS[weekday(date)]} ${month} ${Number(date.slice(8, 10))}`;
+  return `${WEEKDAYS[weekday(date)]} ${formatMonthDay(date)}`;
+}
+
+const WEEKDAY_NAMES = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+/** "Saturday" */
+export function weekdayName(date: string): string {
+  return WEEKDAY_NAMES[weekday(date)];
 }
 
 /** "Today · Sat Nov 14", "Tomorrow · Sun Nov 15" or "Mon Nov 16". */
@@ -51,6 +70,13 @@ export function formatDayHeading(date: string, today: string): string {
   if (date === today) return `Today · ${formatDate(date)}`;
   if (date === addDays(today, 1)) return `Tomorrow · ${formatDate(date)}`;
   return formatDate(date);
+}
+
+/** "Today · 6:30 – 8:55 AM", "Tomorrow · …" or "Sat Nov 21 · …": short, so it fits on one line. */
+export function sessionWhen(start: LocalDateTime, end: LocalDateTime, today: string): string {
+  const date = start.slice(0, 10);
+  const day = date === today ? "Today" : date === addDays(today, 1) ? "Tomorrow" : formatDate(date);
+  return `${day} · ${formatTimeRange(start, end)}`;
 }
 
 /** "Tue Dec 30, 7:00 AM" */

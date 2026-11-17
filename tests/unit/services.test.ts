@@ -9,6 +9,7 @@ import { setActiveNetClient } from "@/lib/activenet";
 import { createActiveNetClient } from "@/lib/activenet/client";
 import { createThrottle } from "@/lib/activenet/throttle";
 import type { Envelope, EventsBody, EventsQuery } from "@/lib/activenet/types";
+import { getActivity } from "@/lib/activity";
 import { getAvailability, MAX_AVAILABILITY_IDS } from "@/lib/availability";
 import { CENTRES_BY_TYPE } from "@/lib/centres";
 import { CENTRES_PER_REQUEST, getSchedule } from "@/lib/schedule";
@@ -16,6 +17,7 @@ import { toEnrollState } from "@/models/availability";
 import { fixture } from "./fixtures";
 
 vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn(), revalidateTag: vi.fn() }));
+vi.mock("next/server", () => ({ connection: vi.fn(async () => {}) }));
 
 // 3:00 pm in Toronto on the day the fixtures were captured.
 const NOW = new Date("2026-11-14T20:00:00Z");
@@ -166,5 +168,37 @@ describe("getAvailability", () => {
       getAvailability(Array.from({ length: MAX_AVAILABILITY_IDS + 1 }, (_, i) => i + 1)),
     ).rejects.toThrow(RangeError);
     expect(fakeFetch).not.toHaveBeenCalled();
+  });
+});
+
+describe("getActivity (details popup)", () => {
+  const detailRequests = () => requests.filter((u) => u.includes("/activity/detail/"));
+
+  it("returns the upcoming sessions and the City's details", async () => {
+    const activity = await getActivity(166860);
+    expect(activity?.sessions.map((s) => s.activityId)).toEqual([166860]);
+    expect(activity?.info).toMatchObject({ name: "Adult Pickleball", ages: "18+" });
+    expect(activity?.now).toBe("2026-11-14 15:00:00");
+  });
+
+  it("an enroll session reads its info through the spots cache, so the two share one City call", async () => {
+    await getActivity(166860);
+    expect(cacheLife).toHaveBeenCalledWith("spots");
+    expect(cacheLife).not.toHaveBeenCalledWith("info");
+    expect(detailRequests()).toHaveLength(1);
+  });
+
+  it("never asks the City about ids that aren't upcoming sessions", async () => {
+    for (const id of [999999, 164222 /* already over */, 0, -5, Number.NaN, 1.5]) {
+      expect(await getActivity(id), String(id)).toBeNull();
+    }
+    expect(detailRequests()).toEqual([]);
+  });
+
+  it("still shows the sessions when the City's details fail", async () => {
+    failing = { activityId: 164373 };
+    const activity = await getActivity(164373);
+    expect(activity?.sessions).toHaveLength(1);
+    expect(activity?.info).toBeNull();
   });
 });
