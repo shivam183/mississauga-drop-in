@@ -240,9 +240,12 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* The card's "On now" / "Starts in" colours. */
+/* The card's "On now" / "Starts in" colours, on its own line under the time
+   (beside it, the long time line wrapped unevenly on phones). */
 .soon {
   composes: soon from "./SessionCard.module.css";
+  display: block;
+  margin-top: 2px;
   font-size: 1rem;
 }
 
@@ -292,6 +295,85 @@ button.iconLink {
 
 .iconLink:hover {
   background: var(--surface);
+}
+
+/* "Directions in…": a dropdown from the Directions button, with a pointer at it
+   (a native popover; MapsMenu places it, else the browser centres it). */
+.mapsMenu {
+  width: min(260px, calc(100% - 32px));
+  padding: 12px;
+  overflow: visible; /* for the pointer */
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg);
+  color: var(--text);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.25);
+}
+
+.mapsMenu[data-side] {
+  inset: auto;
+  margin: 0;
+}
+
+/* The pointer: a small turned square, half hidden under the card's edge. */
+.mapsMenu[data-side]::before {
+  content: "";
+  position: absolute;
+  right: calc(var(--pointer-right) - 7px);
+  width: 14px;
+  height: 14px;
+  border: inherit;
+  background: inherit;
+  transform: rotate(45deg);
+}
+
+.mapsMenu[data-side="below"]::before {
+  top: -8px;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.mapsMenu[data-side="above"]::before {
+  bottom: -8px;
+  border-top: 0;
+  border-left: 0;
+}
+
+.mapsTitle {
+  margin: 0 0 8px;
+  font-weight: 700;
+}
+
+.mapsList {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mapsApp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.mapsApp:hover {
+  background: var(--surface);
+}
+
+.mapsLast {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  font-weight: 400;
 }
 
 .heading {
