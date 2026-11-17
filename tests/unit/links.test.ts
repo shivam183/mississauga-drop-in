@@ -48,6 +48,23 @@ describe("noticeToText", () => {
     expect(text).not.toContain("alert");
   });
 
+  it.each([
+    "<scr<script>x</script>ipt>alert(1)</script>",
+    "<<b>script>alert(1)<</b>/script>",
+    "<scr<b>ipt>alert(1)</scr<i>ipt>",
+    "<img<b> src=x onerror=alert(1)>",
+    "Hi <script src=x",
+    "<b>Hi</b> <scr<i>ipt",
+    "Hi </script",
+  ])("leaves no tag or tag start behind: %s", (html) => {
+    const text = noticeToText(html);
+    expect(text).not.toMatch(/<[a-z/!?]/i); // leftover words are fine: it renders as text
+  });
+
+  it("keeps a plain '<' in text", () => {
+    expect(noticeToText("Ages < 12 with an adult")).toBe("Ages < 12 with an adult");
+  });
+
   it("leaves plain text and unknown entities alone", () => {
     expect(noticeToText("Admittance is first come-first served. &bogus;")).toBe(
       "Admittance is first come-first served. &bogus;",

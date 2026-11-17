@@ -58,10 +58,21 @@ function decodeEntity(entity: string, name: string): string {
  */
 export function noticeToText(value: unknown): string {
   if (typeof value !== "string") return "";
-  return value
-    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, " ")
-    .replace(/<br\s*\/?>|<\/(p|div|li|h\d)\s*>/gi, " ")
-    .replace(/<[^>]*>/g, "")
+  // Until nothing changes, so no pass can leave a new tag behind. Each pass
+  // only shortens the text, so this ends.
+  let text = value;
+  let before;
+  do {
+    before = text;
+    text = text
+      .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, " ")
+      .replace(/<br\s*\/?>|<\/(p|div|li|h\d)\s*>/gi, " ")
+      .replace(/<[^>]*>/g, "");
+  } while (text !== before);
+  // A tag start with no ">" after it ("Hi <script") survives the loop; a plain "a < b" stays.
+  text = text.replace(/<(?=[a-z/!?])/gi, "");
+  // Entities last, so an escaped "&lt;b&gt;" stays the text "<b>".
+  return text
     .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, decodeEntity)
     .replace(/\s+/g, " ")
     .trim();
