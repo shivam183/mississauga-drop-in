@@ -4,6 +4,9 @@ import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import styles from "./Search.module.css";
 import { useSwipeToClose } from "./useSwipeToClose";
 
+/** Below 900px the filters are a bottom sheet (same breakpoint as the CSS). */
+const isSheet = () => matchMedia("(max-width: 899.98px)").matches;
+
 /**
  * On phones the filter form sits in a bottom sheet behind a "Filters"
  * button; from 900px wide it's always shown as a sidebar (see the CSS).
@@ -27,8 +30,12 @@ export function FilterSheet({
     button.current?.focus();
   };
 
-  // Swipe down on the handle/title to close (the desktop sidebar is never "open").
-  const { drag, grab } = useSwipeToClose(close, { enabled: open });
+  // Swipe down on the handle/title to close, or on the form when it's scrolled to
+  // the top, like the details popup (the desktop sidebar is never "open").
+  const { drag, grab } = useSwipeToClose(close, {
+    enabled: open,
+    scrollArea: { root: sheet, selector: `.${styles.sheet}`, when: () => open && isSheet() },
+  });
 
   useEffect(() => {
     if (!open) return;

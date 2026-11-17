@@ -2,6 +2,20 @@ import { expect, test, type Page } from "@playwright/test";
 
 const isPhone = (projectName: string) => projectName === "phone";
 
+/** A real touch swipe from (x, y), `dy` px down (Playwright's mouse makes no touch events). */
+async function touchSwipe(page: Page, x: number, y: number, dy: number) {
+  const cdp = await page.context().newCDPSession(page);
+  const touch = (type: "touchStart" | "touchMove" | "touchEnd", at: number) =>
+    cdp.send("Input.dispatchTouchEvent", {
+      type,
+      touchPoints: type === "touchEnd" ? [] : [{ x, y: at }],
+    });
+  await touch("touchStart", y);
+  for (let i = 1; i <= 6; i++) await touch("touchMove", y + (dy * i) / 6);
+  await touch("touchEnd", y + dy);
+  await cdp.detach();
+}
+
 /** Tests that behave the same at every size run once, at desktop size (see playwright.config.ts). */
 const ANY_SIZE = { tag: "@any-size" };
 
@@ -251,6 +265,35 @@ test("Clear filters also drops a date range and centres that came from a link", 
   await expect(day.locator('option[value="keep"]')).toHaveCount(0);
   await expect(sheet.getByRole("list", { name: "Chosen centres" })).toHaveCount(0);
   await expect(sheet.getByRole("checkbox", { name: "Morning" })).not.toBeChecked();
+});
+
+test("on phones, swiping down on the filter form at its top closes the sheet; lists inside still scroll", async ({
+  page,
+}, testInfo) => {
+  test.skip(!isPhone(testInfo.project.name), "phone only");
+  await page.goto("/");
+  await hydrated(page);
+  const button = page.getByRole("button", { name: /^Filters/ });
+  const sheet = page.getByRole("region", { name: "Filters" });
+  await button.click();
+  await expect(sheet).toBeVisible();
+
+  // A scrolled centre list: a swipe down in it scrolls the list, the sheet stays.
+  await sheet.getByLabel("Community centre").click();
+  const list = sheet.getByRole("listbox", { name: "Community centres" });
+  await expect(list).toBeVisible();
+  await list.evaluate((l) => (l.scrollTop = 120));
+  const inList = (await list.boundingBox())!;
+  await touchSwipe(page, inList.x + 40, inList.y + 30, 150);
+  await expect(sheet).toBeVisible();
+  await page.keyboard.press("Escape"); // closes the list only
+  await expect(list).toBeHidden();
+  await expect(sheet).toBeVisible();
+
+  // The form itself, at its top: the sheet follows the finger and closes.
+  const field = (await sheet.getByText("Time of day").boundingBox())!;
+  await touchSwipe(page, field.x + 20, field.y + field.height / 2, 150);
+  await expect(sheet).toBeHidden();
 });
 
 test("the desktop sidebar can't be dragged like the phone sheet", async ({ page }, testInfo) => {
@@ -807,20 +850,7 @@ test.describe("details popup", () => {
     const { dialog } = await openFirst(page);
     const body = dialog.locator("[class*=body]").first();
     const box = (await body.boundingBox())!;
-    const x = box.x + box.width / 2;
-    const y = box.y + 40;
-    // Real touch events (the mouse doesn't make any).
-    const cdp = await page.context().newCDPSession(page);
-    const swipe = async (dy: number) => {
-      const touch = (type: "touchStart" | "touchMove" | "touchEnd", at: number) =>
-        cdp.send("Input.dispatchTouchEvent", {
-          type,
-          touchPoints: type === "touchEnd" ? [] : [{ x, y: at }],
-        });
-      await touch("touchStart", y);
-      for (let i = 1; i <= 6; i++) await touch("touchMove", y + (dy * i) / 6);
-      await touch("touchEnd", y + dy);
-    };
+    const swipe = (dy: number) => touchSwipe(page, box.x + box.width / 2, box.y + 40, dy);
 
     // Scrolled down, a swipe down scrolls back up instead (when the content is long enough).
     if (await body.evaluate((b) => b.scrollHeight > b.clientHeight + 50)) {

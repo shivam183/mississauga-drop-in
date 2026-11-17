@@ -82,8 +82,14 @@ export function useSwipeToClose(
     let from = 0;
     const onStart = (event: TouchEvent) => {
       area = (event.target as Element).closest(selector);
-      // Only from the top of the content; scrolled down, the swipe scrolls.
-      if (!area || area.scrollTop > 0 || !when.current?.()) area = null;
+      // Only from the top of the content, and of any list inside it (the centre
+      // picker's): scrolled down, the swipe scrolls. A handle drag is already pointer's.
+      let scrolled = false;
+      for (let el = event.target as Element | null; area && el; el = el.parentElement) {
+        if (el.scrollTop > 0) scrolled = true;
+        if (el === area) break;
+      }
+      if (!area || scrolled || by.current === "pointer" || !when.current?.()) area = null;
       from = event.touches[0].clientY;
     };
     const onMove = (event: TouchEvent) => {
