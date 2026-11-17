@@ -89,21 +89,18 @@ test("the Type filter narrows the list and lives in the URL", async ({ page }, t
   await expect(page.getByRole("article").getByText("Drop-in", { exact: true })).toHaveCount(0);
 });
 
-test("activity chips open the activity's page and toggle off", async ({ page }) => {
+test("activity chips filter in place, keep other filters and toggle off", async ({ page }) => {
   await page.goto("/?type=dropin");
   const chips = page.getByRole("navigation", { name: "Activity" });
   await chips.getByRole("link", { name: "Swim" }).click();
-  // Other filters are kept.
-  await expect(page).toHaveURL(/\/swim\?type=dropin$/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Drop-in swimming in Mississauga",
-  );
+  // The same page, not /swim: the list updates without swapping the whole view.
+  await expect(page).toHaveURL(/:\d+\/\?(?=.*type=dropin)(?=.*q=swim)/);
   await expect(page.getByRole("searchbox")).toHaveValue("swim");
   await expect(chips.getByRole("link", { name: "Swim" })).toHaveAttribute("aria-current", "page");
   await expect(page.getByRole("article").first()).toContainText(/swim/i);
 
   await chips.getByRole("link", { name: "Swim" }).click();
-  await expect(page).toHaveURL(/\/\?type=dropin$/);
+  await expect(page).toHaveURL(/:\d+\/\?type=dropin$/);
   await expect(page.getByRole("searchbox")).toHaveValue("");
 });
 
@@ -967,14 +964,14 @@ test.describe("collapsible days", () => {
       await expect(page).not.toHaveURL(/collapsed=/);
       await expect(page.locator("details:not([open])")).toHaveCount(0);
 
-      // So does a chip (its activity page).
+      // So does a chip.
       await day(page, 0).locator("summary").click();
       await expect(page).toHaveURL(/collapsed=/);
       const chips = page.getByRole("navigation", { name: "Activity" });
       await chips.getByRole("link", { name: "Swim" }).click();
-      await expect(page).toHaveURL(/\/swim$/);
-      // :visible: Next keeps the previous page (the home list) in the DOM, hidden, for Back.
-      await expect(page.locator("details:not([open]):visible")).toHaveCount(0);
+      await expect(page).toHaveURL(/[?&]q=swim\b/);
+      await expect(page).not.toHaveURL(/collapsed=/);
+      await expect(page.locator("details:not([open])")).toHaveCount(0);
     },
   );
 
