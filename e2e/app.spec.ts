@@ -89,19 +89,64 @@ test("the Type filter narrows the list and lives in the URL", async ({ page }, t
   await expect(page.getByRole("article").getByText("Drop-in", { exact: true })).toHaveCount(0);
 });
 
-test("activity chips search for an activity and toggle off", async ({ page }) => {
-  await page.goto("/");
+test("activity chips open the activity's page and toggle off", async ({ page }) => {
+  await page.goto("/?type=dropin");
   const chips = page.getByRole("navigation", { name: "Activity" });
   await chips.getByRole("link", { name: "Swim" }).click();
-  await expect(page).toHaveURL(/[?&]q=swim\b/);
+  // Other filters are kept.
+  await expect(page).toHaveURL(/\/swim\?type=dropin$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Drop-in swimming in Mississauga",
+  );
   await expect(page.getByRole("searchbox")).toHaveValue("swim");
   await expect(chips.getByRole("link", { name: "Swim" })).toHaveAttribute("aria-current", "page");
   await expect(page.getByRole("article").first()).toContainText(/swim/i);
 
   await chips.getByRole("link", { name: "Swim" }).click();
-  await expect(page).not.toHaveURL(/[?&]q=/);
+  await expect(page).toHaveURL(/\/\?type=dropin$/);
   await expect(page.getByRole("searchbox")).toHaveValue("");
 });
+
+test("an activity page lists only its sessions; a new search moves to the main list", async ({
+  page,
+}) => {
+  await page.goto("/swim");
+  await expect(page).toHaveTitle("Drop-in swimming in Mississauga · Mississauga Drop-In");
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /\/swim$/);
+  await expect(page.getByRole("searchbox")).toHaveValue("swim");
+  const cards = page.getByRole("article");
+  await expect(cards.first()).toBeVisible();
+  for (const label of await cards.evaluateAll((els) => els.map((e) => e.ariaLabel ?? ""))) {
+    expect(label).toMatch(/swim/i);
+  }
+
+  // Typing searches the main list and the box keeps focus.
+  const box = page.getByRole("searchbox");
+  await box.selectText();
+  await box.pressSequentially("lane", { delay: 50 });
+  await expect(page).toHaveURL(/:\d+\/\?q=lane$/);
+  await expect(page.getByRole("heading", { level: 1 })).not.toHaveText(/swimming/);
+  await expect(page.getByRole("searchbox")).toBeFocused();
+});
+
+test(
+  "unknown activity slugs are 404s; the sitemap lists the activity pages",
+  ANY_SIZE,
+  async ({ page, request }) => {
+    // Like /activity/{id}: the static shell is sent (200) before the slug is checked.
+    for (const url of ["/frisbee", "/calendar", "/centres"]) {
+      await page.goto(url);
+      await expect(page.getByText(/could not be found/i), url).toBeVisible();
+      await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute(
+        "content",
+        /noindex/,
+      );
+    }
+    const sitemap = await (await request.get("/sitemap.xml")).text();
+    expect(sitemap).toContain("<loc>https://mississaugadropin.com/</loc>");
+    expect(sitemap).toContain("<loc>https://mississaugadropin.com/table-tennis</loc>");
+  },
+);
 
 test(
   "searching starts as soon as typing pauses, with no Search button",
@@ -456,9 +501,8 @@ test("a quick tick and untick in the picker doesn't hide a card's centre link la
 test("there is no week view, centre pages or nav tabs", ANY_SIZE, async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("navigation", { name: "Main" })).toHaveCount(0);
-  for (const url of ["/calendar", "/centres", "/centres/290"]) {
-    expect((await page.goto(url))?.status(), url).toBe(404);
-  }
+  // /calendar and /centres: see the activity slug test.
+  expect((await page.goto("/centres/290"))?.status()).toBe(404);
 });
 
 test("the footer links to GitHub issues in a new tab", ANY_SIZE, async ({ page }) => {
@@ -916,19 +960,21 @@ test.describe("collapsible days", () => {
       await expect(page).toHaveURL(/collapsed=/);
       await expect(day(page, 0)).not.toHaveAttribute("open");
 
-      const chips = page.getByRole("navigation", { name: "Activity" });
-      await chips.getByRole("link", { name: "Swim" }).click();
-      await expect(page).toHaveURL(/[?&]q=swim\b/);
-      await expect(page).not.toHaveURL(/collapsed=/);
-      await expect(page.locator("details:not([open])")).toHaveCount(0);
-
-      // Typing a search (not just a chip) opens them too.
-      await day(page, 0).locator("summary").click();
-      await expect(page).toHaveURL(/collapsed=/);
+      // Typing a search opens them.
       await page.getByRole("searchbox").fill("lane");
       await page.keyboard.press("Enter");
       await expect(page).toHaveURL(/[?&]q=lane(&|$)/);
       await expect(page).not.toHaveURL(/collapsed=/);
+      await expect(page.locator("details:not([open])")).toHaveCount(0);
+
+      // So does a chip (its activity page).
+      await day(page, 0).locator("summary").click();
+      await expect(page).toHaveURL(/collapsed=/);
+      const chips = page.getByRole("navigation", { name: "Activity" });
+      await chips.getByRole("link", { name: "Swim" }).click();
+      await expect(page).toHaveURL(/\/swim$/);
+      // :visible: Next keeps the previous page (the home list) in the DOM, hidden, for Back.
+      await expect(page.locator("details:not([open]):visible")).toHaveCount(0);
     },
   );
 

@@ -1,11 +1,14 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition, type ReactNode } from "react";
 import styles from "./Search.module.css";
 
 /** How long typing must pause before the results update. */
 export const SEARCH_DELAY_MS = 300;
+
+/** A search typed on an activity page lands on "/", a new page with a new box: focus it again. */
+let refocus = false;
 
 /**
  * Search box that updates the results as you type, once you pause for
@@ -23,7 +26,6 @@ export function SearchBox({
   hiddenFields: ReactNode;
 }) {
   const router = useRouter();
-  const pathname = usePathname();
   const [pending, startTransition] = useTransition();
   const [waiting, setWaiting] = useState(false);
   const [hasText, setHasText] = useState(defaultValue !== "");
@@ -31,7 +33,11 @@ export function SearchBox({
   const lastSearched = useRef(defaultValue.trim());
   const input = useRef<HTMLInputElement>(null);
 
-  useEffect(() => () => clearTimeout(timer.current), []);
+  useEffect(() => {
+    if (refocus) input.current?.focus();
+    refocus = false;
+    return () => clearTimeout(timer.current);
+  }, []);
 
   // When something else changes the search (e.g. "clear all filters"), show it.
   // Our own searches already match, so typing is never overwritten.
@@ -50,6 +56,7 @@ export function SearchBox({
     const q = value.replace(/\s+/g, " ").trim();
     if (q === lastSearched.current) return;
     lastSearched.current = q;
+    refocus = document.activeElement === input.current;
 
     const params = new URLSearchParams(window.location.search);
     if (q) params.set("q", q);
@@ -59,7 +66,8 @@ export function SearchBox({
     params.delete("collapsed"); // with every day open, so no new result is hidden
     const query = params.toString();
     startTransition(() => {
-      router.replace(`${pathname}${query ? `?${query}` : ""}`, { scroll: false });
+      // To `action`, not this path: a search on /swim moves to the main list.
+      router.replace(`${action}${query ? `?${query}` : ""}`, { scroll: false });
     });
   }
 

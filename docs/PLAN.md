@@ -229,7 +229,7 @@ Done (2026-11-17):
 To do, in this order (batch the code PRs into few deploys: each deploy empties the Runtime Cache, which is paused until about 2026-12-14; see **Hosting limits**):
 
 - ✅ **Activity details popup and page.** Spec below.
-- ⬜ **Activity type pages** (`/swim`, `/pickleball`, …). Spec below.
+- ✅ **Activity type pages** (`/swim`, `/pickleball`, …). Spec below.
 - ⬜ **Centre pages and Browse links** (`/centres/{slug}`). Spec below.
 - ⬜ **By hand after launch:** resubmit the sitemap in Search Console and Bing; about 2–3 weeks later, check Search Console → Performance for the queries people use and pick any further landing pages from them.
 
@@ -261,17 +261,17 @@ Tapping a card's title opens a popup over the list with what the City's activity
 **Spec: activity type pages**
 
 - The chip list moves from `SearchControls` to `src/models/activities.ts`, each with a `slug`, the search `q`, a label, an H1 ("Drop-in swimming in Mississauga"), a meta description and a one-line intro. Slugs: `pickleball`, `swim`, `yoga`, `skate`, `hockey`, `basketball`, `badminton`, `volleyball`, `table-tennis`, `soccer`.
-- `src/app/[activity]/page.tsx`: one static route per slug (`generateStaticParams`, `dynamicParams = false`, so other slugs 404). H1 and intro, then the usual search view with the activity's search filled in. Its own title, description, canonical (`/swim`) and OG title.
-- `SearchView` takes optional `defaults` that fill only fields the URL leaves empty. Every control still links to `/`, so the first filter change moves to the main list; no new navigation logic.
-- Chips link to their activity page (keeping other active filters), so the home page links to every one.
+- `src/app/[activity]/page.tsx`: one prerendered page per slug (`generateStaticParams`). `dynamicParams = false` isn't allowed with Cache Components, so any other slug calls `notFound()`: the not-found page with `noindex`, but status 200, like `/activity/{id}`, because the static shell is sent before the slug is checked. The slug is read inside `<Suspense>` so navigation stays instant; the listed slugs still have their H1 in the static HTML. H1 and intro, then the usual search view with the activity's search filled in. Its own title, description, canonical (`/swim`) and OG title.
+- `SearchView` takes optional `defaults` that fill only fields the URL leaves empty. Every control still links to `/`, so the first filter change moves to the main list. The search box goes to its form's `action` (`/`), not the current path, and keeps focus across that page change.
+- Chips link to their activity page (keeping other active filters), so the home page links to every one; the active chip links back to `/`. The details popup's "More {activity} sessions" links to the activity page.
 - `sitemap.xml` becomes `src/app/sitemap.ts`, listing `/`, the activity pages and, once built, the centre pages.
-- **Acceptance:** unit: unique slugs, `defaults` fill only empty fields. e2e: `/swim` shows its H1 and only swim sessions; a chip links to its page; an unknown slug is a 404; the sitemap lists the pages. Lighthouse mobile SEO and accessibility stay at 100 on `/swim`.
+- **Acceptance (done):** unit: unique slugs, `defaults` fill only empty fields. e2e: `/swim` shows its H1, title, canonical and only swim sessions; typing a search there moves to `/?q=` with focus kept; a chip links to its page keeping filters, and toggles back; unknown slugs (`/frisbee`, `/calendar`, `/centres`) show the not-found page with `noindex`; the sitemap lists the pages. Lighthouse on `/swim` still to check after deploy.
 
 **Spec: centre pages and Browse links**
 
 - `src/app/centres/[slug]/page.tsx`: the slug is the centre's name in URL form (`churchill-meadows-community-centre`), from `ALL_CENTRES`; one static route per centre, others 404. H1 the centre's name; its address, phone and a map link from `getActivityInfo` of its first upcoming session (no new data file; left out if there's none), then the search view filtered to that centre. Own title, description and canonical; listed in the sitemap.
 - A **Browse** section at the bottom of the home page with two short link lists, "By activity" and "By centre", for people and crawlers. A card's centre name still adds that centre to the filter.
-- **Acceptance:** e2e: a centre page shows its name, address and only its sessions; `/centres/290` (an id, not a slug) is a 404, replacing the old check that `/centres` routes don't exist; the Browse links work. Lighthouse as above.
+- **Acceptance:** e2e: a centre page shows its name, address and only its sessions; `/centres/290` (an id, not a slug) is a 404 (`/centres/290` already is; `/centres` alone is now the activity not-found page); the Browse links work. Lighthouse as above.
 
 **Later:** favourites, an `.ics` calendar export, a PWA, "notify me when spots open", activity detail pages as SEO pages (left out for now: thin, and they change every season), and fees if the City ever publishes them online.
 

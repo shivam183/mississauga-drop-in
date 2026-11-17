@@ -6,7 +6,9 @@ import {
   PAGE_SIZE,
   parseSearchParams,
   toFilters,
+  withDefaults,
   type RawSearchParams,
+  type SearchState,
 } from "@/lib/params";
 import { getSchedule } from "@/lib/schedule";
 import { filterSessions, pageDays } from "@/models/filters";
@@ -23,11 +25,14 @@ import { SearchControls } from "./SearchControls";
 export async function SearchView({
   searchParams,
   path,
+  defaults = {},
 }: {
   searchParams: Promise<RawSearchParams>;
   path: string;
+  /** Fill fields the URL leaves empty; every control still links to `path`. */
+  defaults?: Partial<SearchState>;
 }) {
-  const state = parseSearchParams(await searchParams);
+  const state = withDefaults(parseSearchParams(await searchParams), defaults);
 
   const { sessions, failedCentres } = await getSchedule();
   // "Now" (to hide ended sessions) must come from the request, never a prerender.

@@ -20,8 +20,10 @@ import {
   toFilters,
   toQueryString,
   withCollapsed,
+  withDefaults,
 } from "@/lib/params";
 import { clientIp, createRateLimiter } from "@/lib/rate-limit";
+import { ACTIVITIES, activityBySlug, activityFor } from "@/models/activities";
 
 describe("format", () => {
   it("formats time ranges", () => {
@@ -263,5 +265,29 @@ describe("withCollapsed", () => {
   it("returns null when the URL already agrees, so a re-render doesn't navigate", () => {
     expect(withCollapsed("/?collapsed=2026-11-17", "2026-11-17", true)).toBeNull();
     expect(withCollapsed("/?q=swim", "2026-11-17", false)).toBeNull();
+  });
+});
+
+describe("activity pages", () => {
+  it("have unique slugs and searches that are safe in a URL path", () => {
+    const slugs = ACTIVITIES.map((a) => a.slug);
+    expect(new Set(slugs).size).toBe(slugs.length);
+    expect(new Set(ACTIVITIES.map((a) => a.q)).size).toBe(slugs.length);
+    for (const slug of slugs) expect(slug).toMatch(/^[a-z]+(-[a-z]+)*$/);
+    expect(activityBySlug("table-tennis")?.q).toBe("table tennis");
+    expect(activityBySlug("activity")).toBeUndefined();
+    expect(activityFor("Adult Leisure Swim")?.slug).toBe("swim");
+    expect(activityFor("Figure Skating - Adult")).toBeNull(); // "skate" matches Public Skate, not Skating
+  });
+
+  it("defaults fill only the fields the URL leaves empty", () => {
+    const defaults = { q: "swim", centreIds: [290] };
+    expect(withDefaults(EMPTY_SEARCH, defaults)).toMatchObject(defaults);
+    const state = parseSearchParams({ q: "lane", centre: "119", type: "dropin" });
+    expect(withDefaults(state, defaults)).toEqual(state);
+    expect(withDefaults(parseSearchParams({ type: "enroll" }), { q: "yoga" })).toMatchObject({
+      q: "yoga",
+      type: "enroll",
+    });
   });
 });

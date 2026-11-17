@@ -1,0 +1,11 @@
+import type { MetadataRoute } from "next";
+import { ACTIVITIES } from "@/models/activities";
+
+const SITE_URL = "https://mississaugadropin.com";
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  return ["/", ...ACTIVITIES.map(({ slug }) => `/${slug}`)].map((path) => ({
+    url: `${SITE_URL}${path}`,
+    changeFrequency: "hourly",
+  }));
+}
