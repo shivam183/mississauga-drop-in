@@ -115,6 +115,17 @@ export function parseSearchParams(params: RawSearchParams): SearchState {
   return state;
 }
 
+/** `state` with `defaults` filling only the fields the URL left empty (an activity page's search). */
+export function withDefaults(state: SearchState, defaults: Partial<SearchState>): SearchState {
+  const filled: Record<string, unknown> = { ...state };
+  for (const [key, value] of Object.entries(defaults)) {
+    const current = filled[key];
+    if (current === "" || current === null || (Array.isArray(current) && current.length === 0))
+      filled[key] = value;
+  }
+  return filled as unknown as SearchState;
+}
+
 export function toFilters(state: SearchState): SessionFilters {
   return {
     q: state.q || undefined,

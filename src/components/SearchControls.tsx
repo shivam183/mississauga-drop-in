@@ -76,12 +76,13 @@ export function SearchControls({ path, state, today }: SearchControlsProps) {
       />
 
       <nav aria-label="Activity" className={styles.chips}>
-        {ACTIVITIES.map(([q, label]) => {
+        {ACTIVITIES.map(({ slug, q, label }) => {
           const on = state.q.toLowerCase() === q;
           return (
             <Link
-              key={q}
-              href={link({ q: on ? "" : q })}
+              key={slug}
+              // Each activity's own page, keeping the other filters; tapped again, back to all.
+              href={hrefWith(on ? path : `/${slug}`, state, { q: "" })}
               className={styles.chip}
               aria-current={on ? "page" : undefined}
             >

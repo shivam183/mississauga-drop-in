@@ -265,8 +265,8 @@ export function ActivityDetails({
           </h3>
           <div className={styles.more}>
             {chip && (
-              <Link className={styles.pill} href={hrefWith("/", EMPTY_SEARCH, { q: chip[0] })}>
-                More {chip[1].toLowerCase()} sessions <span aria-hidden="true">→</span>
+              <Link className={styles.pill} href={`/${chip.slug}`}>
+                More {chip.label.toLowerCase()} sessions <span aria-hidden="true">→</span>
               </Link>
             )}
             <Link
