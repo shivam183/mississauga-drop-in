@@ -198,6 +198,7 @@ mississauga-drop-in/
   - Done: squash-only merges with the PR title, auto-merge, and merged branches deleted.
   - Done: `v0.1.0` released (https://github.com/shivam183/mississauga-drop-in/releases/tag/v0.1.0).
   - Done: the "Protect main" ruleset requires a PR (squash only) and passing `check`, `e2e`, `analyze` and `conventional-title`, and blocks deletion and force pushes. All changes now go through PRs.
+  - Search engines (2026-11-17): static `robots.txt` (crawl everything but `/api/`) and `sitemap.xml` (just `/`) in `src/app/`, and a canonical URL of `/` so filter URLs aren't indexed as separate pages. The apex domain is canonical, so it must be the primary domain in Vercel (it redirected to `www.` before). Site verified and sitemap submitted in Google Search Console (done by hand).
   - Done: the `RELEASE_PLEASE_TOKEN` secret (a fine-grained PAT) is set, so release PRs get their checks. Renew it before it expires.
 
 **6. Find it faster** (in progress)

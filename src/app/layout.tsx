@@ -14,6 +14,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: "Mississauga Drop-In", template: "%s · Mississauga Drop-In" },
   description: DESCRIPTION,
+  // Every filter URL (?q=, ?type=, ?collapsed=…) is the same page to Google.
+  alternates: { canonical: "/" },
   // The preview shown when a link is pasted into Reddit, chats, etc.
   openGraph: {
     type: "website",
