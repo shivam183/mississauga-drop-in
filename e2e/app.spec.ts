@@ -777,6 +777,64 @@ test.describe("details popup", () => {
     await expect(page).toHaveURL(/\/$/);
   });
 
+  test("on phones, the whole head row pulls down too; a tap there doesn't close", async ({
+    page,
+  }, testInfo) => {
+    test.skip(!isPhone(testInfo.project.name), "phone only");
+    const { dialog } = await openFirst(page);
+    // The Drop-in / Enroll badge, below the handle: where a thumb grabs the sheet.
+    const badge = dialog.getByText(/^(Drop-in|Enroll online)$/).first();
+    const box = (await badge.boundingBox())!;
+    const x = box.x + box.width / 2;
+    const y = box.y + box.height / 2;
+
+    await badge.click();
+    await expect(dialog).toBeVisible();
+
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(x, y + 60, { steps: 4 });
+    await page.mouse.move(x, y + 160, { steps: 4 });
+    await page.mouse.up();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await expect(page).toHaveURL(/\/$/);
+  });
+
+  test("on phones, swiping down on the content at its top closes it; scrolled, it scrolls", async ({
+    page,
+  }, testInfo) => {
+    test.skip(!isPhone(testInfo.project.name), "phone only");
+    const { dialog } = await openFirst(page);
+    const body = dialog.locator("[class*=body]").first();
+    const box = (await body.boundingBox())!;
+    const x = box.x + box.width / 2;
+    const y = box.y + 40;
+    // Real touch events (the mouse doesn't make any).
+    const cdp = await page.context().newCDPSession(page);
+    const swipe = async (dy: number) => {
+      const touch = (type: "touchStart" | "touchMove" | "touchEnd", at: number) =>
+        cdp.send("Input.dispatchTouchEvent", {
+          type,
+          touchPoints: type === "touchEnd" ? [] : [{ x, y: at }],
+        });
+      await touch("touchStart", y);
+      for (let i = 1; i <= 6; i++) await touch("touchMove", y + (dy * i) / 6);
+      await touch("touchEnd", y + dy);
+    };
+
+    // Scrolled down, a swipe down scrolls back up instead (when the content is long enough).
+    if (await body.evaluate((b) => b.scrollHeight > b.clientHeight + 50)) {
+      await body.evaluate((b) => (b.scrollTop = 50));
+      await swipe(150);
+      await expect(dialog).toBeVisible();
+      await body.evaluate((b) => (b.scrollTop = 0));
+    }
+
+    await swipe(150);
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await expect(page).toHaveURL(/\/$/);
+  });
+
   test("Share in the popup copies a link to these details", async ({ page, context }) => {
     // No share sheet, and a clipboard we can read back (as in the card's Share test).
     await page.addInitScript(() => {

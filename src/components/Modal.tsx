@@ -16,7 +16,11 @@ export function Modal({ children, labelledBy }: { children: ReactNode; labelledB
   const ref = useRef<HTMLDialogElement>(null);
   const router = useRouter();
   // Phones: pull the handle down to close, like the filter sheet.
-  const { drag, grab } = useSwipeToClose(() => router.back(), { stayOnClose: true });
+  // Also a swipe down on the content when it's scrolled to the top.
+  const { drag, grab } = useSwipeToClose(() => router.back(), {
+    stayOnClose: true,
+    scrollArea: { root: ref, selector: `.${styles.body}`, when: isPhone },
+  });
 
   useEffect(() => {
     const dialog = ref.current;
@@ -52,6 +56,12 @@ export function Modal({ children, labelledBy }: { children: ReactNode; labelledB
       tabIndex={-1}
       data-dragging={drag !== null && drag > 0}
       style={drag ? { transform: `translateY(${drag}px)` } : undefined}
+      {...grab}
+      // Pull down from the handle or the whole head row (badge, Share), not just the 4px handle.
+      onPointerDown={(event) => {
+        if (isPhone() && (event.target as Element).closest(`.${styles.grab}, .${styles.head}`))
+          grab.onPointerDown(event);
+      }}
       onCancel={(event) => {
         event.preventDefault(); // close by going back, so the URL follows
         router.back();
@@ -62,13 +72,16 @@ export function Modal({ children, labelledBy }: { children: ReactNode; labelledB
       }}
     >
       {/* Pointer-only; keyboards and screen readers close with Esc or ✕. */}
-      <div className={styles.grab} aria-hidden="true" {...grab}>
+      <div className={styles.grab} aria-hidden="true">
         <div className={styles.handle} />
       </div>
       {children}
     </dialog>
   );
 }
+
+/** Phones only, where the popup is a bottom sheet (same breakpoint as the CSS). */
+const isPhone = () => matchMedia("(max-width: 639.98px)").matches;
 
 export function CloseButton() {
   const router = useRouter();
