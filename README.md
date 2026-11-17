@@ -78,6 +78,11 @@ Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and th
 [code of conduct](CODE_OF_CONDUCT.md). To report a security problem, see
 [SECURITY.md](SECURITY.md).
 
+## Support
+
+The site is free, with no ads or accounts. If it saves you a trip, you can
+[buy me a coffee](https://buymeacoffee.com/shivam183) ☕.
+
 ## Licence
 
 [MIT](LICENSE)

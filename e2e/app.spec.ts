@@ -459,15 +459,32 @@ test("the GitHub icon links to the repo in a new tab", async ({ page }) => {
   await expect(link).toBeVisible();
   await expect(link).toHaveAttribute("href", "https://github.com/shivam183/mississauga-drop-in");
   await expect(link).toHaveAttribute("target", "_blank");
-  // Top right of the header's content (which is centred on wide screens).
+  await expect(link).toHaveAttribute("title", "Source code on GitHub");
+  // Level with the site name.
   const header = (await page.getByRole("link", { name: "Mississauga Drop-In" }).boundingBox())!;
   const box = (await link.boundingBox())!;
-  const content = (await page.locator(".site-header-inner").boundingBox())!;
-  expect(box.x + box.width).toBeGreaterThan(content.x + content.width - 40);
   expect(Math.abs(box.y + box.height / 2 - (header.y + header.height / 2))).toBeLessThan(4);
 
   // It's the only GitHub link; the footer no longer repeats it.
   await expect(page.getByRole("link", { name: /GitHub/ })).toHaveCount(1);
+});
+
+test("the coffee icon sits top right, after the GitHub icon, and opens Buy Me a Coffee", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const coffee = page.getByRole("banner").getByRole("link", { name: /buy me a coffee/i });
+  await expect(coffee).toHaveAttribute("href", "https://buymeacoffee.com/shivam183");
+  await expect(coffee).toHaveAttribute("target", "_blank");
+  await expect(coffee).toHaveAttribute("title", "Buy me a coffee");
+  const github = page.getByRole("banner").getByRole("link", { name: /Source code on GitHub/ });
+  const c = (await coffee.boundingBox())!;
+  const g = (await github.boundingBox())!;
+  // Top right of the header's content (which is centred on wide screens).
+  const content = (await page.locator(".site-header-inner").boundingBox())!;
+  expect(c.x + c.width).toBeGreaterThan(content.x + content.width - 40);
+  expect(g.x + g.width).toBeLessThanOrEqual(c.x + 1);
+  expect(Math.abs(c.y - g.y)).toBeLessThan(2);
 });
 
 test("links to other sites open in a new tab; links within the app don't", async ({ page }) => {
