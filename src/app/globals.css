@@ -147,14 +147,32 @@ h1 {
   text-decoration: none;
 }
 
+.header-links {
+  display: flex;
+  margin-right: -10px;
+}
+
 .repo-link {
   display: inline-grid;
   place-items: center;
   width: 44px;
   height: 44px;
-  margin-right: -10px;
   border-radius: 50%;
   color: var(--text);
+}
+
+/* Buy Me a Coffee's yellow keeps their dark cup visible on the dark theme too. */
+.coffee-link::before {
+  content: "";
+  grid-area: 1 / 1;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffdd00;
+}
+
+.coffee-link img {
+  grid-area: 1 / 1;
 }
 
 .repo-link:hover {
