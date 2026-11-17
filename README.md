@@ -25,13 +25,6 @@
   <a href="https://buymeacoffee.com/shivam183"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="48" alt="Buy me a coffee"></a>
 </p>
 
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/images/screenshot-dark.png">
-    <img src="docs/images/screenshot-light.png" width="300" alt="The site on a phone: today's sessions with times, centres and drop-in labels">
-  </picture>
-</p>
-
 An unofficial, mobile-friendly way to find drop-in and online-enrollable
 recreation programs in Mississauga: badminton, pickleball, swimming, skating and
 more. See **when** and **where** at a glance, how many **spots are left**, and
