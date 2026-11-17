@@ -1,4 +1,36 @@
-# Mississauga Drop-In
+<p align="center">
+  <a href="https://mississaugadropin.com"><img src="src/app/icon.svg" width="96" height="96" alt="Mississauga Drop-In logo"></a>
+</p>
+
+<h1 align="center">Mississauga Drop-In</h1>
+
+<p align="center">
+  Find drop-in swims, skates and sports at Mississauga community centres, with live spots left.
+  <br>
+  <a href="https://mississaugadropin.com"><strong>Open the site →</strong></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/shivam183/mississauga-drop-in/actions/workflows/ci.yml"><img src="https://github.com/shivam183/mississauga-drop-in/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/shivam183/mississauga-drop-in/actions/workflows/playwright.yml"><img src="https://github.com/shivam183/mississauga-drop-in/actions/workflows/playwright.yml/badge.svg" alt="E2E"></a>
+  <a href="https://github.com/shivam183/mississauga-drop-in/actions/workflows/codeql.yml"><img src="https://github.com/shivam183/mississauga-drop-in/actions/workflows/codeql.yml/badge.svg" alt="CodeQL"></a>
+  <a href="https://github.com/shivam183/mississauga-drop-in/actions/workflows/api-health.yml"><img src="https://github.com/shivam183/mississauga-drop-in/actions/workflows/api-health.yml/badge.svg" alt="City API health"></a>
+  <br>
+  <a href="https://github.com/shivam183/mississauga-drop-in/releases/latest"><img src="https://img.shields.io/github/v/release/shivam183/mississauga-drop-in" alt="Latest release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/shivam183/mississauga-drop-in" alt="MIT licence"></a>
+  <a href="https://mississaugadropin.com"><img src="https://img.shields.io/website?url=https%3A%2F%2Fmississaugadropin.com&label=site&up_message=online" alt="Site status"></a>
+</p>
+
+<p align="center">
+  <a href="https://buymeacoffee.com/shivam183"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="48" alt="Buy me a coffee"></a>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/screenshot-dark.png">
+    <img src="docs/images/screenshot-light.png" width="300" alt="The site on a phone: today's sessions with times, centres and drop-in labels">
+  </picture>
+</p>
 
 An unofficial, mobile-friendly way to find drop-in and online-enrollable
 recreation programs in Mississauga: badminton, pickleball, swimming, skating and
@@ -10,8 +42,8 @@ tap straight through to enroll on the City's site.
 > Registration and payment happen only on the City's site. Schedules can change;
 > check with the City before you go.
 
-**Live:** https://mississaugadropin.com · **Status:** working towards
-v0.1. See the [plan](docs/PLAN.md).
+**Live:** https://mississaugadropin.com · See the [plan](docs/PLAN.md) for
+what's done and what's next.
 
 ## Features
 
