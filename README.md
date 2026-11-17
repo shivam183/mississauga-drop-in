@@ -6,8 +6,12 @@
 
 <p align="center">
   Find drop-in swims, skates and sports at Mississauga community centres, with live spots left.
-  <br>
-  <a href="https://mississaugadropin.com"><strong>Open the site →</strong></a>
+</p>
+
+<p align="center">
+  <a href="https://mississaugadropin.com"><img src="https://img.shields.io/badge/find_a_drop--in_%E2%86%92-d52b1e?style=for-the-badge&amp;logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGVsbGlwc2UgY3g9IjMyIiBjeT0iNTQuNSIgcng9IjIyIiByeT0iNi41IiBmaWxsPSJub25lIiBzdHJva2U9IiNkNTJiMWUiIHN0cm9rZS13aWR0aD0iMy41Ii8+PHBhdGggZD0iTTMyIDU1QzI3IDQ3IDEyIDM3IDEyIDIyYTIwIDIwIDAgMCAxIDQwIDBjMCAxNS0xNSAyNS0yMCAzM1oiIGZpbGw9IiNjNGM3Y2MiLz48Y2lyY2xlIGN4PSIzMiIgY3k9IjIyIiByPSIxNSIgZmlsbD0iI2ZmZiIvPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMyIDIyKSBzY2FsZSgwLjc0KSB0cmFuc2xhdGUoLTMyIC0yNS4yNSkiPjxnIGZpbGw9IiNkNTJiMWUiPjxyZWN0IHg9IjE4LjUiIHk9IjMwIiB3aWR0aD0iNCIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iMjMiIHk9IjIyIiB3aWR0aD0iNS41IiBoZWlnaHQ9IjE0Ii8+PHBhdGggZD0iTTIzIDIybDIuNzUtOSAyLjc1IDl6Ii8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjQuNCAxNi40KSBzY2FsZSgwLjM2KSI+PHBhdGggZD0iTTE3IDUzQzE1IDQ2IDIwLjUgNDAgMTkuNSAzM0MxOC41IDI2IDE1IDIwIDE2LjUgMTFRMTcgOS41IDE5IDkuNUgyOVEzMSA5LjUgMzEuNSAxMUMzMi41IDE4IDI4LjUgMjQgMjguNSAzMEMyOC41IDM3IDMzIDQ0IDMxIDUzWiIvPjxwYXRoIGQ9Ik0zNS41IDUzQzM0IDQ5IDM4LjUgNDUgMzcuNSA0MC41QzM2LjUgMzYgMzQuNSAzMi41IDM1LjUgMjdRMzYgMjUuNSAzOCAyNS41SDQ2UTQ4IDI1LjUgNDguNSAyN0M0OSAzMSA0NiAzNSA0NiAzOC41QzQ2IDQzIDUwIDQ4IDQ4LjUgNTNaIi8+PC9nPjxyZWN0IHg9IjQyLjUiIHk9IjI5IiB3aWR0aD0iNCIgaGVpZ2h0PSI3Ii8+PHJlY3QgeD0iMTciIHk9IjM1LjUiIHdpZHRoPSIzMCIgaGVpZ2h0PSIyIiByeD0iMSIvPjwvZz48Y2lyY2xlIGN4PSIyNS43NSIgY3k9IjI1LjUiIHI9IjEuNiIgZmlsbD0iI2ZmZiIvPjwvZz48L3N2Zz4K" width="244" alt="Find a drop-in at mississaugadropin.com"></a>
+  &nbsp;
+  <a href="https://buymeacoffee.com/shivam183"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="40" alt="Buy me a coffee"></a>
 </p>
 
 <p align="center">
@@ -19,10 +23,6 @@
   <a href="https://github.com/shivam183/mississauga-drop-in/releases/latest"><img src="https://img.shields.io/github/v/release/shivam183/mississauga-drop-in" alt="Latest release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/shivam183/mississauga-drop-in" alt="MIT licence"></a>
   <a href="https://mississaugadropin.com"><img src="https://img.shields.io/website?url=https%3A%2F%2Fmississaugadropin.com&label=site&up_message=online" alt="Site status"></a>
-</p>
-
-<p align="center">
-  <a href="https://buymeacoffee.com/shivam183"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="48" alt="Buy me a coffee"></a>
 </p>
 
 An unofficial, mobile-friendly way to find drop-in and online-enrollable
