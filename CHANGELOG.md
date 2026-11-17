@@ -5,6 +5,39 @@ This file is updated automatically by
 Conventional Commit messages on `main`. Don't edit it by hand. The project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.5.0](https://github.com/shivam183/mississauga-drop-in/compare/v0.4.0...v0.5.0) (2026-11-17)
+
+
+### Features
+
+* "On now" and "Starts in N min" labels ([#36](https://github.com/shivam183/mississauga-drop-in/issues/36)) ([ed34ecd](https://github.com/shivam183/mississauga-drop-in/commit/ed34ecdbee01f4d461169750a5065aec30d81be3))
+* activity chips; type moves into the filters ([#35](https://github.com/shivam183/mississauga-drop-in/issues/35)) ([b59d6c5](https://github.com/shivam183/mississauga-drop-in/commit/b59d6c5c04c32f8f1a319e55f37f20553647eb68))
+* add a Mississauga skyline pin logo as the site icon and header mark ([#51](https://github.com/shivam183/mississauga-drop-in/issues/51)) ([5d8e0ec](https://github.com/shivam183/mississauga-drop-in/commit/5d8e0eca9c131880c667228f99fd2062baf76a68))
+* add a share card image and WebSite structured data ([#52](https://github.com/shivam183/mississauga-drop-in/issues/52)) ([68146f4](https://github.com/shivam183/mississauga-drop-in/commit/68146f4919ecb0df17d941987773fb71f53fe48c))
+* add Buy Me a Coffee and a livelier README ([#53](https://github.com/shivam183/mississauga-drop-in/issues/53)) ([a5544aa](https://github.com/shivam183/mississauga-drop-in/commit/a5544aa79ed73d85761415388d12a61be99ce08a))
+* add robots.txt, sitemap and canonical URL for search engines ([#50](https://github.com/shivam183/mississauga-drop-in/issues/50)) ([472901e](https://github.com/shivam183/mississauga-drop-in/commit/472901ec1d0a1a26c0c477539f3d8538b008112f))
+* collapse a day by tapping its heading; the page refills ([#48](https://github.com/shivam183/mississauga-drop-in/issues/48)) ([ac65959](https://github.com/shivam183/mississauga-drop-in/commit/ac65959a8e6b865d1f359d818b4a866b22fdc1ea))
+* Share button on each card ([#38](https://github.com/shivam183/mississauga-drop-in/issues/38)) ([ac45b65](https://github.com/shivam183/mississauga-drop-in/commit/ac45b6592daaef4ec25035cbb28c6036162bdb32))
+* shared links open exactly one session, one detail per line ([#39](https://github.com/shivam183/mississauga-drop-in/issues/39)) ([3357d18](https://github.com/shivam183/mississauga-drop-in/commit/3357d18b047be2f909d0f27ccb32f9b12c61fff0))
+
+
+### Bug Fixes
+
+* build raw search params with Object.fromEntries ([#49](https://github.com/shivam183/mississauga-drop-in/issues/49)) ([ef0f6df](https://github.com/shivam183/mississauga-drop-in/commit/ef0f6df6fa844482be3652fbced6fb3c77f3dbff))
+* opening the filters doesn't pop up the phone keyboard ([#41](https://github.com/shivam183/mississauga-drop-in/issues/41)) ([e0a213b](https://github.com/shivam183/mississauga-drop-in/commit/e0a213ba302adc76f82a3cc2311dcdfdfe9ec637))
+
+
+### Performance
+
+* check in-memory cache before the billed remote cache ([#44](https://github.com/shivam183/mississauga-drop-in/issues/44)) ([16cb547](https://github.com/shivam183/mississauga-drop-in/commit/16cb54779c554b1cecd144da5caa67ec82f3d34f))
+* store schedules packed by activity in the remote cache ([#45](https://github.com/shivam183/mississauga-drop-in/issues/45)) ([cb80f73](https://github.com/shivam183/mississauga-drop-in/commit/cb80f73242a32cbfc553352f108c9bc7a657dfe2))
+
+
+### Documentation
+
+* bring PLAN.md up to date and spec collapsible day sections ([#47](https://github.com/shivam183/mississauga-drop-in/issues/47)) ([4a25e8c](https://github.com/shivam183/mississauga-drop-in/commit/4a25e8c943f47003db0d410bb7cb8ac8c0e8bcf4))
+* consolidate PLAN.md and spec Phase 7 (details popup, activity and centre pages) ([#54](https://github.com/shivam183/mississauga-drop-in/issues/54)) ([4fbff93](https://github.com/shivam183/mississauga-drop-in/commit/4fbff938b153f2361d6243b5bf331a421e94de44))
+
 ## [0.4.0](https://github.com/shivam183/mississauga-drop-in/compare/v0.3.0...v0.4.0) (2026-11-15)
 
 
