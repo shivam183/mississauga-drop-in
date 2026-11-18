@@ -5,6 +5,29 @@ This file is updated automatically by
 Conventional Commit messages on `main`. Don't edit it by hand. The project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.6.0](https://github.com/shivam183/mississauga-drop-in/compare/v0.5.0...v0.6.0) (2026-11-18)
+
+
+### Features
+
+* a Back to top button on the list pages ([#70](https://github.com/shivam183/mississauga-drop-in/issues/70)) ([f367a89](https://github.com/shivam183/mississauga-drop-in/commit/f367a89d50670cf9add41dd2e7a7c3045991daef))
+* a Buy me a coffee pill and a short rotating nudge under it ([#69](https://github.com/shivam183/mississauga-drop-in/issues/69)) ([e7c71be](https://github.com/shivam183/mississauga-drop-in/commit/e7c71be3f692313362652fdb9aa37eb95a132b69))
+* add a landing page for each activity (/swim, /pickleball, …) ([#59](https://github.com/shivam183/mississauga-drop-in/issues/59)) ([281aef2](https://github.com/shivam183/mississauga-drop-in/commit/281aef2e521b0c5cfa2230318cf0ee4c875fb024))
+* centre pages for search engines, and a Browse section on the home page ([#67](https://github.com/shivam183/mississauga-drop-in/issues/67)) ([e799a94](https://github.com/shivam183/mississauga-drop-in/commit/e799a94734610073c084a3da9136bbad36708c88))
+* keep the site header at the top while scrolling ([#68](https://github.com/shivam183/mississauga-drop-in/issues/68)) ([dd80694](https://github.com/shivam183/mississauga-drop-in/commit/dd80694eb0726dd87ee84de11853d141ff3781fc))
+* open a details popup for each activity, also its own page ([#55](https://github.com/shivam183/mississauga-drop-in/issues/55)) ([ca1807f](https://github.com/shivam183/mississauga-drop-in/commit/ca1807fd4109158aa5433c369c950d32a91587ca))
+* open directions in Google Maps, Apple Maps or Waze from a dropdown ([#65](https://github.com/shivam183/mississauga-drop-in/issues/65)) ([b0c592e](https://github.com/shivam183/mississauga-drop-in/commit/b0c592e7e480779e41e6182da511ad139b9b756b))
+* tidy the home page's Browse section into cards of rows ([#71](https://github.com/shivam183/mississauga-drop-in/issues/71)) ([5cdedce](https://github.com/shivam183/mississauga-drop-in/commit/5cdedce7e4ba5dc35e833059e9e66c4afd0dcd52))
+
+
+### Bug Fixes
+
+* close the details popup by pulling down its head or content, like a native sheet ([#62](https://github.com/shivam183/mississauga-drop-in/issues/62)) ([fbba96a](https://github.com/shivam183/mississauga-drop-in/commit/fbba96a70db69702f21ba7f20a32aee626068db1))
+* close the filter sheet by swiping down its form, like the details popup ([#64](https://github.com/shivam183/mississauga-drop-in/issues/64)) ([7793f03](https://github.com/shivam183/mississauga-drop-in/commit/7793f038898568824fdd96e8ff4daf45bb1a8442))
+* keep activity chips filtering in place instead of opening the activity page ([#60](https://github.com/shivam183/mississauga-drop-in/issues/60)) ([5ba75bd](https://github.com/shivam183/mississauga-drop-in/commit/5ba75bd525d2f0691735e6d6858681e5b8610a2c))
+* refresh the schedule daily at 7 am and stop caching each centre batch ([#66](https://github.com/shivam183/mississauga-drop-in/issues/66)) ([2fa48a9](https://github.com/shivam183/mississauga-drop-in/commit/2fa48a92812ba1080344f1ce32526c09073d8975))
+* strip nested and unclosed tags from City notices ([#63](https://github.com/shivam183/mississauga-drop-in/issues/63)) ([5fef189](https://github.com/shivam183/mississauga-drop-in/commit/5fef18987a1d1e7d5845f4e5f013e43e86795085))
+
 ## [0.5.0](https://github.com/shivam183/mississauga-drop-in/compare/v0.4.0...v0.5.0) (2026-11-17)
 
 
