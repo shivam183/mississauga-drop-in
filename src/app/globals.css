@@ -175,18 +175,155 @@ h1 {
   color: var(--text);
 }
 
-/* Buy Me a Coffee's yellow keeps their dark cup visible on the dark theme too. */
+/* A pill in Buy Me a Coffee's yellow, which keeps their dark cup visible on the dark theme too. */
+.coffee-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  /* .header-links pulls in 10px for the icons' padding; the pill has none, so stay in the content box. */
+  margin-right: 10px;
+  padding-inline: 14px;
+  color: #0d0c22;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
 .coffee-link::before {
   content: "";
-  grid-area: 1 / 1;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  position: absolute;
+  inset: 6px 0;
+  border-radius: 999px;
   background: #ffdd00;
 }
 
-.coffee-link img {
-  grid-area: 1 / 1;
+.coffee-link:hover::before {
+  background: #ffe94d;
+}
+
+/* Positioned so they paint over the pill. */
+.coffee-link img,
+.coffee-text {
+  position: relative;
+}
+
+.coffee-link::before,
+.coffee-link img,
+.coffee-text {
+  animation: coffee-bounce 0.6s ease 1s 3;
+}
+
+/* Phones: just the cup in a circle, so the header stays one row. */
+@media (max-width: 479.98px) {
+  .coffee-link {
+    justify-content: center;
+    width: 44px;
+    margin-right: 0;
+    padding: 0;
+  }
+
+  .coffee-link::before {
+    inset: 6px;
+  }
+
+  .coffee-text {
+    display: none;
+  }
+}
+
+@media (min-width: 480px) {
+  .coffee-nudge-cta {
+    display: none;
+  }
+}
+
+@keyframes coffee-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Shows under the icon after the bounce, then fades out and stops catching clicks. */
+.coffee-nudge {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 20;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #ffdd00;
+  color: #0d0c22;
+  font-size: 0.875rem;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px rgb(0 0 0 / 0.3);
+  visibility: hidden;
+  opacity: 0;
+  animation: coffee-nudge 3s ease both;
+}
+
+/* Empty until the browser picks a message; it starts its 3s once the text is in. */
+.coffee-nudge:empty {
+  display: none;
+}
+
+.coffee-nudge-gone {
+  animation: coffee-nudge-out 0.3s ease-out both;
+}
+
+@keyframes coffee-nudge-out {
+  from {
+    visibility: visible;
+    opacity: 1;
+  }
+  to {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* An arrow up at the link: the cup on phones, the end of the pill on wider screens. */
+.coffee-nudge::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  right: 16px;
+  border: 6px solid transparent;
+  border-bottom-color: #ffdd00;
+}
+
+@keyframes coffee-nudge {
+  0% {
+    visibility: visible;
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  8%,
+  88% {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coffee-link::before,
+  .coffee-link img,
+  .coffee-text {
+    animation: none;
+  }
 }
 
 .repo-link:hover {

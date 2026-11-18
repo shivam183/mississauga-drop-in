@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AvailabilityProvider } from "@/components/AvailabilityProvider";
+import { CoffeeNudge } from "@/components/CoffeeNudge";
 import { StandInDetails } from "@/components/DetailsPreview";
 import { ExternalLink } from "@/components/ExternalLink";
 import "./globals.css";
@@ -76,13 +77,16 @@ export default function RootLayout({ children, modal }: LayoutProps<"/">) {
               </ExternalLink>
               <ExternalLink
                 href={COFFEE_URL}
-                className="repo-link coffee-link"
+                className="coffee-link"
                 aria-label="Buy me a coffee (opens in a new tab)"
                 title="Buy me a coffee"
               >
                 {/* Buy Me a Coffee's own cup logo, self-hosted so the CSP stays 'self'. */}
                 {/* eslint-disable-next-line @next/next/no-img-element -- a static SVG gains nothing from next/image */}
                 <img src="/bmc-logo.svg" alt="" width={14} height={20} />
+                <span className="coffee-text">Buy me a coffee</span>
+                {/* A one-off nudge per page load; the link's aria-label already says it. */}
+                <CoffeeNudge />
               </ExternalLink>
             </div>
           </div>
