@@ -346,38 +346,64 @@ h1 {
 }
 
 .browse {
-  display: grid;
-  gap: 0 24px;
   margin-top: 48px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
 }
 
 .browse h2 {
-  margin-bottom: 0;
+  margin-bottom: 4px;
 }
 
+/* Small labels, so the links carry the section. */
 .browse h3 {
-  font-size: 1rem;
+  margin: 20px 0 10px;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-.browse ul {
+/* Rows in a card, not pills: pills above the list filter in place, these go to a page.
+   One column on phones, up to three on wide screens. */
+.browse-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+  gap: 0 32px;
   margin: 0;
-  padding: 0;
+  padding: 0 16px;
   list-style: none;
-  line-height: 2;
+  /* With the rows' -1px margin, this clips the top row's dividers in every column. */
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
 }
 
-@media (min-width: 768px) {
-  .browse {
-    grid-template-columns: 1fr 2fr;
-  }
+/* Dividers go above each row, so a column that ends early has no stray line under it. */
+.browse-list li {
+  margin-top: -1px;
+}
 
-  .browse h2 {
-    grid-column: 1 / -1;
-  }
+.browse-list a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  border-top: 1px solid var(--border);
+  color: var(--text);
+  text-decoration: none;
+}
 
-  .browse div:last-child ul {
-    columns: 2;
-  }
+.browse-list a::after {
+  content: "›" / "";
+  color: var(--muted);
+  font-size: 1.25rem;
+}
+
+.browse-list a:hover {
+  color: var(--accent);
 }
 
 .button {
