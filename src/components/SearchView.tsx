@@ -15,6 +15,7 @@ import { filterSessions, pageDays } from "@/models/filters";
 import { DayGroup } from "./DayGroup";
 import { ReopenDetails } from "./DetailsPreview";
 import { LinkPending } from "./LinkPending";
+import { ScrollTopButton } from "./ScrollTopButton";
 import styles from "./Search.module.css";
 import { SearchControls } from "./SearchControls";
 
@@ -108,6 +109,7 @@ export async function SearchView({
           </Link>
         )}
       </div>
+      <ScrollTopButton />
     </div>
   );
 }

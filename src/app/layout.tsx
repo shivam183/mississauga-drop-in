@@ -93,7 +93,8 @@ export default function RootLayout({ children, modal }: LayoutProps<"/">) {
         </header>
         {/* One spots store for the list and the details popup over it, so the popup reuses the card's counts. */}
         <AvailabilityProvider>
-          <main id="main" className="container">
+          {/* Focusable from script only, for the skip link and Back to top. */}
+          <main id="main" className="container" tabIndex={-1}>
             {children}
           </main>
           {/* The details popup, over the list (src/app/@modal), and its stand-in while it loads. */}

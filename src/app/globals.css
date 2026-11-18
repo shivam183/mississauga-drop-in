@@ -72,6 +72,11 @@ a {
   outline-offset: 2px;
 }
 
+/* <main> takes focus only as a landing spot, not as a control. */
+main:focus {
+  outline: none;
+}
+
 .container {
   width: 100%;
   max-width: 960px;

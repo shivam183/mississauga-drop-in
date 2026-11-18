@@ -136,6 +136,40 @@
   text-decoration: none;
 }
 
+/* Bottom right, over the list; under the filter sheet (20+) on phones. */
+.scrollTop {
+  position: fixed;
+  right: var(--space);
+  bottom: var(--space);
+  z-index: 15;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.25);
+  cursor: pointer;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0.2s;
+}
+
+.scrollTop[data-shown="false"] {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollTop {
+    transition: none;
+  }
+}
+
 .chip[aria-current="page"] {
   border-color: var(--text);
   background: var(--text);

@@ -642,6 +642,19 @@ test("the coffee icon sits top right, after the GitHub icon, and opens Buy Me a 
   expect(Math.abs(c.y - g.y)).toBeLessThan(2);
 });
 
+test("Back to top shows once you scroll into the list and takes you to the top", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const button = page.getByRole("button", { name: "Back to top" });
+  await expect(button).toBeHidden();
+  await page.getByRole("navigation", { name: "Browse" }).scrollIntoViewIfNeeded();
+  await button.click();
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+  await expect(button).toBeHidden();
+  await expect(page.locator("main")).toBeFocused();
+});
+
 test("the coffee bubble shows after load and goes at the first scroll", async ({ page }) => {
   await page.goto("/");
   const bubble = page.locator(".coffee-nudge");
