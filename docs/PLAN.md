@@ -49,7 +49,7 @@ Answered in Phase 1 (see `docs/data-source.md`):
 ## Tech stack
 
 - **Next.js (App Router) + TypeScript + React**, rendered on the server and styled with CSS modules.
-- **Caching:** this Next.js version uses Cache Components (`cacheComponents: true`), so caching uses `"use cache"` with `cacheLife` in the `src/lib/` services, not `fetch` revalidate options. The ActiveNet client itself never caches. Normalised schedules and button status (enroll link, opening time) are cached for 10 minutes, and spot counts for 60 seconds. The refresh button bypasses the cache with `?fresh=1`, rate-limited per IP.
+- **Caching:** this Next.js version uses Cache Components (`cacheComponents: true`), so caching uses `"use cache"` with `cacheLife` in the `src/lib/` services, not `fetch` revalidate options. The ActiveNet client itself never caches. The merged schedule is cached until 7 am Toronto time each day (one cache write a day; the centre batches aren't cached separately), button status (enroll link, opening time) for 10 minutes, and spot counts for 60 seconds. The refresh button bypasses the cache with `?fresh=1`, rate-limited per IP.
   - **Two layers** (#17, #44): each lookup checks the server's own memory first (`"use cache"`, free), then Vercel's shared Runtime Cache (`"use cache: remote"`, billed per 8 KB read). Memory alone isn't enough on serverless (every cold server refetched from the City, 3–6 s per page, fixed in #17); remote alone is costly. A value can be up to about twice its lifetime old.
   - **Small entries** (#45): the Runtime Cache rejects items over **2 MB** (HTTP 413). The merged schedule is stored packed by activity (`packSessions`): about 780 KB instead of 3.4 MB. Keep any new remote entry well under 2 MB, and check its size against live data.
   - Details and the cache table are in `docs/architecture.md`.
@@ -67,6 +67,8 @@ The Hobby plan includes **1M Runtime Cache read units a month** (1 unit = 8 KB r
 - **Fixes:** #44 (memory in front of the remote cache) and #45 (packed schedule, under 2 MB, confirmed with no `413` after deploy).
 - **Lessons:** measure the size of anything stored in the remote cache; every deploy empties the cache, so batch changes into fewer deploys; the free plan has 1 hour of runtime logs and no usage metrics by function, so check the runtime logs soon after a deploy.
 - **Before a publicity push** (such as a Reddit post): make sure the Runtime Cache isn't paused, or be on Pro for that month.
+
+**Runtime Cache writes, 2026-11-17:** 75% of the 200,000 monthly writes were used. The schedule was written every 10 minutes, twice over (each centre batch and the merged list). Now only the merged list is cached and it refreshes daily at 7 am, so it's written about once a day. Moving the cache to Redis was considered and not needed: with a daily refresh the writes are tiny, and Redis would add a service with its own limits.
 
 ## GitHub automation
 

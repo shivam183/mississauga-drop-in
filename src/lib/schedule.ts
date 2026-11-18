@@ -7,6 +7,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { getActiveNetClient } from "@/lib/activenet";
 import type { CalendarId } from "@/lib/activenet/types";
 import { CENTRES_BY_TYPE, type Centre } from "@/lib/centres";
+import { secondsUntilTorontoHour } from "@/lib/dates";
 import {
   CALENDAR_FOR_TYPE,
   normalizeEvents,
@@ -20,14 +21,14 @@ import {
 /** Centres per events request. Keeps calendar 1 responses to ~2–3 MB each. */
 export const CENTRES_PER_REQUEST = 5;
 
-/** One batch of centres for one calendar, packed, cached for 10 minutes. */
+/**
+ * One batch of centres for one calendar, packed. Not cached on its own: the
+ * merged list below is, so caching each batch too only doubled the cache writes.
+ */
 export async function getCentreBatch(
   calendar: CalendarId,
   centreIds: readonly number[],
 ): Promise<PackedActivity[]> {
-  "use cache: remote"; // shared across Vercel instances
-  cacheLife("schedule");
-  cacheTag("schedule", `schedule-${calendar}`);
   const body = await getActiveNetClient().getEvents(calendar, centreIds);
   return packSessions(normalizeEvents(body, calendar));
 }
@@ -94,10 +95,13 @@ async function remoteSchedule(
     }
   });
 
-  // shortcut: the merged list can be up to one schedule lifetime older than its batches
-  // (each is cached separately), so schedules may lag ~20 min at worst. Fine for timetables.
+  // Refreshed once a day, at 7 am Toronto time (the first request after 7 gets the
+  // old list and starts the refresh); ended sessions are hidden at render time anyway.
   if (failed.size) cacheLife("minutes");
-  else cacheLife("schedule");
+  else {
+    const untilSeven = secondsUntilTorontoHour(7, new Date());
+    cacheLife({ stale: 300, revalidate: untilSeven, expire: untilSeven + 86_400 });
+  }
   // Batches cover different centres, so concatenating is enough; unpackSessions sorts.
   return { packed: lists.flat(), failedCentres: [...failed.values()] };
 }

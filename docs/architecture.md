@@ -25,12 +25,12 @@ the API.
 
 `"use cache"` with the profiles in `next.config.ts`:
 
-| Function                                  | Profile    | Lifetime | Key                         |
-| ----------------------------------------- | ---------- | -------- | --------------------------- |
-| `getCentreBatch` (schedule.ts)            | `schedule` | 10 min   | calendar + up to 5 centres  |
-| `getCachedButtonStatus` (availability.ts) | `schedule` | 10 min   | activity id + session start |
-| `getCachedDetail` (availability.ts)       | `spots`    | 60 s     | activity id                 |
-| `getActivityInfo` (activity.ts)           | `info`     | 1 day    | activity id                 |
+| Function                                  | Profile  | Lifetime | Key                         |
+| ----------------------------------------- | -------- | -------- | --------------------------- |
+| `getSchedule` (schedule.ts)               | inline   | to 7 am  | session types               |
+| `getCachedButtonStatus` (availability.ts) | `enroll` | 10 min   | activity id + session start |
+| `getCachedDetail` (availability.ts)       | `spots`  | 60 s     | activity id                 |
+| `getActivityInfo` (activity.ts)           | `info`   | 1 day    | activity id                 |
 
 All of these use `"use cache: remote"` (Vercel's Runtime Cache, shared by all
 instances and billed per read). `getSchedule`, `getCachedDetail`,

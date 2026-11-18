@@ -107,7 +107,10 @@ describe("getSchedule", () => {
     expect(new Set(sessions.map((s) => s.type))).toEqual(new Set(["dropin", "enroll"]));
     const starts = sessions.map((s) => s.start);
     expect(starts).toEqual([...starts].sort());
-    expect(cacheLife).toHaveBeenLastCalledWith("schedule");
+    // Kept until 7 am Toronto time, then refreshed.
+    expect(cacheLife).toHaveBeenLastCalledWith(
+      expect.objectContaining({ revalidate: expect.any(Number) }),
+    );
   });
 
   it("reports the centres of a batch that failed and keeps the rest", async () => {
