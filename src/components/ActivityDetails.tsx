@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { getActivity, type Activity } from "@/lib/activity";
+import { centrePath } from "@/lib/centres";
 import {
   displayTitle,
   formatDate,
@@ -295,7 +296,10 @@ export function ActivityDetails({
             )}
             <Link
               className={styles.pill}
-              href={hrefWith("/", EMPTY_SEARCH, { centreIds: [shown.centreId] })}
+              href={
+                centrePath(shown.centreId) ??
+                hrefWith("/", EMPTY_SEARCH, { centreIds: [shown.centreId] })
+              }
             >
               More at {shortCentre(shown.centreName)} <span aria-hidden="true">→</span>
             </Link>

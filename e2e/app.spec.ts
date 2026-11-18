@@ -159,6 +159,54 @@ test(
   },
 );
 
+test("a centre page lists only its sessions, with its address; Browse links to it", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const browse = page.getByRole("navigation", { name: "Browse" });
+  await browse.getByRole("link", { name: "Swim" }).click();
+  await expect(page).toHaveURL(/\/swim$/);
+  await page.goBack();
+  await browse.getByRole("link", { name: "Burnhamthorpe Community Centre" }).click();
+  await expect(page).toHaveURL(/\/centres\/burnhamthorpe-community-centre$/);
+  await expect(page).toHaveTitle(
+    "Burnhamthorpe Community Centre drop-ins and programs · Mississauga Drop-In",
+  );
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    /\/centres\/burnhamthorpe-community-centre$/,
+  );
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Burnhamthorpe Community Centre",
+  );
+  await expect(page.getByRole("link", { name: /1500 Gulleden Drive/ })).toBeVisible(); // the mock's detail
+  const cards = page.getByRole("article");
+  await expect(cards.first()).toBeVisible();
+  const centres = await cards.evaluateAll((els) =>
+    els.map((e) => e.querySelector('a[title$="to the filter"]')?.textContent),
+  );
+  expect(new Set(centres)).toEqual(new Set(["Burnhamthorpe Community Centre"]));
+});
+
+test(
+  "unknown centre slugs are 404s; the sitemap lists the centre pages",
+  ANY_SIZE,
+  async ({ page, request }) => {
+    for (const url of ["/centres/290", "/centres/nowhere"]) {
+      await page.goto(url);
+      await expect(page.getByText(/could not be found/i), url).toBeVisible();
+      await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute(
+        "content",
+        /noindex/,
+      );
+    }
+    const sitemap = await (await request.get("/sitemap.xml")).text();
+    expect(sitemap).toContain(
+      "<loc>https://mississaugadropin.com/centres/churchill-meadows-community-centre</loc>",
+    );
+  },
+);
+
 test(
   "searching starts as soon as typing pauses, with no Search button",
   ANY_SIZE,
@@ -538,12 +586,16 @@ test("a quick tick and untick in the picker doesn't hide a card's centre link la
   ]);
 });
 
-test("there is no week view, centre pages or nav tabs", ANY_SIZE, async ({ page }) => {
-  await page.goto("/");
-  await expect(page.getByRole("navigation", { name: "Main" })).toHaveCount(0);
-  // /calendar and /centres: see the activity slug test.
-  expect((await page.goto("/centres/290"))?.status()).toBe(404);
-});
+test(
+  "there is no week view or nav tabs; centre pages go by name, not id",
+  ANY_SIZE,
+  async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByRole("navigation", { name: "Main" })).toHaveCount(0);
+    // /calendar and /centres: see the activity slug test.
+    expect((await page.goto("/centres/290"))?.status()).toBe(404);
+  },
+);
 
 test("the footer links to GitHub issues in a new tab", ANY_SIZE, async ({ page }) => {
   await page.goto("/");
@@ -992,7 +1044,10 @@ test.describe("details popup", () => {
     await expect(page.getByRole("dialog")).toHaveCount(0);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(/\S/);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
-    await expect(page.getByRole("link", { name: /More at / })).toBeVisible();
+    await expect(page.getByRole("link", { name: /More at / })).toHaveAttribute(
+      "href",
+      /^\/centres\/[a-z-]+$/,
+    );
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
