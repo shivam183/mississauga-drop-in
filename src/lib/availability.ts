@@ -34,7 +34,7 @@ async function remoteButtonStatus(
   sessionStart: LocalDateTime,
 ): Promise<ButtonStatusBody> {
   "use cache: remote"; // shared across Vercel instances
-  cacheLife("schedule");
+  cacheLife("enroll");
   cacheTag("enroll", `enroll-${activityId}`);
   return getActiveNetClient().getButtonStatus(activityId, sessionStart);
 }
