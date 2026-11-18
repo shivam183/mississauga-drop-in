@@ -227,6 +227,7 @@ Done (2026-11-17):
 - ✅ **Logo** (#51): a grey map pin with a red ring at its base and, in a white disc, a red Mississauga skyline (City Hall's clock spire and the two Absolute World towers); drawn for this site, not stock art. `src/app/icon.svg` (tab and Google result icon), `src/app/apple-icon.png` (180px, iOS home screen), and beside the site name in the header.
 - ✅ **Share card and site name** (#52): `src/app/opengraph-image.tsx` builds a 1200×630 card at build time, used for Open Graph and as a large X card. The home page carries `WebSite` JSON-LD so Google shows "Mississauga Drop-In" as the site name.
 - ✅ **Buy Me a Coffee** (#53): BMC's own cup logo (self-hosted `public/bmc-logo.svg`, on a circle in their yellow) right of the GitHub icon, with hover tooltips on every header logo; in the README, a logo, badges, a "Find a drop-in" button and BMC's button. A plain link, not BMC's widget script, so the CSP, speed and privacy are unchanged.
+- ✅ **Sticky header**: the site header stays at the top; day headings and the desktop filter panel stick just under it (`--header-h` in `globals.css`), and `scroll-padding-top` keeps jumps (like collapsing a day from its stuck heading) below it too.
 
 To do, in this order (batch the code PRs into few deploys: each deploy empties the Runtime Cache, which is paused until about 2026-12-14; see **Hosting limits**):
 

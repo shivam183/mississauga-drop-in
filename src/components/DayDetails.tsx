@@ -63,8 +63,11 @@ export function DayDetails({
           collapse,
         );
         if (!href) return releaseHeight();
-        // Above the window means its heading was stuck: keep that heading at the top.
-        if (collapse && details.getBoundingClientRect().top < 0) {
+        // Starting above the sticky header's bottom (the page's scroll-padding-top) means its
+        // heading was stuck: keep that heading there.
+        const stuckAt =
+          parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+        if (collapse && details.getBoundingClientRect().top < stuckAt) {
           details.scrollIntoView({ block: "start" });
         }
         pending = href;

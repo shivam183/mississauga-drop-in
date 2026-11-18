@@ -1125,9 +1125,10 @@ test.describe("collapsible days", () => {
 
     await summary.click();
     // Right away, before the refill: no jump to the top of the page, the heading
-    // sits at the top of the screen, and the next day's cards are already there.
+    // sits just under the sticky site header, and the next day's cards are already there.
     const top = await summary.evaluate((s) => s.getBoundingClientRect().top);
-    expect(Math.abs(top)).toBeLessThanOrEqual(2);
+    const header = (await page.getByRole("banner").boundingBox())!;
+    expect(Math.abs(top - (header.y + header.height))).toBeLessThanOrEqual(2);
     expect(await page.evaluate(() => scrollY)).toBeGreaterThan(100);
     await expect(day(page, 1).getByRole("article").first()).toBeInViewport();
 
