@@ -22,6 +22,7 @@ import {
   withCollapsed,
   withDefaults,
 } from "@/lib/params";
+import { ALL_CENTRES, centreBySlug, centrePath, centreSlug } from "@/lib/centres";
 import { clientIp, createRateLimiter } from "@/lib/rate-limit";
 import { ACTIVITIES, activityBySlug, activityFor } from "@/models/activities";
 
@@ -289,5 +290,21 @@ describe("activity pages", () => {
       q: "yoga",
       type: "enroll",
     });
+  });
+});
+
+describe("centre pages", () => {
+  it("have unique, URL-safe slugs that lead back to the centre", () => {
+    const slugs = ALL_CENTRES.map((c) => centreSlug(c.name));
+    expect(new Set(slugs).size).toBe(slugs.length);
+    for (const slug of slugs) expect(slug).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+    expect(centreSlug("Mississauga Seniors' Centre")).toBe("mississauga-seniors-centre");
+    expect(centreSlug("Mississauga Sports and Ent. Centre SportsPlex")).toBe(
+      "mississauga-sports-and-ent-centre-sportsplex",
+    );
+    expect(centreBySlug("churchill-meadows-community-centre")?.id).toBe(261);
+    expect(centreBySlug("261")).toBeUndefined();
+    expect(centrePath(261)).toBe("/centres/churchill-meadows-community-centre");
+    expect(centrePath(999999)).toBeNull();
   });
 });

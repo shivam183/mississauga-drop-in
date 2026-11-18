@@ -230,7 +230,7 @@ To do, in this order (batch the code PRs into few deploys: each deploy empties t
 
 - ✅ **Activity details popup and page.** Spec below.
 - ✅ **Activity type pages** (`/swim`, `/pickleball`, …). Spec below.
-- ⬜ **Centre pages and Browse links** (`/centres/{slug}`). Spec below.
+- ✅ **Centre pages and Browse links** (`/centres/{slug}`). Spec below.
 - ⬜ **By hand after launch:** resubmit the sitemap in Search Console and Bing; about 2–3 weeks later, check Search Console → Performance for the queries people use and pick any further landing pages from them.
 
 **Spec: activity details popup and page**
@@ -270,8 +270,9 @@ Tapping a card's title opens a popup over the list with what the City's activity
 **Spec: centre pages and Browse links**
 
 - `src/app/centres/[slug]/page.tsx`: the slug is the centre's name in URL form (`churchill-meadows-community-centre`), from `ALL_CENTRES`; one static route per centre, others 404. H1 the centre's name; its address, phone and a map link from `getActivityInfo` of its first upcoming session (no new data file; left out if there's none), then the search view filtered to that centre. Own title, description and canonical; listed in the sitemap.
-- A **Browse** section at the bottom of the home page with two short link lists, "By activity" and "By centre", for people and crawlers. A card's centre name still adds that centre to the filter.
-- **Acceptance:** e2e: a centre page shows its name, address and only its sessions; `/centres/290` (an id, not a slug) is a 404 (`/centres/290` already is; `/centres` alone is now the activity not-found page); the Browse links work. Lighthouse as above.
+- Switching centres stays in place, like the chips: the centre picker and a card's centre name filter `/` (`/?centre=…`), never link to a centre page, so there's no whole-page swap. The centre pages are for search engines and shared links: found through the sitemap, the Browse section and the details popup's "More at {centre}" link. On a centre page, `SearchView` gets the centre as `defaults`, so the first filter change moves to the main list, as on the activity pages.
+- A **Browse** section at the bottom of the home page with two short link lists, "By activity" and "By centre", for people and crawlers.
+- **Acceptance (done):** unit: unique, URL-safe slugs, `centreBySlug`, `centrePath`. e2e: a centre page shows its name, address and only its sessions; `/centres/290` (an id, not a slug) and unknown slugs show the not-found page; the popup's "More at" links to the centre page; the Browse links work; on `/`, picking a centre or tapping a card's centre name filters in place (URL stays `/?centre=…`). Lighthouse as above.
 
 **Later:** favourites, an `.ics` calendar export, a PWA, "notify me when spots open", activity detail pages as SEO pages (left out for now: thin, and they change every season), and fees if the City ever publishes them online.
 
