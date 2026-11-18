@@ -553,7 +553,7 @@
   .sheet {
     grid-area: side;
     position: sticky;
-    top: var(--space);
+    top: calc(var(--header-h) + var(--space));
     /* The open centre list draws over day headings (2) and cards (1). */
     z-index: 3;
     padding: var(--space);

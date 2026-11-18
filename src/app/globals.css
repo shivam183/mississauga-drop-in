@@ -14,6 +14,8 @@
   --full: #b42318;
   --radius: 12px;
   --space: 16px;
+  /* The sticky header: a 44px row, 8px padding above and below, a 1px border. */
+  --header-h: 61px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   /* The light band that sweeps across loading placeholders. */
   --shimmer: rgb(255 255 255 / 0.7);
@@ -43,6 +45,8 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  /* Jumps and scrollIntoView stop below the sticky header. */
+  scroll-padding-top: var(--header-h);
 }
 
 /* The list behind the details popup doesn't scroll. */
@@ -130,7 +134,12 @@ h1 {
 }
 
 .site-header {
+  position: sticky;
+  top: 0;
+  /* Over day headings (2) and the filter panel (3), under the filter sheet (20+). */
+  z-index: 10;
   border-bottom: 1px solid var(--border);
+  background: var(--bg);
 }
 
 .site-header-inner {
