@@ -462,6 +462,7 @@ test("the open centre picker fits inside the filters, with no sideways scroll", 
   page,
 }, testInfo) => {
   await page.goto("/");
+  await hydrated(page); // the picker only opens once the page is interactive
   const sheet = page.getByRole("region", { name: "Filters" });
   if (isPhone(testInfo.project.name)) await page.getByRole("button", { name: /^Filters/ }).click();
   await sheet.getByRole("combobox", { name: "Community centre" }).click();
@@ -639,6 +640,14 @@ test("the coffee icon sits top right, after the GitHub icon, and opens Buy Me a 
   expect(c.x + c.width).toBeGreaterThan(content.x + content.width - 40);
   expect(g.x + g.width).toBeLessThanOrEqual(c.x + 1);
   expect(Math.abs(c.y - g.y)).toBeLessThan(2);
+});
+
+test("the coffee bubble shows after load and goes at the first scroll", async ({ page }) => {
+  await page.goto("/");
+  const bubble = page.locator(".coffee-nudge");
+  await expect(bubble).toBeVisible();
+  await page.mouse.wheel(0, 200);
+  await expect(bubble).toBeHidden();
 });
 
 test(
