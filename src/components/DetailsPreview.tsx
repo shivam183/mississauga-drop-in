@@ -3,16 +3,15 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
-import type { SessionType } from "@/models/session";
 import styles from "./ActivityDetails.module.css";
 import { CloseIcon } from "./CloseIcon";
 import { DETAILS_TITLE_ID } from "./detailsIds";
-import { TypeBadge } from "./TypeBadge";
+import { TypeBadge, type BadgeType } from "./TypeBadge";
 
 /** What the tapped card already shows, so the popup can draw it straight away. */
 export interface DetailsPreview {
   href: string;
-  type: SessionType;
+  type: BadgeType;
   title: string;
   /** "Today · 6:30 – 8:55 AM" */
   when: string;

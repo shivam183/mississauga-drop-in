@@ -488,3 +488,94 @@ h1 {
     display: none;
   }
 }
+
+/*
+ * Drop-in | Registered: a segmented toggle in the header. The accent pill is
+ * one shape that slides between the two halves (data-current), so switching
+ * animates; the tab text sits above it.
+ */
+.area-tabs {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.area-tabs::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc((100% - 8px) / 2);
+  border-radius: 999px;
+  background: var(--accent);
+  transition:
+    transform 0.25s ease,
+    opacity 0.2s ease;
+}
+
+.area-tabs[data-current="programs"]::before {
+  transform: translateX(calc(100% + 2px));
+}
+
+.area-tabs:not([data-current])::before {
+  opacity: 0;
+}
+
+.area-tabs a {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.25s ease;
+}
+
+.area-tabs a:hover {
+  color: var(--text);
+}
+
+.area-tabs a[aria-current="page"] {
+  color: var(--on-accent);
+}
+
+.area-tabs a:focus-visible {
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .area-tabs::before,
+  .area-tabs a {
+    transition: none;
+  }
+}
+
+/* Logo, toggle, GitHub and coffee on one row: the name text goes until there's room for it. */
+@media (max-width: 719.98px) {
+  .site-name-text {
+    display: none;
+  }
+}
+
+/* Phones: tighter, so logo, toggle, GitHub and coffee fit one row down to 320px. */
+@media (max-width: 479.98px) {
+  .site-header-inner {
+    column-gap: 8px;
+  }
+
+  .area-tabs a {
+    padding: 0 10px;
+    font-size: 0.875rem;
+  }
+}

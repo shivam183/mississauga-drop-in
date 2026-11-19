@@ -410,6 +410,51 @@
   font-weight: 700;
 }
 
+/* − [ age ] +: one bordered control, the number centred. */
+.stepper {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.stepper button {
+  /* Quick taps count once each, with no double-tap-to-zoom on phones. */
+  touch-action: manipulation;
+  border: 0;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.stepper button:hover {
+  background: var(--border);
+}
+
+.stepper input {
+  min-width: 0;
+  border: 0;
+  border-inline: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: center;
+  /* The − / + buttons replace the browser's tiny spinner arrows. */
+  appearance: textfield;
+}
+
+.stepper input::-webkit-inner-spin-button,
+.stepper input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
 .field select,
 .field input[type="text"] {
   width: 100%;
@@ -444,6 +489,24 @@
   cursor: pointer;
 }
 
+/* Registered programs' day buttons: a week in one row, Sun to Sat. */
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+/* Centred in both layouts (the sidebar's toggles are left-aligned rows). */
+.days .toggle {
+  display: grid;
+  justify-content: center;
+  justify-items: center;
+  min-height: 44px;
+  padding: 4px 0;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
 /* The filters in use, above the results; each pill removes its filter. */
 .activeFilters {
   display: flex;
@@ -471,6 +534,17 @@
 
 .filterPill:hover {
   border-color: var(--text);
+}
+
+/* One toggle on its own row ("Has open spots"), not a third of it. */
+.toggleWide {
+  grid-template-columns: 1fr;
+}
+
+/* Centred in the sidebar too, where toggles are left-aligned rows with hours on the right. */
+.toggleWide .toggle {
+  justify-content: center;
+  text-align: center;
 }
 
 .toggleLabel {
@@ -552,6 +626,13 @@
   color: var(--muted);
 }
 
+/* /registered: "Programs already under way are hidden. Show all seasons" under the count. */
+.seasonNote {
+  margin: 8px 0 14px;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
 .warning {
   padding: 10px 12px;
   border-left: 4px solid var(--few);
@@ -627,4 +708,11 @@
   .results:only-child {
     grid-column: 1 / -1;
   }
+}
+
+/* /registered: one plain list of cards (no day groups). */
+.programList {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
 }

@@ -108,12 +108,73 @@ The client uses `body.button_status`. Four states have been seen:
 cached, so the app ignores it. `notification` can be HTML, so the app turns it
 into plain text and never renders it as markup.
 
+## Registered programs (the activity search)
+
+Confirmed against live responses on 2026-11-18; recorded in
+`tests/fixtures/activities.*.json`, `estimateprice.json` and `meetingdates.json`.
+Not tied to a calendar.
+
+### Search: `POST /activities/list?locale=en-US`
+
+The API behind the City's "Activity search" page. Body:
+`{"activity_search_pattern": {…}, "activity_transfer_pattern": {}}`, with
+`activity_select_param: 2` and `for_map: false` in the pattern.
+
+- **Paging is a request header**, `page_info`:
+  `{"order_by":"Date range","page_number":1,"total_records_per_page":20}`.
+  **The page size is capped at 20** (500 still returns 20). The total comes
+  back in `headers.page_info.total_records`.
+- **Filters all run on the City's side and combine:** `activity_keyword`,
+  `center_ids[]`, `activity_category_ids[]`, `season_ids[]`,
+  `activity_type_ids[]`, `days_of_week` (7 characters, **Sunday first**:
+  `"0000010"` is Friday), `min_age`/`max_age` (both set to one age finds
+  programs that suit it), `open_spots: 1`. Ids are strings. `date_after` and
+  `date_before` are **ignored**, in every format tried.
+- **Size:** about 13,600 rows; about 4,000 are type "Drop In Program" (id `7`),
+  the rest (about 9,600) are programs: Activity (`1`), Camps (`8`), League
+  (`5`). The app always sends the non-drop-in types.
+- Each row (`body.activity_items[]`): `id`, `name`, `desc` (HTML),
+  `location.label` (centre), `days_of_week` ("Mon,Wed"), `time_range`
+  ("6:30 PM - 7:30 PM", or "… - Noon"), `date_range_start`/`date_range_end`,
+  `ages` ("At least 9 but less than 13"), `total_open`,
+  `activity_online_start_time` (registration opens; `""` once open),
+  `enroll_now.href` (the enroll page, always present), `urgent_message.status_description`
+  (**"Full" even when `total_open` is above 0**, "In progress", or `""`),
+  `detail_url`.
+
+### Filter lists: `GET /activities/filters?locale=en-US`
+
+`body.centers`, `categories`, `types`, `seasons`, `othercategories` (age
+groups), each `[{ id, desc }]` with `desc` HTML-escaped ("Books &amp;
+Reading"). 82 locations (centres, libraries, pools, parks), with the same ids
+as the calendars. Seasons include past and future ones, most of them empty.
+
+### Fees: `GET /activity/detail/estimateprice/{id}?locale=en-US`
+
+`body.estimateprice.prices[].details[]` = `{ price: "$102.15", description:
+"Resident" }`, then "Non-resident"; `free: true` for free programs. Drop-ins
+publish no prices here.
+
+### Meeting pattern: `GET /activity/detail/meetingandregistrationdates/{id}?locale=en-US`
+
+`body.meeting_and_registration_dates.activity_patterns[]` = `{ beginning_date,
+ending_date, pattern_dates: [{ weekdays: "Sat" | "Weekdays" | …, starting_time:
+"08:30:00", ending_time }] }`.
+
+`/activity/detail/{id}` and `/activity/detail/buttonstatus/{id}` work for
+programs too. Before registration opens, `buttonstatus` gives
+`activity_online_start_time` and an `action_link` with an **empty** `href` (its
+label is the opening time); the enroll page is then
+`/activity/search/enroll/{id}`.
+
 ## Being a polite client
 
 - Every request to the City is made by our server, never the browser.
 - Request starts are throttled to at most 2 per second, with at most 4 in
   flight (`src/lib/activenet/throttle.ts`). The throttle is per server process.
-- Results are cached: schedules for 10 minutes and spot counts for 60 seconds.
+- Results are cached: the schedule until 7 am daily and spot counts for 60 seconds;
+  program searches and details for 10 minutes in server memory; the program
+  filter lists for a day, in memory and then the shared cache.
   Because the raw calendar 1 response is about 12 MB, the cache holds the
   normalised sessions, not raw responses.
 - Tests use recorded fixtures only and never call the live API.

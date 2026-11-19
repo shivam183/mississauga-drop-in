@@ -1,0 +1,218 @@
+{
+  "headers": {
+    "sessionRefreshedOn": null,
+    "sessionExtendedCount": 0,
+    "response_code": "0000",
+    "response_message": "Successful",
+    "page_info": {
+      "order_by": "Name",
+      "order_option": "ASC",
+      "total_page": 430,
+      "total_records_per_page": 20,
+      "total_records": 8581,
+      "page_number": 71
+    }
+  },
+  "body": {
+    "instructors": [],
+    "geographicareas": [],
+    "centers": [
+      {
+        "id": "287",
+        "desc": "Adamson Estate"
+      },
+      {
+        "id": "226",
+        "desc": "Applewood Heights Outdoor Pool"
+      },
+      {
+        "id": "21",
+        "desc": "Barondale Green Park"
+      },
+      {
+        "id": "288",
+        "desc": "Benares Museum"
+      },
+      {
+        "id": "285",
+        "desc": "Bradley Museum"
+      }
+    ],
+    "othercategories": [
+      {
+        "id": "3",
+        "desc": "Adult"
+      },
+      {
+        "id": "6",
+        "desc": "All Ages"
+      },
+      {
+        "id": "8",
+        "desc": "Family/Group"
+      },
+      {
+        "id": "9",
+        "desc": "Older Adult"
+      },
+      {
+        "id": "7",
+        "desc": "Preschool"
+      },
+      {
+        "id": "10",
+        "desc": "Teen"
+      },
+      {
+        "id": "2",
+        "desc": "Youth"
+      }
+    ],
+    "terms": [],
+    "sorts": [
+      "Ages",
+      "Date range",
+      "Days of week",
+      "Location",
+      "Name",
+      "Number",
+      "Time range"
+    ],
+    "skills": [],
+    "categories": [
+      {
+        "id": "59",
+        "desc": "Aquatic Specialty"
+      },
+      {
+        "id": "47",
+        "desc": "Arts"
+      },
+      {
+        "id": "55",
+        "desc": "Books &amp; Reading"
+      },
+      {
+        "id": "60",
+        "desc": "Camps - Extended Hours"
+      },
+      {
+        "id": "49",
+        "desc": "Camps - Full Day"
+      }
+    ],
+    "types": [
+      {
+        "id": "1",
+        "desc": "Activity"
+      },
+      {
+        "id": "-3",
+        "desc": "Camp"
+      },
+      {
+        "id": "8",
+        "desc": "Camps"
+      },
+      {
+        "id": "-4",
+        "desc": "Childcare"
+      },
+      {
+        "id": "7",
+        "desc": "Drop In Program"
+      },
+      {
+        "id": "5",
+        "desc": "League"
+      }
+    ],
+    "departments": [
+      {
+        "id": "1",
+        "desc": "Aquatics"
+      },
+      {
+        "id": "2",
+        "desc": "Arts & Culture"
+      },
+      {
+        "id": "3",
+        "desc": "Community Programs"
+      },
+      {
+        "id": "4",
+        "desc": "Fitness"
+      },
+      {
+        "id": "13",
+        "desc": "Golf"
+      },
+      {
+        "id": "9",
+        "desc": "Leagues"
+      },
+      {
+        "id": "5",
+        "desc": "Library"
+      },
+      {
+        "id": "14",
+        "desc": "Misc/Other"
+      },
+      {
+        "id": "12",
+        "desc": "MSC Programs"
+      },
+      {
+        "id": "11",
+        "desc": "Museum"
+      },
+      {
+        "id": "15",
+        "desc": "Partnership Programs"
+      },
+      {
+        "id": "6",
+        "desc": "Skating & Hockey"
+      },
+      {
+        "id": "10",
+        "desc": "Staff Development"
+      },
+      {
+        "id": "8",
+        "desc": "Therapeutic"
+      }
+    ],
+    "pricerange": {
+      "under": "",
+      "above": "",
+      "options": [],
+      "has_peak_load_period": false
+    },
+    "sites": [],
+    "seasons": [
+      {
+        "id": "10",
+        "desc": "Activity Templates"
+      },
+      {
+        "id": "27",
+        "desc": "2026 Winter"
+      },
+      {
+        "id": "28",
+        "desc": "2026 March Break"
+      },
+      {
+        "id": "29",
+        "desc": "2026 Spring"
+      },
+      {
+        "id": "30",
+        "desc": "2026 Summer Camps"
+      }
+    ]
+  }
+}

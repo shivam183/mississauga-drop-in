@@ -6,20 +6,30 @@
 import { createThrottle, type Throttle } from "./throttle";
 import { LOCAL_DATE_TIME } from "./types";
 import type {
+  ActivitiesPage,
   ActivityDetailBody,
+  ActivityFiltersBody,
+  ActivitySearchPattern,
   ButtonStatusBody,
   CalendarId,
+  Envelope,
+  EstimatePriceBody,
   EventsBody,
   EventsQuery,
   FiltersBody,
   LocalDateTime,
+  MeetingDatesBody,
 } from "./types";
 import {
+  assertActivitiesListBody,
   assertActivityDetailBody,
+  assertActivityFiltersBody,
   assertButtonStatusBody,
   assertEnvelope,
+  assertEstimatePriceBody,
   assertEventsBody,
   assertFiltersBody,
+  assertMeetingDatesBody,
 } from "./validate";
 
 export const DEFAULT_BASE_URL = "https://anc.ca.apm.activecommunities.com/activemississauga/rest";
@@ -60,7 +70,18 @@ export interface ActiveNetClient {
   getActivityDetail(activityId: number): Promise<ActivityDetailBody>;
   /** Enrollment button state for the session starting at `sessionStart`. */
   getButtonStatus(activityId: number, sessionStart: LocalDateTime): Promise<ButtonStatusBody>;
+  /** One page (PROGRAMS_PER_PAGE rows, by start date) of the City's activity search. */
+  searchActivities(pattern: ActivitySearchPattern, page: number): Promise<ActivitiesPage>;
+  /** The activity search's centres, categories and types. */
+  getActivityFilters(): Promise<ActivityFiltersBody>;
+  /** Fees (Resident / Non-resident) for one program. */
+  getEstimatePrice(activityId: number): Promise<EstimatePriceBody>;
+  /** When one program meets: dates, weekdays and times. */
+  getMeetingDates(activityId: number): Promise<MeetingDatesBody>;
 }
+
+/** Rows per page of /activities/list; the City caps it at 20. */
+export const PROGRAMS_PER_PAGE = 20;
 
 /** One throttle for the whole process, so separate clients share the limit. */
 const sharedThrottle = createThrottle();
@@ -73,11 +94,19 @@ export function createActiveNetClient(options: ActiveNetClientOptions = {}): Act
 
   async function request<Body>(
     path: string,
-    init: { method: "GET" | "POST"; body?: unknown },
+    init: { method: "GET" | "POST"; body?: unknown; headers?: Record<string, string> },
     assertBody: (body: unknown) => asserts body is Body,
   ): Promise<Body> {
+    return (await requestEnvelope(path, init, assertBody)).body;
+  }
+
+  async function requestEnvelope<Body>(
+    path: string,
+    init: { method: "GET" | "POST"; body?: unknown; headers?: Record<string, string> },
+    assertBody: (body: unknown) => asserts body is Body,
+  ): Promise<Envelope<Body>> {
     const url = `${baseUrl}${path}`;
-    const headers: Record<string, string> = { Accept: "application/json" };
+    const headers: Record<string, string> = { Accept: "application/json", ...init.headers };
     if (init.body !== undefined) headers["Content-Type"] = "application/json";
     if (options.userAgent) headers["User-Agent"] = options.userAgent;
 
@@ -114,7 +143,7 @@ export function createActiveNetClient(options: ActiveNetClientOptions = {}): Act
       );
     }
     assertBody(json.body);
-    return json.body;
+    return json as Envelope<Body>;
   }
 
   return {
@@ -172,6 +201,61 @@ export function createActiveNetClient(options: ActiveNetClientOptions = {}): Act
         `/activity/detail/buttonstatus/${activityId}?${query}`,
         { method: "GET" },
         assertButtonStatusBody,
+      );
+    },
+
+    async searchActivities(pattern, page) {
+      if (!Number.isInteger(page) || page < 1) throw new RangeError("page must be 1 or more");
+      const envelope = await requestEnvelope(
+        `/activities/list?locale=${LOCALE}`,
+        {
+          method: "POST",
+          // Paging goes in a header; the City ignores page sizes over 20.
+          headers: {
+            page_info: JSON.stringify({
+              order_by: "Date range",
+              page_number: page,
+              total_records_per_page: PROGRAMS_PER_PAGE,
+            }),
+          },
+          body: {
+            activity_search_pattern: { activity_select_param: 2, for_map: false, ...pattern },
+            activity_transfer_pattern: {},
+          },
+        },
+        assertActivitiesListBody,
+      );
+      const total = (envelope.headers.page_info as { total_records?: unknown } | undefined)
+        ?.total_records;
+      return {
+        items: envelope.body.activity_items,
+        total: Number.isInteger(total) ? (total as number) : envelope.body.activity_items.length,
+      };
+    },
+
+    getActivityFilters() {
+      return request(
+        `/activities/filters?locale=${LOCALE}`,
+        { method: "GET" },
+        assertActivityFiltersBody,
+      );
+    },
+
+    getEstimatePrice(activityId) {
+      assertId(activityId, "activityId");
+      return request(
+        `/activity/detail/estimateprice/${activityId}?locale=${LOCALE}`,
+        { method: "GET" },
+        assertEstimatePriceBody,
+      );
+    },
+
+    getMeetingDates(activityId) {
+      assertId(activityId, "activityId");
+      return request(
+        `/activity/detail/meetingandregistrationdates/${activityId}?locale=${LOCALE}`,
+        { method: "GET" },
+        assertMeetingDatesBody,
       );
     },
   };

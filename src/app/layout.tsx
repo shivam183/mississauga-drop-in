@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { AreaTabs, Tabs } from "@/components/AreaTabs";
 import { AvailabilityProvider } from "@/components/AvailabilityProvider";
 import { CoffeeNudge } from "@/components/CoffeeNudge";
 import { StandInDetails } from "@/components/DetailsPreview";
@@ -50,11 +52,15 @@ export default function RootLayout({ children, modal }: LayoutProps<"/">) {
         </a>
         <header className="site-header">
           <div className="container site-header-inner">
-            <Link href="/" className="site-name">
+            <Link href="/" className="site-name" aria-label="Mississauga Drop-In, home">
               {/* eslint-disable-next-line @next/next/no-img-element -- a static SVG gains nothing from next/image */}
               <img src="/icon.svg" alt="" title="Mississauga Drop-In" width={28} height={28} />
-              Mississauga Drop-In
+              <span className="site-name-text">Mississauga Drop-In</span>
             </Link>
+            {/* The path is only known per request; until then neither side is highlighted. */}
+            <Suspense fallback={<Tabs current={null} />}>
+              <AreaTabs />
+            </Suspense>
             <div className="header-links">
               <ExternalLink
                 href={REPO_URL}

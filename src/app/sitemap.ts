@@ -7,6 +7,7 @@ const SITE_URL = "https://mississaugadropin.com";
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     "/",
+    "/registered",
     ...ACTIVITIES.map(({ slug }) => `/${slug}`),
     ...ALL_CENTRES.map(({ name }) => `/centres/${centreSlug(name)}`),
   ].map((path) => ({
