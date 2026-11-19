@@ -52,14 +52,29 @@ function batches<T>(items: readonly T[], size: number): T[][] {
  * of one per batch plus a merge and sort. A list with failed centres is only
  * kept for a minute so they're retried soon.
  */
+/**
+ * Refreshed once a day, at 7 am Toronto time (the first request after 7 gets the
+ * old list and starts the refresh); ended sessions are hidden at render time anyway.
+ * A list with failed centres is kept a minute so they're retried soon.
+ */
+function scheduleLifetime(failed: boolean) {
+  if (failed) return cacheLife("minutes");
+  const untilSeven = secondsUntilTorontoHour(7, new Date());
+  cacheLife({ stale: 300, revalidate: untilSeven, expire: untilSeven + 86_400 });
+}
+
 export async function getSchedule(
   types: readonly SessionType[] = ["dropin", "enroll"],
 ): Promise<Schedule> {
   // This instance's memory first (free), the remote cache (billed per read) only on
-  // a miss. No cacheLife here, so the shorter lifetime after a failure carries over.
+  // a miss.
   "use cache";
   cacheTag("schedule");
   const { packed, failedCentres } = await remoteSchedule(types);
+  // The same lifetime as the remote copy. Without its own cacheLife this layer would
+  // use Next's 15-minute default (a longer inner lifetime doesn't carry over), re-reading
+  // the whole schedule from the remote cache four times an hour per instance.
+  scheduleLifetime(failedCentres.length > 0);
   return { sessions: unpackSessions(packed), failedCentres };
 }
 
@@ -95,13 +110,7 @@ async function remoteSchedule(
     }
   });
 
-  // Refreshed once a day, at 7 am Toronto time (the first request after 7 gets the
-  // old list and starts the refresh); ended sessions are hidden at render time anyway.
-  if (failed.size) cacheLife("minutes");
-  else {
-    const untilSeven = secondsUntilTorontoHour(7, new Date());
-    cacheLife({ stale: 300, revalidate: untilSeven, expire: untilSeven + 86_400 });
-  }
+  scheduleLifetime(failed.size > 0);
   // Batches cover different centres, so concatenating is enough; unpackSessions sorts.
   return { packed: lists.flat(), failedCentres: [...failed.values()] };
 }

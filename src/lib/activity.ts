@@ -29,6 +29,8 @@ async function remoteInfo(activityId: number): Promise<ActivityInfo> {
 /** This instance's memory first (free), the remote cache (billed per read) only on a miss. */
 async function getActivityInfo(activityId: number): Promise<ActivityInfo> {
   "use cache";
+  // Its own lifetime: without one an outer cache refreshes every 15 minutes (Next's default).
+  cacheLife("info");
   cacheTag("info", `info-${activityId}`);
   return remoteInfo(activityId);
 }
