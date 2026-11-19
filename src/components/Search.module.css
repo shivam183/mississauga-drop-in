@@ -444,6 +444,35 @@
   cursor: pointer;
 }
 
+/* The filters in use, above the results; each pill removes its filter. */
+.activeFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.filterPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.filterPill:hover {
+  border-color: var(--text);
+}
+
 .toggleLabel {
   font-weight: 700;
 }

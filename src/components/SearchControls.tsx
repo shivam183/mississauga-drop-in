@@ -16,7 +16,7 @@ import styles from "./Search.module.css";
 const TYPES: SessionType[] = ["dropin", "enroll"];
 
 /** Labels and start-time ranges, matching TIME_OF_DAY_HOURS in models/filters. */
-const TIMES: Array<[TimeOfDay, string, string]> = [
+export const TIMES: Array<[TimeOfDay, string, string]> = [
   ["morning", "Morning", "until 12 PM"],
   ["afternoon", "Afternoon", "12–5 PM"],
   ["evening", "Evening", "from 5 PM"],

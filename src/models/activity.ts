@@ -40,11 +40,30 @@ const coordinate = (value: unknown) =>
 const isoDate = (value: unknown) =>
   typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : "";
 
-/** "16 yrs +," -> "16+"; "6 yrs - 12 yrs" -> "6–12"; anything else as given. */
+/**
+ * "16 yrs +," -> "16+"; "6 yrs - 12 yrs" -> "6–12"; programs' "Age at least
+ * 18 yrs but less than 100 yrs" -> "18+" and "… 3 yrs but less than 5 yrs" -> "3–4";
+ * anything else as given.
+ */
 export function formatAges(description: unknown): string {
-  const raw = text(description).replace(/[\s,]+$/, "");
-  const plus = raw.match(/^(\d+)\s*yrs?\s*\+$/i);
+  // Decoded: the City sends "4&#189;" for 4½.
+  const raw = noticeToText(description).replace(/[\s,]+$/, "");
+  const plus = raw.match(/^(\d+)\s*(?:yrs?\s*\+|and up)$/i);
   if (plus) return `${plus[1]}+`;
+  // Details say "Age at least 3 yrs but …", search rows "At least 3 but …".
+  // "Less than 100" is the City's "no upper limit". Months stay: "4y 9m–14".
+  const atLeast = raw.match(
+    /^(?:Age\s+)?at least\s+(\d+½?(?:\s*yrs?)?|\d+y(?:\s*\d+m)?)\s+but less than\s+(\d+)\s*(?:yrs?)?$/i,
+  );
+  if (atLeast) {
+    // Details say "4y 6m" where search rows say "4½"; show "4½" for both.
+    const from = atLeast[1]
+      .replace(/\s*yrs?$/i, "")
+      .replace(/^(\d+)y\s*6m$/i, "$1½")
+      .replace(/\s+/g, " ");
+    const to = Number(atLeast[2]) - 1;
+    return to >= 98 ? `${from}+` : `${from}–${to}`;
+  }
   const range = raw.match(/^(\d+)\s*(?:yrs?)?\s*-\s*(\d+)\s*yrs?$/i);
   if (range) return `${range[1]}–${range[2]}`;
   return raw;
@@ -101,7 +120,8 @@ export function toActivityInfo(detail: RawActivityDetail): ActivityInfo {
     season: formatSeason(detail.season_name),
     firstDate: isoDate(detail.first_date),
     lastDate: isoDate(detail.last_date),
-    description: text(detail.catalog_description),
+    // Often wrapped in pasted HTML (<span style=…>, &nbsp;).
+    description: noticeToText(detail.catalog_description),
     notes: formatNotes(detail.online_notes, detail.user_notes),
     centre: centreName
       ? {

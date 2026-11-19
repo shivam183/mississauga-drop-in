@@ -9,6 +9,9 @@ import { noticeToText, safeCityUrl } from "./links";
 /** Openings at or below this count are shown as "few". */
 export const FEW_SPACES = 5;
 
+/** "1 spot left", "12 spots left". */
+export const spotsLeftText = (count: number) => `${count} ${count === 1 ? "spot" : "spots"} left`;
+
 export type Spaces =
   | { level: "full"; count: 0 }
   | { level: "few" | "open"; count: number }

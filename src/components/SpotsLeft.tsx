@@ -1,6 +1,7 @@
 "use client";
 
 import { formatCheckedAt } from "@/lib/format";
+import { spotsLeftText } from "@/models/availability";
 import type { AvailabilityEntry } from "./AvailabilityProvider";
 import styles from "./EnrollPanel.module.css";
 
@@ -37,7 +38,7 @@ export function SpotsLeft({
       ? "Full"
       : spaces.level === "unknown"
         ? (spaces.text ?? "Spots unknown")
-        : `${spaces.count} ${spaces.count === 1 ? "spot" : "spots"} left`;
+        : spotsLeftText(spaces.count);
   const refreshing = refreshState === "";
 
   return (

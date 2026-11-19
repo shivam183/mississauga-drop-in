@@ -63,8 +63,16 @@ body {
   line-height: 1.5;
 }
 
+/* A thin, soft underline set below the letters (links in text still need more than colour); solid on hover. */
 a {
   color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+}
+
+a:hover {
+  text-decoration-color: currentColor;
 }
 
 :focus-visible {
