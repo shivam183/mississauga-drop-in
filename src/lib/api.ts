@@ -1,10 +1,11 @@
 /**
  * Shared pieces of the public JSON API (/api/centres, /api/sessions,
- * /api/availability). The response shapes here are a public contract:
+ * /api/availability, /api/programs). The response shapes here are a public contract:
  * documented in docs/api.md, and kept stable when internals change.
  */
-import type { LocalDateTime } from "@/lib/activenet/types";
+import { LOCAL_DATE_TIME, type LocalDateTime } from "@/lib/activenet/types";
 import { TORONTO_TIME_ZONE } from "@/lib/dates";
+import type { Program } from "@/models/registered";
 import type { Session, SessionType } from "@/models/session";
 
 export const API_DEFAULT_LIMIT = 50;
@@ -108,5 +109,57 @@ export function toApiSession(session: Session): ApiSession {
     end: torontoIso(session.end),
     activityId: session.activityId,
     url: session.url,
+  };
+}
+
+// --- Registered programs ---------------------------------------------------
+
+/** One registered program in the public API. See docs/api.md. */
+export interface ApiProgram {
+  id: number;
+  name: string;
+  /** Where it runs: a centre, library, pool or park. */
+  location: string;
+  /** As the site shows them: "Mon, Wed", "6:30 – 7:30 PM", "Jan 4 – Mar 8"; "" if unknown. */
+  days: string;
+  time: string;
+  dates: string;
+  /** The City's wording, e.g. "At least 9 but less than 13"; "" if unknown. */
+  ages: string;
+  /** Online registration: open now, full, or opening at `opensAt` (ISO 8601). */
+  status:
+    | { state: "open"; spots: number }
+    | { state: "full" }
+    | { state: "opens"; opensAt: string | null; spots: number };
+  /** Already under way; you can often still join. */
+  started: boolean;
+  /** The City's enroll page and program page, or null. */
+  enrollUrl: string | null;
+  url: string | null;
+}
+
+export function toApiProgram(program: Program): ApiProgram {
+  const { status } = program;
+  return {
+    id: program.id,
+    name: program.name,
+    location: program.centre,
+    days: program.days,
+    time: program.time,
+    dates: program.dates,
+    ages: program.ages,
+    status:
+      status.state === "full"
+        ? { state: "full" }
+        : status.state === "open"
+          ? { state: "open", spots: status.spots }
+          : {
+              state: "opens",
+              opensAt: LOCAL_DATE_TIME.test(status.at) ? torontoIso(status.at) : null,
+              spots: status.spots,
+            },
+    started: program.started,
+    enrollUrl: program.enrollUrl,
+    url: program.cityUrl,
   };
 }

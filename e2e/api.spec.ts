@@ -106,3 +106,49 @@ test("GET /api/availability includes the worked-out enroll state", async ({ requ
   expect((await request.get("/api/availability")).status()).toBe(400);
   expect((await request.get("/api/availability?ids=1,2,x")).status()).toBe(400);
 });
+
+test("GET /api/programs lists registered programs with their status", async ({ request }) => {
+  const response = await request.get("/api/programs");
+  expect(response.status()).toBe(200);
+  expect(response.headers()["access-control-allow-origin"]).toBe("*");
+  const body = await response.json();
+  expect(body).toMatchObject({ total: 8, page: 1, perPage: 20, next: null });
+  const [open, full, opens] = body.programs;
+  expect(open).toMatchObject({
+    id: 158821,
+    name: "H3O Swim For Life 1",
+    location: "Frank McKechnie Cmty Centre",
+    status: { state: "open", spots: 12 },
+    enrollUrl: expect.stringContaining("/enroll/158821"),
+  });
+  expect(full.status).toEqual({ state: "full" });
+  expect(opens.status).toMatchObject({
+    state: "opens",
+    opensAt: expect.stringMatching(ISO_WITH_OFFSET),
+  });
+
+  const swim2 = await (await request.get("/api/programs?q=life%202")).json();
+  expect(swim2.programs.map((p: { id: number }) => p.id)).toEqual([161336]);
+
+  const past = await (await request.get("/api/programs?page=2")).json();
+  expect(past.programs).toEqual([]);
+});
+
+test("GET /api/programs rejects a bad page", async ({ request }) => {
+  for (const query of ["page=0", "page=11", "page=x", "page=1.5"]) {
+    const response = await request.get(`/api/programs?${query}`);
+    expect(response.status(), query).toBe(400);
+    expect((await response.json()).error).toBeTruthy();
+  }
+});
+
+test("GET /api/programs/filters lists the locations, categories and seasons", async ({
+  request,
+}) => {
+  const response = await request.get("/api/programs/filters");
+  expect(response.status()).toBe(200);
+  const body = await response.json();
+  expect(Object.keys(body)).toEqual(["locations", "categories", "seasons"]);
+  expect(body.locations).toContainEqual({ id: 287, name: "Adamson Estate" });
+  expect(body.categories[0]).toEqual({ id: expect.any(String), label: expect.any(String) });
+});

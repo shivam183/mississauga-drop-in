@@ -188,8 +188,11 @@ async function upcomingSeasons(options: ProgramOptions, now: string): Promise<st
   return info ? upcomingSeasonIds(info, now) : [];
 }
 
-/** Programs matching `search`, its first `search.pages` pages (each cached on its own). */
-export async function searchPrograms(search: ProgramSearch): Promise<ProgramResults> {
+/**
+ * Programs matching `search`, pages `first` to `search.pages` (each cached on
+ * its own): the site shows from page 1, the API one page at a time.
+ */
+export async function searchPrograms(search: ProgramSearch, first = 1): Promise<ProgramResults> {
   // "Now" (upcoming seasons, "Registration opens …") must come from the request, never a prerender.
   await connection();
   const now = toTorontoLocal(new Date());
@@ -197,7 +200,7 @@ export async function searchPrograms(search: ProgramSearch): Promise<ProgramResu
   const upcomingIds = search.season === null ? await upcomingSeasons(options, now) : [];
   const pattern = toSearchPattern(search, options.typeIds, upcomingIds);
   const pages = await Promise.all(
-    Array.from({ length: search.pages }, (_, i) => searchPage(pattern, i + 1)),
+    Array.from({ length: search.pages - first + 1 }, (_, i) => searchPage(pattern, first + i)),
   );
   // A program can move between pages while they're cached apart; show it once.
   const seen = new Set<number>();
