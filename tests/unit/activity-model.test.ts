@@ -64,10 +64,13 @@ describe("toActivityInfo reads defensively", () => {
       ...minimal,
       allowed_gender: "Female",
       online_notes: "<div>Bring a <b>lock</b> &amp; towel.</div>",
+      catalog_description:
+        '<div><span style="color: rgb(31, 73, 125);">Dance,&nbsp;music &amp; play.</span></div>',
       centers: [{ name: "Some Centre", latitude: 0, longitude: null }],
     });
     expect(info.gender).toBe("Female");
     expect(info.notes).toBe("Bring a lock & towel.");
+    expect(info.description).toBe("Dance, music & play.");
     expect(info.centre).toEqual({
       name: "Some Centre",
       address: "",
@@ -104,6 +107,12 @@ describe("formatAges", () => {
     ["18 yrs +", "18+"],
     ["6 yrs - 12 yrs", "6–12"],
     ["6 - 12 yrs,", "6–12"],
+    ["Age at least 18 yrs but less than 100 yrs", "18+"],
+    ["Age at least 3 yrs but less than 5 yrs", "3–4"],
+    ["Age at least 4y 9m but less than 15 yrs", "4y 9m–14"],
+    ["Age at least 4&#189; yrs but less than 13 yrs,", "4½–12"],
+    // "4y 6m" reads as "4½", the way the City's search lists it.
+    ["Age at least 4y 6m but less than 13 yrs,", "4½–12"],
     ["All ages", "All ages"],
     ["", ""],
     [null, ""],

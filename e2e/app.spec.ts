@@ -103,6 +103,21 @@ test("the Type filter narrows the list and lives in the URL", async ({ page }, t
   await expect(page.getByRole("article").getByText("Drop-in", { exact: true })).toHaveCount(0);
 });
 
+test("the filters in use show as pills that each remove their filter", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/?type=enroll&time=morning,evening");
+  const pills = page.getByRole("list", { name: "Filters in use" });
+  await expect(pills.getByRole("link")).toHaveText(["Enroll online✕", "Morning✕", "Evening✕"]);
+  await pills.getByRole("link", { name: "Remove Morning" }).click();
+  await expect(page).toHaveURL(/\/\?type=enroll&time=evening$/);
+  // The form follows the URL: Morning is unticked, Evening still ticked.
+  if (isPhone(testInfo.project.name)) await page.getByRole("button", { name: /^Filters/ }).click();
+  const filters = page.getByRole("region", { name: "Filters" });
+  await expect(filters.getByRole("checkbox", { name: /Morning/ })).not.toBeChecked();
+  await expect(filters.getByRole("checkbox", { name: /Evening/ })).toBeChecked();
+});
+
 test("activity chips filter in place, keep other filters and toggle off", async ({ page }) => {
   await page.goto("/?type=dropin");
   const chips = page.getByRole("navigation", { name: "Activity" });
@@ -546,6 +561,8 @@ test("centre picker: type to filter the list, pick one or more centres", async (
 
 test("a card's centre name adds that centre to the filter", async ({ page }, testInfo) => {
   await page.goto("/?type=enroll&q=pickle");
+  // A tap before hydration can be lost under load (the URL never changed); wait like the popup tests.
+  await hydrated(page);
   await page
     .getByRole("article")
     .first()
@@ -816,12 +833,9 @@ test.describe("details popup", () => {
     await expect(dialog).toHaveAccessibleName(/\S/);
     await expect(dialog.getByText(/Ages \d+/)).toBeVisible();
     await expect(dialog.getByText("Good to know", { exact: true })).toBeVisible();
-    await expect(dialog.getByText(/, Mississauga, ON L\d[A-Z] \d[A-Z]\d/)).toBeVisible();
-    // By name and address, so Google opens its listing for the centre, not a bare pin.
-    await expect(dialog.getByRole("link", { name: /Mississauga, ON L\d/ })).toHaveAttribute(
-      "href",
-      /^https:\/\/www\.google\.com\/maps\/search\/\?api=1&query=[^&]*Centre%2C%20\d+%20/,
-    );
+    // No separate Where section: the centre is in the card, with Directions and Call beside it.
+    await expect(dialog.getByRole("heading", { name: "Where" })).toHaveCount(0);
+    await expect(dialog.getByRole("button", { name: /^Directions to / })).toBeVisible();
     await expect(dialog.getByRole("link", { name: /^Call / })).toHaveAttribute("href", /^tel:/);
     await expect(dialog.getByRole("link", { name: /View on ActiveMississauga/ })).toBeVisible();
     // The list behind doesn't scroll while it's open.

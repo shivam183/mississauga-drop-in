@@ -84,17 +84,17 @@ function runSummary(sessions: Session[], info: ActivityInfo | null): string {
  * (photos, hours); coordinates only drop a bare pin, so they're the fallback
  * without an address.
  */
-function mapPlace(session: Session, info: ActivityInfo | null): string {
+function mapPlace(centreName: string, info: ActivityInfo | null): string {
   const centre = info?.centre;
-  const name = centre?.name ?? session.centreName;
+  const name = centre?.name ?? centreName;
   if (centre?.address) return `${name}, ${centre.address}`;
   if (centre?.lat != null && centre.lng != null) return `${centre.lat},${centre.lng}`;
   return `${name}, Mississauga, ON`;
 }
 
 /** Directions in each maps app, for the Directions menu. */
-function mapApps(session: Session, info: ActivityInfo | null): MapApp[] {
-  const place = encodeURIComponent(mapPlace(session, info));
+function mapApps(centreName: string, info: ActivityInfo | null): MapApp[] {
+  const place = encodeURIComponent(mapPlace(centreName, info));
   const { lat, lng } = info?.centre ?? {};
   return [
     {
@@ -142,11 +142,6 @@ export function ActivityDetails({
   const others =
     shown.type === "dropin" ? sessions.filter((s) => s !== shown).slice(0, UPCOMING) : [];
   const summary = shown.type === "dropin" ? runSummary(sessions, info) : "";
-  const centre = info?.centre;
-  const phone = centre?.phone ?? "";
-  const tel = phone.replace(/[^\d+]/g, "");
-  const apps = mapApps(shown, info);
-  const listing = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapPlace(shown, info))}`;
   const chip = activityFor(shown.title);
   const enroll = shown.type === "enroll";
   const Heading = page ? "h1" : "h2";
@@ -200,28 +195,7 @@ export function ActivityDetails({
               </span>
             )}
           </p>
-          <div className={styles.whereRow}>
-            <p className={styles.where}>
-              <span aria-hidden="true">📍 </span>
-              {shown.centreName}
-              {shown.facility && ` · ${shown.facility}`}
-            </p>
-            <span className={styles.quick}>
-              <MapsMenu apps={apps} label={`Directions to ${shown.centreName}`}>
-                <Icon d={DIRECTIONS_ICON} />
-              </MapsMenu>
-              {tel && (
-                <a
-                  href={`tel:${tel}`}
-                  className={styles.iconLink}
-                  aria-label={`Call ${phone}`}
-                  title={`Call ${phone}`}
-                >
-                  <Icon d={PHONE_ICON} />
-                </a>
-              )}
-            </span>
-          </div>
+          <WhereRow centreName={shown.centreName} facility={shown.facility} info={info} />
           {enroll && <DetailsSpots activityId={shown.activityId} className={styles.spots} />}
         </section>
 
@@ -259,30 +233,6 @@ export function ActivityDetails({
             <p className={styles.notes}>{info.notes}</p>
           </section>
         )}
-
-        <section aria-labelledby="details-where">
-          <h3 id="details-where" className={styles.heading}>
-            Where
-          </h3>
-          <p className={styles.text}>
-            <strong>{centre?.name ?? shown.centreName}</strong>
-            {shown.facility && <span className="muted"> · {shown.facility}</span>}
-            {centre?.address && (
-              <>
-                <br />
-                <ExternalLink href={listing}>{centre.address}</ExternalLink>
-              </>
-            )}
-            {tel && (
-              <>
-                <br />
-                <span className="muted">
-                  Phone: <a href={`tel:${tel}`}>{phone}</a> (City of Mississauga)
-                </span>
-              </>
-            )}
-          </p>
-        </section>
 
         <section aria-labelledby="details-more">
           <h3 id="details-more" className={styles.heading}>
@@ -322,6 +272,47 @@ export function ActivityDetails({
 const DIRECTIONS_ICON = "M3 11l18-8-8 18-2-8z";
 const PHONE_ICON =
   "M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z";
+
+/**
+ * "📍 Centre · Room" with Directions (a maps-app menu) and Call beside it, in
+ * the details card.
+ */
+function WhereRow({
+  centreName,
+  facility = "",
+  info,
+}: {
+  centreName: string;
+  facility?: string;
+  info: ActivityInfo | null;
+}) {
+  const phone = info?.centre?.phone ?? "";
+  const tel = phone.replace(/[^\d+]/g, "");
+  return (
+    <div className={styles.whereRow}>
+      <p className={styles.where}>
+        <span aria-hidden="true">📍 </span>
+        {centreName}
+        {facility && ` · ${facility}`}
+      </p>
+      <span className={styles.quick}>
+        <MapsMenu apps={mapApps(centreName, info)} label={`Directions to ${centreName}`}>
+          <Icon d={DIRECTIONS_ICON} />
+        </MapsMenu>
+        {tel && (
+          <a
+            href={`tel:${tel}`}
+            className={styles.iconLink}
+            aria-label={`Call ${phone}`}
+            title={`Call ${phone}`}
+          >
+            <Icon d={PHONE_ICON} />
+          </a>
+        )}
+      </span>
+    </div>
+  );
+}
 
 /** A 20px outline icon in the current text colour. */
 function Icon({ d }: { d: string }) {
