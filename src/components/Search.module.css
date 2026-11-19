@@ -511,7 +511,7 @@
 .activeFilters {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   margin: 0 0 8px;
   padding: 0;
   list-style: none;
@@ -521,13 +521,13 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 32px;
-  padding: 4px 12px;
+  /* Same size as the activity chips (.chip). */
+  min-height: 44px;
+  padding: 8px 16px;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--surface);
   color: var(--text);
-  font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
 }
