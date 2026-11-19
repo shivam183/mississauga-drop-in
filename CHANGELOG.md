@@ -5,6 +5,21 @@ This file is updated automatically by
 Conventional Commit messages on `main`. Don't edit it by hand. The project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.7.0](https://github.com/shivam183/mississauga-drop-in/compare/v0.6.0...v0.7.0) (2026-11-19)
+
+
+### Features
+
+* filter pills on the drop-in list, and a calmer details page ([#76](https://github.com/shivam183/mississauga-drop-in/issues/76)) ([45f9eb5](https://github.com/shivam183/mississauga-drop-in/commit/45f9eb5c239b8bd449f5884a12851b6fe79405cf))
+* registered programs at /registered, with a Drop-in | Registered toggle ([#77](https://github.com/shivam183/mississauga-drop-in/issues/77)) ([6374171](https://github.com/shivam183/mississauga-drop-in/commit/6374171ed1d7ea384cf4aca7a1041f0fed1eb68e))
+
+
+### Bug Fixes
+
+* **cache:** give each memory cache layer its own lifetime ([#75](https://github.com/shivam183/mississauga-drop-in/issues/75)) ([4edb461](https://github.com/shivam183/mississauga-drop-in/commit/4edb461feee95a1236eb0e3620a034ed39919bf0))
+* keep crawlers off filter combinations and details pages ([#72](https://github.com/shivam183/mississauga-drop-in/issues/72)) ([8335e92](https://github.com/shivam183/mississauga-drop-in/commit/8335e92ca421516254f1fce52affefad9375e431))
+* serve the logo at /favicon.ico ([#74](https://github.com/shivam183/mississauga-drop-in/issues/74)) ([16eaab8](https://github.com/shivam183/mississauga-drop-in/commit/16eaab81d1324f703b6547ad119603a817d29fc7))
+
 ## [0.6.0](https://github.com/shivam183/mississauga-drop-in/compare/v0.5.0...v0.6.0) (2026-11-18)
 
 
