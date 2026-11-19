@@ -77,7 +77,8 @@ describe("toProgram", () => {
       status: { state: "full" }, // the City says "Full" even with total_open 3
       started: false,
       enrollUrl: expect.stringMatching(/^https:\/\/anc\.ca\.apm\.activecommunities\.com\//),
-      cityUrl: expect.stringMatching(/^https:\/\/.*activecommunities\.com\//),
+      // The City's own pages are on ca.apm…, its enroll pages on anc.ca.apm….
+      cityUrl: expect.stringMatching(/^https:\/\/(anc\.)?ca\.apm\.activecommunities\.com\//),
     });
   });
 

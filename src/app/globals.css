@@ -497,7 +497,7 @@ h1 {
 .area-tabs {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 2px;
   padding: 3px;
   border: 1px solid var(--border);
@@ -568,14 +568,26 @@ h1 {
   }
 }
 
-/* Phones: tighter, so logo, toggle, GitHub and coffee fit one row down to 320px. */
+/*
+ * Phones: logo, toggle, GitHub and coffee always on one row, down to 320px. The
+ * toggle is the part that gives: smaller text, and it may shrink rather than wrap
+ * (wider fonts, e.g. on Linux, used to push the icons onto a second row).
+ */
 @media (max-width: 479.98px) {
   .site-header-inner {
-    column-gap: 8px;
+    flex-wrap: nowrap;
+    column-gap: 6px;
+  }
+
+  .area-tabs {
+    min-width: 0;
   }
 
   .area-tabs a {
-    padding: 0 10px;
-    font-size: 0.875rem;
+    min-width: 0;
+    padding: 0 8px;
+    font-size: 0.8125rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
