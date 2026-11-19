@@ -70,6 +70,12 @@ The Hobby plan includes **1M Runtime Cache read units a month** (1 unit = 8 KB r
 
 **Runtime Cache writes, 2026-11-17:** 75% of the 200,000 monthly writes were used. The schedule was written every 10 minutes, twice over (each centre batch and the merged list). Now only the merged list is cached and it refreshes daily at 7 am, so it's written about once a day. Moving the cache to Redis was considered and not needed: with a daily refresh the writes are tiny, and Redis would add a service with its own limits.
 
+**Fluid Active CPU, 2026-11-18:** 90% of the free 4 hours a month was used in about four days, with only about 850 page views. If it runs out, Vercel pauses the project until the period resets (about 2026-12-14).
+
+- **Cause:** OpenAI's GPTBot (the top user agent in Firewall). Every page renders per request (about 150–270 ms of CPU each, measured on a local production build), and the site links to endless combinations: `/?q=…&centre=…` for every activity and centre, and `/activity/{id}?session=…` for every session, new each day. Web Analytics doesn't count crawlers, so the traffic didn't show there.
+- **Fixes:** Vercel Firewall → Bot Management → AI Bots: Deny (instant; blocked requests run no function). `robots.txt` blocks GPTBot entirely and, for every crawler, query strings and the noindex details pages (`/activity/`, `/registered/`). OAI-SearchBot (ChatGPT search) and search engines still reach `/`, the activity pages and the centre pages.
+- **Lessons:** before adding crawlable pages (such as registered programs, about 9,600 details pages and their filters), check that crawlers can't fan out over them; watch Vercel → Usage → Fluid Active CPU after deploys. Hold the registered-programs deploy until the CPU period resets.
+
 ## GitHub automation
 
 | Workflow                   | Trigger                         | What it does                                                                                                                                                                                                                                            |
