@@ -5,6 +5,23 @@ This file is updated automatically by
 Conventional Commit messages on `main`. Don't edit it by hand. The project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.0.0](https://github.com/shivam183/mississauga-drop-in/compare/v0.7.1...v1.0.0) (2026-11-19)
+
+
+### Features
+
+* a public API for registered programs ([#83](https://github.com/shivam183/mississauga-drop-in/issues/83)) ([db8ec60](https://github.com/shivam183/mississauga-drop-in/commit/db8ec6024547d9e416347b1a93b230a83454529c))
+
+
+### Documentation
+
+* cover registered programs in the README and architecture doc ([#84](https://github.com/shivam183/mississauga-drop-in/issues/84)) ([c5cec40](https://github.com/shivam183/mississauga-drop-in/commit/c5cec4015d53ca81d848a414ac1b13f0838d24b5))
+
+
+### Chores
+
+* release 1.0.0 ([#82](https://github.com/shivam183/mississauga-drop-in/issues/82)) ([ba15aea](https://github.com/shivam183/mississauga-drop-in/commit/ba15aeaebcd26029a82f91e3c10f681f4fe9b266))
+
 ## [0.7.1](https://github.com/shivam183/mississauga-drop-in/compare/v0.7.0...v0.7.1) (2026-11-19)
 
 
