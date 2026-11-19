@@ -10,13 +10,16 @@ Browser ──► Next.js server (pages + /api routes)
 
 - **`src/lib/activenet/`** knows the City's request and response shapes and
   nothing else.
-- **`src/models/`** turns raw responses into `Session`, `Centre` and
-  availability values. It is pure, so it is easy to unit test with fixtures.
+- **`src/models/`** turns raw responses into `Session`, `Centre`, `Program`
+  (registered programs) and availability values. It is pure, so it is easy to unit test with fixtures.
 - **`src/lib/`** combines the two with caching, and is what pages and API
   routes call.
 - **Pages** render on the server from URL parameters, so every filtered view can
   be bookmarked and works without JavaScript. Only live spot counts load in the
   browser, through `/api/availability`.
+- **Registered programs** (`/registered`) aren't copied: each search is sent
+  live to the City's activity search, one page of 20 at a time
+  (`src/lib/registered.ts`).
 
 See [PLAN.md](PLAN.md) for the roadmap and [data-source.md](data-source.md) for
 the API.
@@ -31,12 +34,19 @@ the API.
 | `getCachedButtonStatus` (availability.ts) | `enroll` | 10 min   | activity id + session start |
 | `getCachedDetail` (availability.ts)       | `spots`  | 60 s     | activity id                 |
 | `getActivityInfo` (activity.ts)           | `info`   | 1 day    | activity id                 |
+| `getProgramOptions` (registered.ts)       | `info`   | 1 day    | none                        |
+| `getSeasonInfo` (registered.ts)           | `info`   | 1 day    | season ids                  |
+| `searchPage` (registered.ts)              | `enroll` | 10 min   | search filters + page       |
+| `programDetail` (registered.ts)           | `enroll` | 10 min   | program id                  |
 
 All of these use `"use cache: remote"` (Vercel's Runtime Cache, shared by all
 instances and billed per read). `getSchedule`, `getCachedDetail`,
 `getCachedButtonStatus` and `getActivityInfo` also have a plain `"use cache"` (in-memory) layer in front,
 so a warm instance answers repeat lookups without a billed read. As a result, a value
-can be up to about twice its lifetime old.
+can be up to about twice its lifetime old. The registered-program functions are
+the exception: `getProgramOptions` and `getSeasonInfo` (small, a day) have both
+layers, while `searchPage` and `programDetail` are in memory only, since every
+filter combination would be its own billed entry.
 
 `getActivityInfo` (the details popup) stores only the small `ActivityInfo` (about
 1–2 KB, one read unit), not the City's raw response, and is only called for

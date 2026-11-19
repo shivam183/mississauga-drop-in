@@ -19,6 +19,7 @@ Thanks for helping make Mississauga's recreation programs easier to find.
 Run the same checks as CI:
 
 ```bash
+npm run format:check
 npm run lint
 npm run typecheck
 npm test
