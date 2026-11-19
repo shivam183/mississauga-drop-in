@@ -120,8 +120,7 @@ export function SearchBox({
             if (!input.current) return;
             input.current.value = "";
             setHasText(false);
-            search("");
-            input.current.focus();
+            search(""); // no focus(): on phones it would pop up the keyboard
           }}
         >
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">

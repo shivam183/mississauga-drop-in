@@ -266,7 +266,7 @@ test("the X button clears the search", ANY_SIZE, async ({ page }) => {
   await expect(page).not.toHaveURL(/[?&]q=/);
   await expect(page).toHaveURL(/[?&]type=dropin\b/);
   await expect(box).toHaveValue("");
-  await expect(box).toBeFocused();
+  await expect(box).not.toBeFocused(); // no keyboard popping up on phones
   await expect(page.getByRole("button", { name: "Clear search" })).toHaveCount(0);
 });
 
