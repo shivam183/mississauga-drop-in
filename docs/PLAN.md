@@ -70,6 +70,8 @@ The Hobby plan includes **1M Runtime Cache read units a month** (1 unit = 8 KB r
 
 **Runtime Cache writes, 2026-11-17:** 75% of the 200,000 monthly writes were used. The schedule was written every 10 minutes, twice over (each centre batch and the merged list). Now only the merged list is cached and it refreshes daily at 7 am, so it's written about once a day. Moving the cache to Redis was considered and not needed: with a daily refresh the writes are tiny, and Redis would add a service with its own limits.
 
+**Memory cache lifetimes, 2026-11-19:** a `"use cache"` wrapper without its own `cacheLife` uses Next's 15-minute default (a longer inner lifetime doesn't carry over; see `cacheLife.md`, "Nested caching behavior"). So each warm instance re-read the schedule (the big item) and the activity details from the Runtime Cache about every 15 minutes instead of daily. Every memory layer now sets its lifetime explicitly: the schedule the same 7 am / one-minute-after-a-failure rule as its remote copy, activity details and the registered lists `info` (daily).
+
 **Fluid Active CPU, 2026-11-18:** 90% of the free 4 hours a month was used in about four days, with only about 850 page views. If it runs out, Vercel pauses the project until the period resets (about 2026-12-14).
 
 - **Cause:** OpenAI's GPTBot (the top user agent in Firewall). Every page renders per request (about 150–270 ms of CPU each, measured on a local production build), and the site links to endless combinations: `/?q=…&centre=…` for every activity and centre, and `/activity/{id}?session=…` for every session, new each day. Web Analytics doesn't count crawlers, so the traffic didn't show there.
