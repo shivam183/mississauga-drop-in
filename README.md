@@ -51,8 +51,9 @@ what's done and what's next.
 ## Public API
 
 The schedule is also available as JSON, free and without a key:
-`/api/centres`, `/api/sessions` (with the same filters as the site) and
-`/api/availability` (spots left). See [docs/api.md](docs/api.md).
+`/api/centres`, `/api/sessions` (with the same filters as the site),
+`/api/availability` (spots left) and `/api/programs` (registered programs). See
+[docs/api.md](docs/api.md).
 
 ## Quick start
 

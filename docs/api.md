@@ -138,3 +138,75 @@ Spots left and enroll status for up to 20 `enroll` sessions, by `activityId`
   answer; try again later.
 
 Never cached by shared caches.
+
+## `GET /api/programs`
+
+Registered programs (lessons, camps, leagues: sign up once for the season),
+the list on [/registered](https://mississaugadropin.com/registered). They're
+searched live on the City's site, sorted by start date, 20 per page.
+
+| Parameter | Example   | Meaning                                                                                   |
+| --------- | --------- | ----------------------------------------------------------------------------------------- |
+| `q`       | `swim`    | Search words, as on the City's site                                                       |
+| `cat`     | `47`      | A category id from `/api/programs/filters`                                                |
+| `season`  | `27`      | A season id from `/api/programs/filters`, or `all`. Default: upcoming seasons (see below) |
+| `age`     | `6`       | The participant's age, 1–99                                                               |
+| `day`     | `tue,thu` | Meets on any of these days: `sun` … `sat`                                                 |
+| `centre`  | `287,290` | Location ids from `/api/programs/filters` (not `/api/centres`), up to 20                  |
+| `open`    | `1`       | Only programs with spots left                                                             |
+| `page`    | `2`       | Page, 1–10 (default 1)                                                                    |
+
+Without `season`, only **upcoming seasons** are searched: those with programs
+starting today or later, or started in the last two weeks. Unknown or invalid
+filter values are ignored; an invalid `page` returns 400. Like the site, at
+most 10 pages (200 programs) are served; narrow the search for more.
+
+```json
+{
+  "generatedAt": "2026-11-14T21:05:00.000Z",
+  "total": 1520,
+  "page": 1,
+  "perPage": 20,
+  "next": "/api/programs?q=swim&page=2",
+  "programs": [
+    {
+      "id": 158821,
+      "name": "H3O Swim For Life 1",
+      "location": "Frank McKechnie Cmty Centre",
+      "days": "Sat",
+      "time": "8:30 – 9:00 AM",
+      "dates": "Sep 26 – Dec 12",
+      "ages": "At least 4y 9m but less than 15",
+      "status": { "state": "open", "spots": 12 },
+      "started": false,
+      "enrollUrl": "https://anc.ca.apm.activecommunities.com/activemississauga/activity/search/enroll/158821?wishlist_id=0&locale=en-US",
+      "url": "https://ca.apm.activecommunities.com/activemississauga/Activity_Search/h3o-swim-for-life-1/158821?locale=en-US"
+    }
+  ]
+}
+```
+
+- `status`: `{ "state": "open", "spots" }`, `{ "state": "full" }`, or
+  `{ "state": "opens", "opensAt", "spots" }` when online registration opens
+  later (`opensAt` in ISO 8601, or `null` if the City's time can't be read).
+- `days`, `time` and `dates` are worded as the site shows them; `""` if the
+  City doesn't say.
+- `started`: already under way; you can often still join.
+- `next` is the path of the next page, or `null` on the last one.
+
+Shared caches may reuse a response for up to a minute.
+
+## `GET /api/programs/filters`
+
+The ids `/api/programs` filters by, each list sorted by name (seasons as the
+City lists them, past ones too).
+
+```json
+{
+  "locations": [{ "id": 287, "name": "Adamson Estate" }],
+  "categories": [{ "id": "47", "label": "Arts" }],
+  "seasons": [{ "id": "27", "label": "2026 Winter" }]
+}
+```
+
+Cached for a day.

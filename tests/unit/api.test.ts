@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { API_DEFAULT_LIMIT, API_MAX_LIMIT, parsePage, toApiSession, torontoIso } from "@/lib/api";
+import {
+  API_DEFAULT_LIMIT,
+  API_MAX_LIMIT,
+  parsePage,
+  toApiProgram,
+  toApiSession,
+  torontoIso,
+} from "@/lib/api";
 import { toRawSearchParams } from "@/lib/params";
 import type { Session } from "@/models/session";
 
@@ -89,5 +96,50 @@ describe("toApiSession", () => {
       activityId: 164373,
       url: session.url,
     });
+  });
+});
+
+describe("toApiProgram", () => {
+  const program = {
+    id: 158821,
+    name: "Swim",
+    centre: "Frank McKechnie Cmty Centre",
+    days: "Sat",
+    time: "8:30 – 9:00 AM",
+    dates: "Sep 26 – Dec 12",
+    ages: "At least 4 but less than 6",
+    started: false,
+    enrollUrl: null,
+    cityUrl: null,
+  };
+
+  it("drops the internal few flag and renames centre and cityUrl", () => {
+    expect(toApiProgram({ ...program, status: { state: "open", spots: 3, few: true } })).toEqual({
+      id: 158821,
+      name: "Swim",
+      location: "Frank McKechnie Cmty Centre",
+      days: "Sat",
+      time: "8:30 – 9:00 AM",
+      dates: "Sep 26 – Dec 12",
+      ages: "At least 4 but less than 6",
+      status: { state: "open", spots: 3 },
+      started: false,
+      enrollUrl: null,
+      url: null,
+    });
+    expect(toApiProgram({ ...program, status: { state: "full" } }).status).toEqual({
+      state: "full",
+    });
+  });
+
+  it("gives opening times in ISO, or null when the City's time is malformed", () => {
+    const opens = (at: string) =>
+      toApiProgram({ ...program, status: { state: "opens", at, spots: 8, few: false } }).status;
+    expect(opens("2026-12-01 07:00:00")).toEqual({
+      state: "opens",
+      opensAt: "2026-12-01T07:00:00-05:00",
+      spots: 8,
+    });
+    expect(opens("Dec 1")).toEqual({ state: "opens", opensAt: null, spots: 8 });
   });
 });
