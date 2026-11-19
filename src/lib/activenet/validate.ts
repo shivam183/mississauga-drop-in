@@ -4,11 +4,15 @@
  * nonsense. Used by the client and by the nightly API health check.
  */
 import type {
+  ActivitiesListBody,
   ActivityDetailBody,
+  ActivityFiltersBody,
   ButtonStatusBody,
   Envelope,
+  EstimatePriceBody,
   EventsBody,
   FiltersBody,
+  MeetingDatesBody,
 } from "./types";
 import { LOCAL_DATE_TIME } from "./types";
 
@@ -131,4 +135,39 @@ export function assertButtonStatusBody(body: unknown): asserts body is ButtonSta
       notification: string,
     }),
   });
+}
+
+const program = shape({
+  id: integer,
+  name: string,
+  location: shape({ label: string }),
+  days_of_week: string,
+  time_range: string,
+  date_range_start: string,
+  date_range_end: string,
+  ages: string,
+  total_open: integer,
+  activity_online_start_time: optionalLocalDateTime,
+});
+
+export function assertActivitiesListBody(body: unknown): asserts body is ActivitiesListBody {
+  fields(body, "body", { activity_items: arrayOf(program) });
+}
+
+const option = shape({ id: string, desc: string });
+
+export function assertActivityFiltersBody(body: unknown): asserts body is ActivityFiltersBody {
+  fields(body, "body", {
+    centers: arrayOf(option),
+    categories: arrayOf(option),
+    types: arrayOf(option),
+  });
+}
+
+export function assertEstimatePriceBody(body: unknown): asserts body is EstimatePriceBody {
+  fields(body, "body", { estimateprice: object });
+}
+
+export function assertMeetingDatesBody(body: unknown): asserts body is MeetingDatesBody {
+  fields(body, "body", { meeting_and_registration_dates: object });
 }

@@ -18,3 +18,9 @@
   background: var(--accent);
   color: var(--on-accent);
 }
+
+.program {
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}

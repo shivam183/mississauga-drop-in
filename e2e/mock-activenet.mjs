@@ -81,6 +81,59 @@ function buttonStatus(id) {
   return envelope;
 }
 
+// Registered programs (/registered): the recorded "swim" search. Row #0 is open
+// with 12 spots, #1 full, #2 opens for registration tomorrow at 7 am, the rest
+// as recorded (full).
+const programs = fixture("activities.list.json").body.activity_items;
+Object.assign(programs[0], { urgent_message: { status_description: "" }, total_open: 12 });
+Object.assign(programs[2], {
+  urgent_message: { status_description: "" },
+  activity_online_start_time: `${shiftDay(today, 1)} 07:00:00`,
+});
+const programById = new Map(programs.map((p) => [p.id, p]));
+const isFull = (p) => p.urgent_message?.status_description === "Full";
+
+function programList(pattern, pageInfo) {
+  const keyword = (pattern.activity_keyword ?? "").toLowerCase();
+  const matches = programs.filter((p) => p.name.toLowerCase().includes(keyword));
+  const { page_number = 1, total_records_per_page = 20 } = JSON.parse(pageInfo ?? "{}");
+  const start = (page_number - 1) * total_records_per_page;
+  return {
+    headers: {
+      response_code: "0000",
+      response_message: "Successful",
+      page_info: { total_records: matches.length, page_number, total_records_per_page },
+    },
+    body: { activity_items: matches.slice(start, start + total_records_per_page) },
+  };
+}
+
+function programDetail(p) {
+  const envelope = fixture("detail.1.json");
+  Object.assign(envelope.body.detail, {
+    activity_id: p.id,
+    activity_name: p.name,
+    activity_type: "Activity",
+    first_date: today,
+    last_date: shiftDay(today, 60),
+    space_status: isFull(p) ? "Full" : `${p.total_open} openings remaining`,
+  });
+  return envelope;
+}
+
+function programButtonStatus(p) {
+  if (isFull(p)) return fixture("buttonstatus.3.full.json");
+  const envelope = fixture("buttonstatus.3.enroll.json");
+  const status = envelope.body.button_status;
+  status.action_link.href = status.action_link.href.replace(/enroll\/\d+/, `enroll/${p.id}`);
+  if (p.activity_online_start_time) {
+    // Before registration opens the City sends the time and an empty link.
+    status.activity_online_start_time = p.activity_online_start_time;
+    status.action_link.href = "";
+  }
+  return envelope;
+}
+
 const server = createServer((request, response) => {
   const url = new URL(request.url, `http://localhost:${PORT}`);
   let body = "";
@@ -104,6 +157,24 @@ const server = createServer((request, response) => {
       );
       return send(200, envelope);
     }
+    if (url.pathname.endsWith("/activities/filters")) {
+      return send(200, fixture("activities.filters.json"));
+    }
+    if (url.pathname.endsWith("/activities/list")) {
+      const { activity_search_pattern } = JSON.parse(body);
+      return send(200, programList(activity_search_pattern, request.headers.page_info));
+    }
+    const program = programById.get(id);
+    if (url.pathname.includes("/estimateprice/") && program) {
+      return send(200, fixture("estimateprice.json"));
+    }
+    if (url.pathname.includes("/meetingandregistrationdates/") && program) {
+      return send(200, fixture("meetingdates.json"));
+    }
+    if (url.pathname.includes("/activity/detail/buttonstatus/") && program)
+      return send(200, programButtonStatus(program));
+    if (url.pathname.includes("/activity/detail/") && program)
+      return send(200, programDetail(program));
     if (url.pathname.includes("/activity/detail/buttonstatus/") && id)
       return send(200, buttonStatus(id));
     if (url.pathname.includes("/activity/detail/") && id) return send(200, detail(id));

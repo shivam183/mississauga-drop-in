@@ -1,0 +1,76 @@
+{
+  "headers": {
+    "sessionRefreshedOn": null,
+    "sessionExtendedCount": 0,
+    "response_code": "0000",
+    "response_message": "Successful",
+    "page_info": {
+      "order_by": "",
+      "total_page": 1,
+      "order_option": "ASC",
+      "total_records_per_page": 20,
+      "total_records": 0,
+      "page_number": 1
+    }
+  },
+  "body": {
+    "meeting_and_registration_dates": {
+      "activity_id": 158821,
+      "no_meeting_dates": false,
+      "user_entered": false,
+      "online_activity_date_description": "",
+      "current_date": "2026-11-18 12:43:50",
+      "additional_dates": [],
+      "activity_patterns": [
+        {
+          "beginning_date": "2026-09-26",
+          "ending_date": "2026-12-12",
+          "weeks_of_month": "",
+          "exception_dates": [],
+          "pattern_dates": [
+            {
+              "weekdays": "Sat",
+              "starting_time": "08:30:00",
+              "ending_time": "09:00:00"
+            }
+          ]
+        }
+      ],
+      "priority_enrollment_datetimes": {
+        "first_daytime_internet": null,
+        "first_daytime_internet_nonresidents": null,
+        "first_daytime_internet_members": null,
+        "last_daytime_internet": null,
+        "drop_in_first_daytime_internet": null,
+        "drop_in_first_daytime_internet_nonresidents": null,
+        "drop_in_first_daytime_internet_members": null,
+        "drop_in_last_daytime_internet": null,
+        "for_drop_in_activity": false
+      },
+      "local_priority_enrollment_datetimes": {
+        "first_daytime_internet": null,
+        "first_daytime_internet_nonresidents": null,
+        "first_daytime_internet_members": null,
+        "last_daytime_internet": null,
+        "drop_in_first_daytime_internet": null,
+        "drop_in_first_daytime_internet_nonresidents": null,
+        "drop_in_first_daytime_internet_members": null,
+        "drop_in_last_daytime_internet": null,
+        "for_drop_in_activity": false
+      },
+      "enrollment_datetimes": [
+        {
+          "first_daytime_internet": "2026-08-11 07:00:00",
+          "first_daytime_internet_nonresidents": "2026-08-18 07:00:00",
+          "first_daytime_internet_members": "2026-08-11 07:00:00",
+          "last_daytime_internet": null,
+          "drop_in_first_daytime_internet": null,
+          "drop_in_first_daytime_internet_nonresidents": null,
+          "drop_in_first_daytime_internet_members": null,
+          "drop_in_last_daytime_internet": null,
+          "for_drop_in_activity": false
+        }
+      ]
+    }
+  }
+}

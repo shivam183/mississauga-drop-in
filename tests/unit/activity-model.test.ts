@@ -111,7 +111,7 @@ describe("formatAges", () => {
     ["Age at least 3 yrs but less than 5 yrs", "3–4"],
     ["Age at least 4y 9m but less than 15 yrs", "4y 9m–14"],
     ["Age at least 4&#189; yrs but less than 13 yrs,", "4½–12"],
-    // "4y 6m" reads as "4½", the way the City's search lists it.
+    // The same program's details: "4y 6m" reads as the card's "4½".
     ["Age at least 4y 6m but less than 13 yrs,", "4½–12"],
     ["All ages", "All ages"],
     ["", ""],

@@ -15,12 +15,17 @@
  *   buttonstatus.3.opens.json enrollment opens in the future
  *   buttonstatus.3.full.json  "This activity is full…"
  *   buttonstatus.3.over.json  "…this activity is over" (only if one ended today)
+ *   activities.filters.json   the activity search's lists (centres, categories, seasons cut to 5)
+ *   activities.list.json      one page of a "swim" program search, cut to 8 rows
+ *   estimateprice.json        the first of those programs' fees
+ *   meetingdates.json         and when it meets
  *   capture.json              when and from which sessions the above came
  */
 import path from "node:path";
 import { activeNetClientFromEnv } from "../src/lib/activenet/client";
 import type { RawCentre, RawEvent } from "../src/lib/activenet/types";
 import { TORONTO_TIME_ZONE, toTorontoLocal } from "../src/lib/dates";
+import { EMPTY_PROGRAM_SEARCH, programTypeIds, toSearchPattern } from "../src/models/registered";
 import { run, writeJson } from "./lib";
 
 const OUT = path.resolve("tests/fixtures");
@@ -155,6 +160,35 @@ run(async () => {
       ended.start_time,
     );
     if (/\bover\b/i.test(s.notification)) await save("over", ended);
+  }
+
+  // Registered programs (/registered): filter lists, one search page, one program's fees and dates.
+  const options = await client.getActivityFilters();
+  const filtersEnvelope = lastEnvelope("/activities/filters");
+  for (const key of ["centers", "categories", "seasons"]) {
+    const list = filtersEnvelope.body[key];
+    if (Array.isArray(list)) filtersEnvelope.body[key] = list.slice(0, 5);
+  }
+  await writeJson(`${OUT}/activities.filters.json`, filtersEnvelope);
+  const programs = await client.searchActivities(
+    {
+      ...toSearchPattern({ ...EMPTY_PROGRAM_SEARCH, q: "swim" }, programTypeIds(options.types)),
+    },
+    1,
+  );
+  const listEnvelope = lastEnvelope("/activities/list");
+  listEnvelope.body.activity_items = (listEnvelope.body.activity_items as unknown[]).slice(0, 8);
+  await writeJson(`${OUT}/activities.list.json`, listEnvelope);
+  const program = programs.items[0];
+  if (program) {
+    await client.getEstimatePrice(program.id);
+    await writeJson(`${OUT}/estimateprice.json`, lastEnvelope(`/estimateprice/${program.id}`));
+    await client.getMeetingDates(program.id);
+    await writeJson(
+      `${OUT}/meetingdates.json`,
+      lastEnvelope(`/meetingandregistrationdates/${program.id}`),
+    );
+    manifest.program = { activityId: program.id, total: programs.total };
   }
 
   manifest.enroll = Object.fromEntries(

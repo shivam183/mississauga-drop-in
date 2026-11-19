@@ -1,0 +1,48 @@
+{
+  "headers": {
+    "sessionRefreshedOn": null,
+    "sessionExtendedCount": 0,
+    "response_code": "0000",
+    "response_message": "Successful",
+    "page_info": {
+      "order_by": "",
+      "order_option": "ASC",
+      "total_page": 1,
+      "total_records_per_page": 20,
+      "total_records": 0,
+      "page_number": 1
+    }
+  },
+  "body": {
+    "estimateprice": {
+      "show_price_info_online": true,
+      "estimate_price": "",
+      "prices": [
+        {
+          "list_name": "",
+          "activity_name": "H3O Swim For Life 1",
+          "details": [
+            {
+              "price": "$288.00",
+              "description": "Resident"
+            },
+            {
+              "price": "$298.00",
+              "description": "Non-resident"
+            }
+          ]
+        }
+      ],
+      "registration_type_prices": [],
+      "private_lesson_enroll_now": "",
+      "not_allow_online_team_enroll": false,
+      "search_from_price": null,
+      "search_from_price_desc": "",
+      "show_all_inclusive_pricing": false,
+      "all_inclusive_total_price": null,
+      "is_package": false,
+      "free": false,
+      "simple_fee": false
+    }
+  }
+}

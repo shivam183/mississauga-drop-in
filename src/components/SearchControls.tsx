@@ -25,7 +25,8 @@ export const TIMES: Array<[TimeOfDay, string, string]> = [
 /** Days offered in the Day picker, starting today. */
 const DAYS_AHEAD = 14;
 
-function Hidden({ name, value }: { name: string; value: string | null | undefined }) {
+/** A hidden form field, left out when empty. */
+export function Hidden({ name, value }: { name: string; value: string | null | undefined }) {
   return value ? <input type="hidden" name={name} value={value} /> : null;
 }
 

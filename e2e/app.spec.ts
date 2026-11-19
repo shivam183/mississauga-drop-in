@@ -1214,3 +1214,199 @@ test.describe("collapsible days", () => {
     await expect(day(page, 0)).toHaveAttribute("open");
   });
 });
+
+// The mock's recorded "swim" search: #0 open with 12 spots, #1 full, #2 opening tomorrow (see mock-activenet.mjs).
+test.describe("registered programs", () => {
+  test("the header toggle switches between Drop-in and Registered", async ({ page }) => {
+    await page.goto("/");
+    const toggle = page.getByRole("navigation", { name: "Area" });
+    await expect(toggle.getByRole("link", { name: "Drop-in" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    await toggle.getByRole("link", { name: "Registered" }).click();
+    await expect(page).toHaveURL(/\/registered$/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Registered programs in Mississauga",
+    );
+    await expect(toggle.getByRole("link", { name: "Registered" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    await toggle.getByRole("link", { name: "Drop-in" }).click();
+    await expect(page).toHaveURL(/:\d+\/$/);
+    await expect(toggle.getByRole("link", { name: "Drop-in" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
+
+  test("on phones the header stays one row", async ({ page }, testInfo) => {
+    test.skip(!isPhone(testInfo.project.name), "phone only");
+    await page.goto("/registered");
+    const toggle = (await page.getByRole("navigation", { name: "Area" }).boundingBox())!;
+    const coffee = (await page.getByRole("link", { name: /Buy me a coffee/ }).boundingBox())!;
+    expect(Math.abs(toggle.y + toggle.height / 2 - (coffee.y + coffee.height / 2))).toBeLessThan(4);
+  });
+
+  test("cards are compact: time with dates, spots and Share, no price, Enroll at the bottom", async ({
+    page,
+  }) => {
+    await page.goto("/registered");
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /\/registered$/);
+    const cards = page.getByRole("article");
+    const open = cards.nth(0);
+    await expect(open.getByText("Sat 8:30 – 9:00 AM", { exact: true })).toBeVisible();
+    await expect(open.getByText("Sep 26 – Dec 12", { exact: true })).toBeVisible();
+    await expect(open.getByText(/\$\d/)).toHaveCount(0); // the price varies, so it is only in the popup
+    await expect(open.getByRole("button", { name: /^Share / })).toBeVisible();
+    await expect(open.getByText("12 spots left")).toBeVisible();
+    const enroll = open.getByRole("link", { name: /Enroll now/ });
+    await expect(enroll).toHaveAttribute("href", /\/activity\/search\/enroll\/158821\b/);
+    // Full width, at the bottom of the card.
+    const [card, button] = [(await open.boundingBox())!, (await enroll.boundingBox())!];
+    expect(card.y + card.height - (button.y + button.height)).toBeLessThan(24);
+    expect(button.width).toBeGreaterThan(card.width - 48);
+    await expect(cards.nth(1).getByText("Full", { exact: true })).toBeVisible();
+    await expect(cards.nth(1).getByRole("link", { name: /Enroll/ })).toHaveCount(0);
+    await expect(cards.nth(2).getByText(/^Enrollment opens /)).toBeVisible();
+    await expect(cards.nth(2).getByText(/\d+ spots? left/)).toBeVisible();
+  });
+
+  test("a search stays on /registered", ANY_SIZE, async ({ page }) => {
+    await page.goto("/registered");
+    await page.waitForLoadState("networkidle");
+    await page.getByRole("searchbox").fill("private");
+    await page.getByRole("searchbox").press("Enter");
+    await expect(page).toHaveURL(/\/registered\?q=private$/);
+    const cards = page.getByRole("article");
+    await expect(cards).toHaveCount(3);
+    for (const label of await cards.evaluateAll((els) => els.map((e) => e.ariaLabel ?? ""))) {
+      expect(label).toBe("Private Lessons Swimming");
+    }
+  });
+
+  test("a chip picks a category that later filters keep, and is one choice at a time", async ({
+    page,
+  }, testInfo) => {
+    await page.goto("/registered");
+    const chips = page.getByRole("navigation", { name: "Program type" });
+    await chips.getByRole("link", { name: "Arts" }).click();
+    await expect(page).toHaveURL(/\/registered\?cat=47$/);
+    await expect(chips.getByRole("link", { name: "Arts" })).toHaveAttribute("aria-current", "page");
+    // No Category menu (chips and search cover it); the form carries the chip's category.
+    if (isPhone(testInfo.project.name))
+      await page.getByRole("button", { name: /^Filters/ }).click();
+    const filters = page.getByRole("region", { name: "Filters" });
+    await expect(filters.getByLabel("Category")).toHaveCount(0);
+    await filters.getByLabel("Has open spots").check();
+    await expect(page).toHaveURL(/[?&]cat=47\b/);
+    await expect(page).toHaveURL(/[?&]open=1\b/);
+    // Clear filters keeps the chip, like the drop-in page.
+    await filters.getByRole("button", { name: "Clear filters" }).click();
+    await expect(page).toHaveURL(/\/registered\?cat=47$/);
+    await expect(chips.getByRole("link", { name: "Arts" })).toHaveAttribute("aria-current", "page");
+    // Camps is a keyword; picking it drops the Arts category.
+    await page.goto("/registered?cat=47");
+    await chips.getByRole("link", { name: "Camps" }).click();
+    await expect(page).toHaveURL(/\/registered\?q=camp$/);
+  });
+
+  test("the age stepper searches once taps pause, and typing works too", async ({
+    page,
+  }, testInfo) => {
+    await page.goto("/registered");
+    if (isPhone(testInfo.project.name))
+      await page.getByRole("button", { name: /^Filters/ }).click();
+    const filters = page.getByRole("region", { name: "Filters" });
+    const age = filters.getByRole("spinbutton", { name: "Age" });
+    // A person's taps are 100 ms+ apart; the stepper ignores clicks closer than 60 ms (a duplicated tap).
+    const tapOlder = async (times: number) => {
+      for (let i = 0; i < times; i++) {
+        if (i > 0) await page.waitForTimeout(100);
+        await filters.getByRole("button", { name: "Older" }).click();
+      }
+    };
+    await tapOlder(3);
+    await expect(page).toHaveURL(/\/registered\?age=3$/);
+    await expect(age).toHaveValue("3");
+    await filters.getByRole("button", { name: "Younger" }).click();
+    await expect(page).toHaveURL(/\/registered\?age=2$/);
+    await age.fill("12");
+    await expect(page).toHaveURL(/\/registered\?age=12$/);
+    // No one is 0: typing it, or − from 1, goes back to all ages.
+    await age.fill("0");
+    await expect(page).toHaveURL(/\/registered$/);
+    await expect(age).toHaveValue("");
+    await expect(age).toHaveAttribute("placeholder", "All ages");
+    await filters.getByRole("button", { name: "Older" }).click();
+    await expect(page).toHaveURL(/\/registered\?age=1$/);
+    await filters.getByRole("button", { name: "Younger" }).click();
+    await expect(page).toHaveURL(/\/registered$/);
+    await expect(age).toHaveValue("");
+    // The pill's ✕ clears the field, even back to a URL the form itself went to before.
+    await tapOlder(3);
+    await expect(page).toHaveURL(/\/registered\?age=3$/);
+    if (isPhone(testInfo.project.name)) await page.keyboard.press("Escape");
+    await page.getByRole("link", { name: "Remove Age 3" }).click();
+    await expect(page).toHaveURL(/\/registered$/);
+    if (isPhone(testInfo.project.name))
+      await page.getByRole("button", { name: /^Filters/ }).click();
+    await expect(age).toHaveValue("");
+  });
+
+  test("several days, upcoming or all seasons, and pills that remove a filter", async ({
+    page,
+  }, testInfo) => {
+    await page.goto("/registered");
+    const phone = isPhone(testInfo.project.name);
+    if (phone) await page.getByRole("button", { name: /^Filters/ }).click();
+    const filters = page.getByRole("region", { name: "Filters" });
+    await expect(filters.getByLabel("Season")).toHaveValue("");
+    await expect(filters.getByLabel("Season").locator("option").nth(0)).toHaveText(
+      "Upcoming seasons",
+    );
+    await filters.getByRole("checkbox", { name: "Tuesday" }).check();
+    await expect(page).toHaveURL(/[?&]day=tue\b/);
+    await filters.getByRole("checkbox", { name: "Thursday" }).check();
+    await expect(page).toHaveURL(/[?&]day=tue&day=thu$/);
+    await filters.getByLabel("Season").selectOption("all");
+    await expect(page).toHaveURL(/[?&]season=all\b/);
+    if (phone) await page.keyboard.press("Escape");
+
+    const pills = page.getByRole("list", { name: "Filters in use" });
+    await expect(pills.getByRole("link")).toHaveText(["All seasons✕", "Tuesday✕", "Thursday✕"]);
+    await pills.getByRole("link", { name: "Remove Tuesday" }).click();
+    await expect(page).toHaveURL(/\/registered\?season=all&day=thu$/);
+    // The form follows: Tuesday is unticked, Thursday still ticked.
+    if (phone) await page.getByRole("button", { name: /^Filters/ }).click();
+    await expect(filters.getByRole("checkbox", { name: "Tuesday" })).not.toBeChecked();
+    await expect(filters.getByRole("checkbox", { name: "Thursday" })).toBeChecked();
+  });
+
+  test("a card opens its details: when, fees and Enroll; Esc closes it", async ({ page }) => {
+    await page.goto("/registered");
+    await page.waitForLoadState("networkidle");
+    await page.getByRole("article").first().getByRole("heading").getByRole("link").click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog.getByRole("heading", { name: "H3O Swim For Life 1" })).toBeVisible();
+    await expect(dialog.getByText("Sat · 8:30 – 9:00 AM", { exact: true })).toBeVisible();
+    await expect(dialog.getByText("Sep 26 – Dec 12", { exact: true })).toBeVisible();
+    await expect(dialog.getByText("Non-resident")).toBeVisible();
+    await expect(dialog.getByText("$298.00")).toBeVisible();
+    await expect(dialog.getByRole("link", { name: /Enroll now/ })).toBeVisible();
+    await expect(page).toHaveURL(/\/registered\/158821$/);
+    await page.keyboard.press("Escape");
+    await expect(dialog).toHaveCount(0);
+    await expect(page).toHaveURL(/\/registered$/);
+  });
+
+  test("a program page loads directly; unknown ids are not found", ANY_SIZE, async ({ page }) => {
+    await page.goto("/registered/158821");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("H3O Swim For Life 1");
+    await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute("content", /noindex/);
+    await page.goto("/registered/999999");
+    await expect(page.getByText(/could not be found/i)).toBeVisible();
+    await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute("content", /noindex/);
+  });
+});

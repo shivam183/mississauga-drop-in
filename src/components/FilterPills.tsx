@@ -10,7 +10,7 @@ export interface FilterPill {
 /**
  * The filters in use, as pills above the results; tapping one removes it. On
  * phones the filters are in a closed sheet, so this is where you see them.
- * Used by the drop-in lists.
+ * Used by the drop-in and registered lists.
  */
 export function FilterPills({ pills }: { pills: FilterPill[] }) {
   if (pills.length === 0) return null;

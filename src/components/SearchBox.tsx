@@ -62,6 +62,7 @@ export function SearchBox({
     if (q) params.set("q", q);
     else params.delete("q");
     params.delete("limit"); // a new search starts from the first page
+    params.delete("pages"); // (on /registered)
     params.delete("session"); // and leaves a shared session for the full list
     params.delete("collapsed"); // with every day open, so no new result is hidden
     const query = params.toString();

@@ -105,6 +105,8 @@ export interface RawActivityDetail {
   // Read only for the details popup (src/models/activity.ts); all optional.
   category?: string | null;
   season_name?: string | null;
+  /** A program's payment plan, free text: "Fall 50% now+50% Oct 5". */
+  term_name?: string | null;
   /** e.g. "16 yrs +," */
   age_description?: string | null;
   /** "Mixed", "Male" or "Female" */
@@ -157,5 +159,110 @@ export interface RawButtonStatus {
 
 export interface ButtonStatusBody {
   button_status: RawButtonStatus;
+  [field: string]: unknown;
+}
+
+// POST /activities/list (the "Activity search": registered programs) -------
+
+/** Filters for /activities/list. Empty fields mean "any". */
+export interface ActivitySearchPattern {
+  activity_keyword: string;
+  center_ids: string[];
+  activity_category_ids: string[];
+  /** Activity types; the app always sends the non-drop-in ones. */
+  activity_type_ids: string[];
+  /** 7 characters, Sunday first: "0000010" is Friday. Null for any day. */
+  days_of_week: string | null;
+  /** A participant's age: both set to it finds programs that suit it. */
+  min_age: number | null;
+  max_age: number | null;
+  /** 1: only programs with openings. */
+  open_spots: 1 | null;
+  /** e.g. ["17"] for "2027 Winter". */
+  season_ids: string[];
+}
+
+export interface RawLink {
+  href: string;
+  label?: string;
+  [field: string]: unknown;
+}
+
+export interface RawProgram {
+  id: number;
+  name: string;
+  /** HTML. Never render as markup. */
+  desc?: string | null;
+  location: { label: string; [field: string]: unknown };
+  /** "Mon,Wed" or "" */
+  days_of_week: string;
+  /** "6:30 PM - 7:30 PM" or "" */
+  time_range: string;
+  /** "2026-10-07" */
+  date_range_start: string;
+  date_range_end: string;
+  /** "At least 9 but less than 13", "3 and up" */
+  ages: string;
+  total_open: number;
+  /** When online registration opens (LocalDateTime), or "". */
+  activity_online_start_time: string;
+  /** Always present for enrollable programs; Enroll goes here. */
+  enroll_now: RawLink | null;
+  /** "Full", "In progress" or "". */
+  urgent_message?: { status_description?: string | null } | null;
+  detail_url?: string | null;
+  [field: string]: unknown;
+}
+
+export interface ActivitiesListBody {
+  activity_items: RawProgram[];
+  [field: string]: unknown;
+}
+
+export interface ActivitiesPage {
+  items: RawProgram[];
+  /** All matches, from the response's page_info. */
+  total: number;
+}
+
+// GET /activities/filters -------------------------------------------------
+
+export interface RawOption {
+  id: string;
+  desc: string;
+  [field: string]: unknown;
+}
+
+export interface ActivityFiltersBody {
+  centers: RawOption[];
+  categories: RawOption[];
+  types: RawOption[];
+  seasons?: RawOption[];
+  [field: string]: unknown;
+}
+
+// GET /activity/detail/estimateprice/{id} ---------------------------------
+
+export interface EstimatePriceBody {
+  estimateprice: {
+    free?: boolean;
+    prices?: Array<{ details?: Array<{ price?: string; description?: string }> | null }> | null;
+    [field: string]: unknown;
+  };
+  [field: string]: unknown;
+}
+
+// GET /activity/detail/meetingandregistrationdates/{id} -------------------
+
+export interface MeetingDatesBody {
+  meeting_and_registration_dates: {
+    activity_patterns?: Array<{
+      beginning_date?: string;
+      ending_date?: string;
+      /** e.g. [{ weekdays: "Weekdays" | "Sat" | "Mon, Wed", starting_time: "09:00:00", ending_time: "12:00:00" }] */
+      pattern_dates?: Array<{ weekdays?: string; starting_time?: string; ending_time?: string }>;
+    }> | null;
+    [field: string]: unknown;
+  };
   [field: string]: unknown;
 }

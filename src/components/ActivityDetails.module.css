@@ -256,6 +256,33 @@
   border-top: 1px solid var(--border);
 }
 
+/* "12 CLASSES" on the left, a program's spots on the right. */
+.labelRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* A program's "13 spots left" / "Full", coloured like its card. */
+.spotsCount {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.spotsCount[data-level="open"] {
+  color: var(--open);
+}
+
+.spotsCount[data-level="few"] {
+  color: var(--few);
+}
+
+.spotsCount[data-level="full"] {
+  color: var(--full);
+}
+
 .whereRow {
   display: flex;
   align-items: center;
@@ -402,6 +429,67 @@ button.iconLink {
 
 .upcoming li:first-child {
   border-top: 0;
+}
+
+/* A program's fees table: labels left, prices right-aligned. */
+.fees {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border);
+  font-variant-numeric: tabular-nums;
+}
+
+.fees th,
+.fees td {
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  text-align: right;
+}
+
+.fees thead th {
+  border-top: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+/* "Fees" in the corner stands in for the section heading. */
+.fees thead th:first-child {
+  color: var(--text);
+  font-size: 1rem;
+  text-align: left;
+}
+
+/* A program's "Sep 26 – Dec 12", on its own line under the time, like the card. */
+.meetingDates {
+  margin: 0;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.feesSection {
+  margin-top: 20px;
+}
+
+/* "Payment plan: 50% now, 50% on Oct 5", right under the fees table. */
+.plan {
+  margin: 8px 0 0;
+}
+
+/* Row labels; they wrap rather than widen the page if the City sends a long one. */
+.fees tbody th {
+  font-weight: 400;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.fees tbody td {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.fees tbody tr:nth-child(even) {
+  background: var(--surface);
 }
 
 .summary {

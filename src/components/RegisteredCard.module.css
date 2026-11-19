@@ -1,0 +1,57 @@
+/* Program cards reuse SessionCard.module.css (card, title, centre, stripes); these keep them compact. */
+
+/* "Sat 8:30 – 9:00 AM": one line on a phone, a step below a session card's time. */
+.when {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 800;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+
+/* "Sep 26 – Dec 12", right under the time: for a program the dates matter as much. */
+.dates {
+  margin: 0;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.started {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.name {
+  margin-top: 4px;
+}
+
+/* "Ages 9–12" */
+.ages {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* "12 spots left" in the top row, beside Share. */
+.spots {
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.spots[data-level="open"] {
+  color: var(--open);
+}
+
+.spots[data-level="few"] {
+  color: var(--few);
+}
+
+.spots[data-level="full"] {
+  color: var(--full);
+}
+
+.enroll {
+  margin-top: 10px;
+}
