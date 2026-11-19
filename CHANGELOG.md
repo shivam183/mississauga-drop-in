@@ -5,6 +5,14 @@ This file is updated automatically by
 Conventional Commit messages on `main`. Don't edit it by hand. The project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.7.1](https://github.com/shivam183/mississauga-drop-in/compare/v0.7.0...v0.7.1) (2026-11-19)
+
+
+### Bug Fixes
+
+* make the filter pills the same size as the activity chips ([#79](https://github.com/shivam183/mississauga-drop-in/issues/79)) ([d234d4b](https://github.com/shivam183/mississauga-drop-in/commit/d234d4bd1c2a4f8da7a480d2f015a949002ad9cd))
+* the search box's X doesn't pop up the keyboard ([#80](https://github.com/shivam183/mississauga-drop-in/issues/80)) ([2b9d87a](https://github.com/shivam183/mississauga-drop-in/commit/2b9d87adaca57d6560f97ffa8a42c73b2e1ff416))
+
 ## [0.7.0](https://github.com/shivam183/mississauga-drop-in/compare/v0.6.0...v0.7.0) (2026-11-19)
 
 
