@@ -218,6 +218,7 @@ Goal: get a regular user from opening the site to the session they want in as fe
 - ✅ **"On now" and "Starts in N min" labels** (#36). See the result card section.
 - ✅ **Share button and session links** (#38, #39). See the result card section. `/api/sessions` accepts the same `session` parameter (`docs/api.md`).
 - ✅ **Fix:** opening the filter sheet on a phone no longer pops up the keyboard; the sheet focuses itself, not its first field (#41).
+- ✅ **Fix:** the search box's ✕ clears the search without focusing the box, so it doesn't pop up the keyboard on phones.
 - ❌ **"My centres" chip** (#40, closed): remembering the last centres in the browser and offering them as a chip. Decided it isn't worth adding.
 - ✅ **Collapsible day sections** (#48). Summary below.
 - ❌ **Week strip and header day menu** (2026-11-16, compared in an interactive mock): a row of day chips adds clutter to the home page, and chips are for activities only; a menu on the sticky day header is easy to miss and not a common pattern. Jumping to a specific day stays in the filter sheet's day picker.
