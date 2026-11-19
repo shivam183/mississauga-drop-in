@@ -5,7 +5,7 @@
 <h1 align="center">Mississauga Drop-In</h1>
 
 <p align="center">
-  Find drop-in swims, skates and sports at Mississauga community centres, with live spots left.
+  Find drop-in swims, skates and sports at Mississauga community centres, with live spots left, plus registered programs like swim lessons and camps.
 </p>
 
 <p align="center">
@@ -28,7 +28,9 @@
 An unofficial, mobile-friendly way to find drop-in and online-enrollable
 recreation programs in Mississauga: badminton, pickleball, swimming, skating and
 more. See **when** and **where** at a glance, how many **spots are left**, and
-tap straight through to enroll on the City's site.
+tap straight through to enroll on the City's site. Registered programs (swim
+lessons, camps, sports, arts and more) have their own list, with season, age
+and day filters.
 
 > **Not affiliated with the City of Mississauga.** This project reads the same
 > public schedule data shown on ActiveMississauga and always links back to it.
@@ -45,6 +47,10 @@ what's done and what's next.
 - Search as you type; filter by type, one or more centres, day and time of day.
 - Spots left per session, with an **Enroll now** button that opens the City's
   enrollment page.
+- **Registered programs** at `/registered`: search the City's swim lessons,
+  camps, sports, fitness, arts and more, filter by season, age, days, location
+  and open spots, then register on the City's site. A **Drop-in | Registered**
+  toggle in the header switches between the two lists.
 - Built for phones first; works without JavaScript except for live spot counts.
 - A public JSON API: see below.
 
