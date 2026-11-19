@@ -209,6 +209,7 @@ mississauga-drop-in/
   - Done: `v0.1.0` released (https://github.com/shivam183/mississauga-drop-in/releases/tag/v0.1.0).
   - Done: the "Protect main" ruleset requires a PR (squash only) and passing `check`, `e2e`, `analyze` and `conventional-title`, and blocks deletion and force pushes. All changes now go through PRs.
   - Done: the `RELEASE_PLEASE_TOKEN` secret (a fine-grained PAT) is set, so release PRs get their checks. Renew it before it expires.
+  - Done: `v1.0.0`, the project is feature complete. Forced with a `Release-As: 1.0.0` footer on the squash commit (the PR body), since `bump-minor-pre-major` keeps 0.x from reaching 1.0 on its own.
 
 **6. Find it faster** ✅
 
