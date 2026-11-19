@@ -1,5 +1,15 @@
+# OpenAI's training crawler: it crawled filter combinations nonstop and used up the free plan's
+# CPU (2026-11-18). ChatGPT search uses OAI-SearchBot, which falls under the rules below.
+User-Agent: GPTBot
+Disallow: /
+
 User-Agent: *
 Allow: /
 Disallow: /api/
+# Filtered lists (?q=, ?centre=, …) and details pages are noindex or canonical to a clean page;
+# crawling their endless combinations only burns server CPU.
+Disallow: /*?
+Disallow: /activity/
+Disallow: /registered/
 
 Sitemap: https://mississaugadropin.com/sitemap.xml
