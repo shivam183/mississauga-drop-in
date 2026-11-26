@@ -150,6 +150,9 @@ export async function RegisteredView({ searchParams }: { searchParams: Promise<R
           </p>
         )}
 
+        {/* Cards are h3s, like drop-in cards under their day h2s; with no day groups (and the
+            filter sheet closed on phones) the list needs its own h2, so headings don't skip a level. */}
+        {results && results.programs.length > 0 && <h2 className="visually-hidden">Programs</h2>}
         {results && results.programs.length > 0 && (
           <div className={styles.programList}>
             {results.programs.map((program) => (
