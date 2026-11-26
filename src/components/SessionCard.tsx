@@ -38,10 +38,6 @@ export function SessionCard({
         </p>
         <div className={styles.actions}>
           <TypeBadge type={session.type} />
-          <CalendarLink
-            href={`/activity/${session.activityId}/calendar?session=${session.id}`}
-            className={styles.calendar}
-          />
           <ShareButton
             title={title}
             text={[title, `${formatDate(day)}, ${time}`, session.centreName].join("\n")}
@@ -72,18 +68,25 @@ export function SessionCard({
           {title}
         </DetailsLink>
       </h3>
-      <p className={styles.where}>
-        <span aria-hidden="true">📍 </span>
-        <Link
-          className={styles.centre}
-          href={centreHref}
-          title={`Add ${session.centreName} to the filter`}
-        >
-          {session.centreName}
-          <LinkPending />
-        </Link>
-        {session.facility && <span className={styles.facility}> · {session.facility}</span>}
-      </p>
+      {/* Add to calendar sits at the end of the place line, as in the popup; the top row has no room for it. */}
+      <div className={styles.whereRow}>
+        <p className={styles.where}>
+          <span aria-hidden="true">📍 </span>
+          <Link
+            className={styles.centre}
+            href={centreHref}
+            title={`Add ${session.centreName} to the filter`}
+          >
+            {session.centreName}
+            <LinkPending />
+          </Link>
+          {session.facility && <span className={styles.facility}> · {session.facility}</span>}
+        </p>
+        <CalendarLink
+          href={`/activity/${session.activityId}/calendar?session=${session.id}`}
+          className={styles.calendar}
+        />
+      </div>
       {session.type === "enroll" && (
         <EnrollPanel activityId={session.activityId} cityUrl={session.url} />
       )}

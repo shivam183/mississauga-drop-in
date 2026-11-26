@@ -39,12 +39,6 @@ export function RegisteredCard({ program }: { program: Program }) {
           <span className={styles.spots} data-level={level}>
             {spots}
           </span>
-          {/* shortcut: the list doesn't know the meeting pattern, so the link always shows; the
-              rare program without one gets a "Not found". Check it per card if that's ever common. */}
-          <CalendarLink
-            href={`/registered/${program.id}/calendar`}
-            className={cardStyles.calendar}
-          />
           <ShareButton
             title={program.name}
             text={[program.name, whenLine, program.centre].filter(Boolean).join("\n")}
@@ -75,10 +69,15 @@ export function RegisteredCard({ program }: { program: Program }) {
           {program.name}
         </DetailsLink>
       </h3>
-      <p className={cardStyles.where}>
-        <span aria-hidden="true">📍 </span>
-        {program.centre}
-      </p>
+      <div className={cardStyles.whereRow}>
+        <p className={cardStyles.where}>
+          <span aria-hidden="true">📍 </span>
+          {program.centre}
+        </p>
+        {/* shortcut: the list doesn't know the meeting pattern, so the link always shows; the
+            rare program without one gets a "Not found". Check it per card if that's ever common. */}
+        <CalendarLink href={`/registered/${program.id}/calendar`} className={cardStyles.calendar} />
+      </div>
       {program.ages && <p className={styles.ages}>{agesLabel(program.ages)}</p>}
       {state.state !== "full" && (
         <div className={styles.enroll}>
