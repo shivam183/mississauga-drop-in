@@ -1010,18 +1010,19 @@ test.describe("details popup", () => {
       });
     });
     const { dialog } = await openFirst(page);
-    const name = (await dialog.getByRole("heading", { level: 2 }).first().textContent())!.trim();
+    const heading = dialog.getByRole("heading", { level: 2 }).first();
     await expect(dialog.getByRole("button", { name: /^Share / })).toHaveAttribute("title", "Share");
     await dialog.getByRole("button", { name: /^Share / }).click();
     await expect(dialog.getByRole("status")).toHaveText("Copied");
     const copied = (await page.evaluate(() => (window as { copied?: string }).copied))!;
     const [first, , , url] = copied.split("\n");
-    expect(first).toBe(name);
+    // The accessible name leaves out the activity icon (aria-hidden), as the shared text does.
+    await expect(heading).toHaveAccessibleName(first);
     expect(url).toMatch(/\/activity\/\d+\?session=[de]\d+-\d{12}$/);
     // Whoever opens it gets the full details page.
     const shared = await context.newPage();
     await shared.goto(url);
-    await expect(shared.getByRole("heading", { level: 1 })).toHaveText(name);
+    await expect(shared.getByRole("heading", { level: 1 })).toHaveAccessibleName(first);
   });
 
   test("an enroll session shows spots and Enroll without scrolling", async ({ page }) => {
@@ -1403,7 +1404,10 @@ test.describe("registered programs", () => {
 
   test("a program page loads directly; unknown ids are not found", ANY_SIZE, async ({ page }) => {
     await page.goto("/registered/158821");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("H3O Swim For Life 1");
+    // The accessible name leaves out the activity icon (aria-hidden).
+    await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName(
+      "H3O Swim For Life 1",
+    );
     await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute("content", /noindex/);
     await page.goto("/registered/999999");
     await expect(page.getByText(/could not be found/i)).toBeVisible();
