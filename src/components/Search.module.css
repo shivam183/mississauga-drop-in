@@ -665,6 +665,9 @@
       "side search"
       "side chips"
       "side results";
+    /* When the sidebar is taller than a short result (none found), only the results row grows;
+       otherwise the spare height spreads over every row and pushes the chips down. */
+    grid-template-rows: auto auto 1fr;
     align-items: start;
     gap: 16px 32px;
   }
