@@ -943,7 +943,7 @@ test.describe("details popup", () => {
     );
 
     // Picking one closes the card (the app opens in a new tab) and remembers it.
-    await context.route(/waze\.com/, (route) => route.fulfill({ body: "waze" }));
+    await context.route(/^https:\/\/waze\.com\//, (route) => route.fulfill({ body: "waze" }));
     const opened = context.waitForEvent("page");
     await apps.nth(2).click();
     await (await opened).close();
