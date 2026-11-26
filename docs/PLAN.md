@@ -248,6 +248,7 @@ To do, in this order (batch the code PRs into few deploys: each deploy empties t
 - ✅ **Centre pages and Browse links** (`/centres/{slug}`). Spec below.
 - ✅ **Drop-in filters and links:** the filters in use show as **pills** above the results (type, date, times, centres; not the search text and chips, nor what a centre page sets itself), each removing its filter (`FilterPills`, shared with `/registered`), the same size as the chips. The filter form **follows the URL**: it remembers the queries it applied itself, and any other change (Clear filters, a chip, a pill, a card's centre link) remounts its fields with the new values, so they never show stale choices. Text links use a thin, soft underline set below the letters, solid on hover.
 - ✅ **Registered programs** (`/registered`, a Drop-in | Registered toggle in the header). Spec below. Ship after the Runtime Cache unpauses (about 2026-12-14).
+- ✅ **Fix:** on desktop, a search with no results no longer pushes the chips and the "No upcoming sessions" message down the page. The sidebar spans the search, chips and results rows; when it was taller than them, the spare height went to every row. Now only the results row grows (`grid-template-rows: auto auto 1fr`), on `/` and `/registered`.
 - ⬜ **By hand after launch:** resubmit the sitemap in Search Console and Bing; about 2–3 weeks later, check Search Console → Performance for the queries people use and pick any further landing pages from them.
 
 **Spec: activity details popup and page**
