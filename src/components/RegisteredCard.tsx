@@ -81,7 +81,11 @@ export function RegisteredCard({ program }: { program: Program }) {
       {program.ages && <p className={styles.ages}>{agesLabel(program.ages)}</p>}
       {state.state !== "full" && (
         <div className={styles.enroll}>
-          <EnrollButton state={state} cityUrl={program.cityUrl} />
+          <EnrollButton
+            state={state}
+            cityUrl={program.cityUrl}
+            reminderHref={`/registered/${program.id}/reminder`}
+          />
         </div>
       )}
     </article>

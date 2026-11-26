@@ -33,6 +33,8 @@ export interface CalendarEvent {
   end: LocalDateTime;
   /** Repeats weekly on these days until this date ("YYYY-MM-DD"), skipping `except`. */
   weekly?: { days: string[]; until: string; except: string[] };
+  /** An alert this many minutes before it starts. */
+  alertMinutes?: number;
 }
 
 const ICS_DAYS = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
@@ -78,6 +80,35 @@ export function cityDates(raw: string): string[] {
 const weekdayOf = (date: string) => new Date(`${date}T12:00:00Z`).getUTCDay();
 const addDays = (date: string, n: number) =>
   new Date(Date.parse(`${date}T12:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+
+/** "2026-11-24 07:00:00" plus 15 minutes, as Toronto wall-clock time (no zone maths needed for minutes). */
+const addMinutes = (t: LocalDateTime, n: number): LocalDateTime =>
+  new Date(Date.parse(`${t.replace(" ", "T")}Z`) + n * 60_000)
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
+
+/**
+ * "Remind me": a 15-minute event when registration opens, with an alert 10
+ * minutes before, so you're ready to enroll the moment it opens.
+ */
+export function reminderEvent(
+  what: { name: string; location: string; page: string },
+  opensAt: LocalDateTime,
+  enrollUrl: string,
+  uid: string,
+): CalendarEvent {
+  return {
+    uid,
+    title: `Registration opens: ${what.name}`,
+    location: what.location,
+    url: enrollUrl,
+    page: what.page,
+    start: opensAt,
+    end: addMinutes(opensAt, 15),
+    alertMinutes: 10,
+  };
+}
 
 /** A pattern as one event: its first meeting, repeating weekly when it spans more than a day. Null if it never meets. */
 export function patternEvent(
@@ -192,6 +223,15 @@ export function toIcs(events: CalendarEvent[], now: Date): string {
       for (const date of e.weekly.except) {
         lines.push(`EXDATE;TZID=America/Toronto:${local(`${date} ${time}`)}`);
       }
+    }
+    if (e.alertMinutes !== undefined) {
+      lines.push(
+        "BEGIN:VALARM",
+        "ACTION:DISPLAY",
+        `DESCRIPTION:${escape(e.title)}`,
+        `TRIGGER:-PT${e.alertMinutes}M`,
+        "END:VALARM",
+      );
     }
     lines.push("END:VEVENT");
   }

@@ -46,7 +46,12 @@ export function EnrollPanel({
   return (
     <div ref={ref} className={styles.panel} data-level={level}>
       <SpotsLeft entry={entry} onRefresh={refresh} refreshState={refreshState} />
-      <EnrollButton state={state} cityUrl={cityUrl} loading={loading} />
+      <EnrollButton
+        state={state}
+        cityUrl={cityUrl}
+        reminderHref={`/activity/${activityId}/reminder`}
+        loading={loading}
+      />
       <noscript>
         {cityUrl && (
           <ExternalLink className={styles.fallback} href={cityUrl}>

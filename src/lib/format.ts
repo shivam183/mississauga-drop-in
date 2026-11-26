@@ -84,6 +84,13 @@ export function formatDateTime(time: LocalDateTime): string {
   return `${formatDate(time.slice(0, 10))}, ${formatTime(time)}`;
 }
 
+/** "Nov 27, 7 AM" or "Nov 27, 7:30 AM": short enough to sit beside a button on a phone. */
+export function formatShortDateTime(time: LocalDateTime): string {
+  // A non-breaking space keeps "7 AM" together if it wraps.
+  const clock = formatTime(time).replace(":00 ", " ").replace(" ", "\u00a0");
+  return `${formatMonthDay(time.slice(0, 10))}, ${clock}`;
+}
+
 const checkedFormat = new Intl.DateTimeFormat("en-CA", {
   timeZone: TORONTO_TIME_ZONE,
   hour: "numeric",

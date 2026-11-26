@@ -126,6 +126,28 @@
   font-weight: 600;
 }
 
+/* "Opens Nov 24, 7:00 AM" with Remind me beside it, on one row. */
+.opens {
+  display: flex;
+  gap: 8px;
+  /* A touch smaller than the full-width button, so both fit on one line on a 360px phone. */
+  font-size: 0.9375rem;
+}
+
+.opens > .disabled {
+  flex: 1;
+  min-width: 0;
+  padding-inline: 8px;
+}
+
+.remind {
+  flex-shrink: 0;
+  width: auto;
+  padding: 0 8px;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
 .placeholder {
   background: var(--surface);
 }
