@@ -37,7 +37,11 @@ export function DetailsEnrollButton({
   const { entry } = useAvailability(activityId, ref);
   return (
     <div ref={ref}>
-      <EnrollButton {...enrollButtonProps(entry)} cityUrl={cityUrl} />
+      <EnrollButton
+        {...enrollButtonProps(entry)}
+        cityUrl={cityUrl}
+        reminderHref={`/activity/${activityId}/reminder`}
+      />
     </div>
   );
 }

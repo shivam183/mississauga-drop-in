@@ -5,6 +5,7 @@ import {
   cityWeekdays,
   icsFileName,
   patternEvent,
+  reminderEvent,
   toIcs,
   type CalendarEvent,
 } from "@/models/calendar";
@@ -100,6 +101,30 @@ describe("calendar", () => {
       .map((l, i) => (i ? l.slice(1) : l))
       .join("");
     expect(unfolded.startsWith(`SUMMARY:${"é".repeat(100)}`)).toBe(true);
+  });
+
+  it("reminds you when registration opens: 15 minutes, an alert 10 before, the enroll link", () => {
+    const event = reminderEvent(
+      { name: "Swim Kids 3", location: "Malton CC", page: "/registered/7" },
+      "2026-11-30 23:50:00",
+      "https://example.ca/enroll/7",
+      "reminder-program-7@mississaugadropin.com",
+    );
+    // Crosses midnight (and the month) without a zone shift: wall-clock minutes.
+    expect([event.start, event.end]).toEqual(["2026-11-30 23:50:00", "2026-12-01 00:05:00"]);
+    const lines = toIcs([event], NOW).replace(/\r\n /g, "").split("\r\n");
+    expect(lines).toContain("SUMMARY:Registration opens: Swim Kids 3");
+    expect(lines).toContain("URL:https://example.ca/enroll/7");
+    const alarm = lines.slice(lines.indexOf("BEGIN:VALARM"), lines.indexOf("END:VALARM") + 1);
+    expect(alarm).toEqual([
+      "BEGIN:VALARM",
+      "ACTION:DISPLAY",
+      "DESCRIPTION:Registration opens: Swim Kids 3",
+      "TRIGGER:-PT10M",
+      "END:VALARM",
+    ]);
+    // Ordinary events have no alert.
+    expect(toIcs([{ ...event, alertMinutes: undefined }], NOW)).not.toContain("VALARM");
   });
 
   it("names the file after the title", () => {

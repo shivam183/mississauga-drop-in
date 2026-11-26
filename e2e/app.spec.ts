@@ -1290,8 +1290,17 @@ test.describe("registered programs", () => {
     expect(button.width).toBeGreaterThan(card.width - 48);
     await expect(cards.nth(1).getByText("Full", { exact: true })).toBeVisible();
     await expect(cards.nth(1).getByRole("link", { name: /Enroll/ })).toHaveCount(0);
-    await expect(cards.nth(2).getByText(/^Enrollment opens /)).toBeVisible();
+    await expect(cards.nth(2).getByText(/^Opens /)).toBeVisible();
     await expect(cards.nth(2).getByText(/\d+ spots? left/)).toBeVisible();
+    // Beside it, Remind me: a calendar event when registration opens, with an alert.
+    const remind = cards.nth(2).getByRole("link", { name: /^Remind me when enrollment opens/ });
+    const href = (await remind.getAttribute("href"))!;
+    expect(href).toMatch(/^\/registered\/\d+\/reminder$/);
+    const ics = await (await page.request.get(href)).text();
+    expect(ics).toContain("SUMMARY:Registration opens: ");
+    expect(ics).toContain("TRIGGER:-PT10M");
+    // Open and full programs have no reminder.
+    await expect(cards.nth(0).getByRole("link", { name: /^Remind me/ })).toHaveCount(0);
   });
 
   test("a search stays on /registered", ANY_SIZE, async ({ page }) => {

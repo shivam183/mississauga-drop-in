@@ -217,7 +217,11 @@ export function RegisteredDetails({
       </div>
 
       <div className={styles.bar}>
-        <EnrollButton state={enroll} cityUrl={program.cityUrl} />
+        <EnrollButton
+          state={enroll}
+          cityUrl={program.cityUrl}
+          reminderHref={`/registered/${program.id}/reminder`}
+        />
         {/* "unknown" already shows "Check on ActiveMississauga"; under a real button this is a plain link. */}
         {enroll.state !== "unknown" && (
           <ExternalLink

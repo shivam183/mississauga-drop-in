@@ -5,6 +5,7 @@ import {
   formatCheckedAt,
   formatDate,
   formatDateTime,
+  formatShortDateTime,
   formatDayHeading,
   formatTimeRange,
   startsLabel,
@@ -43,6 +44,8 @@ describe("format", () => {
     expect(formatDayHeading("2026-11-15", "2026-11-14")).toBe("Tomorrow · Sun Nov 15");
     expect(formatDayHeading("2026-11-16", "2026-11-14")).toBe("Mon Nov 16");
     expect(formatDateTime("2026-12-30 07:00:00")).toBe("Wed Dec 30, 7:00 AM");
+    expect(formatShortDateTime("2026-12-30 07:00:00")).toBe("Dec 30, 7 AM");
+    expect(formatShortDateTime("2026-12-30 19:30:00")).toBe("Dec 30, 7:30 PM");
   });
 
   it("labels sessions that are on now or start within the hour", () => {
