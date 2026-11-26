@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
 import styles from "./ActivityDetails.module.css";
 import { CloseIcon } from "./CloseIcon";
+import { iconFor } from "@/models/activities";
 import { DETAILS_TITLE_ID } from "./detailsIds";
 import { TypeBadge, type BadgeType } from "./TypeBadge";
 
@@ -239,6 +240,7 @@ export function DetailsLoading({ close }: { close: ReactNode }) {
         {preview ? (
           <>
             <h2 id={DETAILS_TITLE_ID} className={styles.name}>
+              <span aria-hidden="true">{iconFor(preview.title) ?? ""} </span>
               {preview.title}
             </h2>
             <div className={`${styles.factsPlaceholder} shimmer`} />

@@ -77,7 +77,7 @@ export function SearchControls({ path, state, today }: SearchControlsProps) {
       />
 
       <nav aria-label="Activity" className={styles.chips}>
-        {ACTIVITIES.map(({ slug, q, label }) => {
+        {ACTIVITIES.map(({ slug, q, label, icon }) => {
           const on = state.q.toLowerCase() === q;
           return (
             <Link
@@ -87,6 +87,7 @@ export function SearchControls({ path, state, today }: SearchControlsProps) {
               className={styles.chip}
               aria-current={on ? "page" : undefined}
             >
+              <span aria-hidden="true">{icon}&nbsp;</span>
               {label}
               <LinkPending />
             </Link>

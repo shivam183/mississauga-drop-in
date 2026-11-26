@@ -39,16 +39,16 @@ const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Frid
  * name so a renumbered id still works (a missing one is left out); camps span
  * three categories, so that one searches "camp".
  */
-const CHIPS: Array<{ label: string; category?: string; q?: string }> = [
-  { label: "Swim lessons", category: "Swimming Lessons" },
-  { label: "Camps", q: "camp" },
-  { label: "Sports", category: "Sports" },
-  { label: "Fitness", category: "Fitness" },
-  { label: "Skating", category: "Skating & Hockey" },
-  { label: "Dance & music", category: "Dance, Drama, Music" },
-  { label: "Arts", category: "Arts" },
-  { label: "Leagues", category: "Sport Leagues" },
-  { label: "Learning", category: "Learning" },
+const CHIPS: Array<{ label: string; icon: string; category?: string; q?: string }> = [
+  { label: "Swim lessons", icon: "🏊", category: "Swimming Lessons" },
+  { label: "Camps", icon: "🏕️", q: "camp" },
+  { label: "Sports", icon: "🏀", category: "Sports" },
+  { label: "Fitness", icon: "💪", category: "Fitness" },
+  { label: "Skating", icon: "⛸️", category: "Skating & Hockey" },
+  { label: "Dance & music", icon: "💃", category: "Dance, Drama, Music" },
+  { label: "Arts", icon: "🎨", category: "Arts" },
+  { label: "Leagues", icon: "🏆", category: "Sport Leagues" },
+  { label: "Learning", icon: "📚", category: "Learning" },
 ];
 
 function RegisteredChips({
@@ -60,10 +60,12 @@ function RegisteredChips({
 }) {
   // One chip at a time: picking one drops another chip's keyword or category.
   const chipQ = CHIPS.some((c) => c.q === state.q.toLowerCase());
-  const chips = CHIPS.flatMap(({ label, category, q }) => {
+  const chips = CHIPS.flatMap(({ label, icon, category, q }) => {
     if (q) {
       const on = state.q.toLowerCase() === q;
-      return [{ label, on, href: programHref(state, on ? { q: "" } : { q, category: null }) }];
+      return [
+        { label, icon, on, href: programHref(state, on ? { q: "" } : { q, category: null }) },
+      ];
     }
     const id = options?.categories.find((c) => c.label === category)?.id;
     if (!id) return [];
@@ -71,17 +73,18 @@ function RegisteredChips({
     const href = on
       ? programHref(state, { category: null })
       : programHref(state, { category: id, ...(chipQ ? { q: "" } : {}) });
-    return [{ label, on, href }];
+    return [{ label, icon, on, href }];
   });
   return (
     <nav aria-label="Program type" className={styles.chips}>
-      {chips.map(({ label, on, href }) => (
+      {chips.map(({ label, icon, on, href }) => (
         <Link
           key={label}
           href={href}
           className={styles.chip}
           aria-current={on ? "page" : undefined}
         >
+          <span aria-hidden="true">{icon}&nbsp;</span>
           {label}
           <LinkPending />
         </Link>

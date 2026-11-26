@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { getProgram, type ProgramDetails as Details } from "@/lib/registered";
+import { iconFor } from "@/models/activities";
 import { spotsLeftText } from "@/models/availability";
 import { formatDateSpan, type Fee } from "@/models/registered";
 import { facts, WhereRow } from "./ActivityDetails";
@@ -118,6 +119,7 @@ export function RegisteredDetails({
   const spots = spotsText(program);
   const dates = formatDateSpan(info.firstDate, info.lastDate);
   const when = meetings.length > 0 ? meetings : dates ? [{ time: "", dates }] : [];
+  const icon = iconFor(info.name);
   const firstWhen = when[0] ? [when[0].time, when[0].dates].filter(Boolean).join(" · ") : "";
 
   return (
@@ -137,6 +139,7 @@ export function RegisteredDetails({
       </div>
       <div className={styles.body}>
         <Heading id={DETAILS_TITLE_ID} className={styles.name}>
+          {icon && <span aria-hidden="true">{icon} </span>}
           {info.name}
         </Heading>
         {factList.length > 0 && (

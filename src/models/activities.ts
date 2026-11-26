@@ -13,7 +13,23 @@ export interface Activity {
   description: string;
   /** One line under the H1. */
   intro: string;
+  /** An emoji shown before the chip and card title (decoration: the name is always beside it). */
+  icon: string;
 }
+
+// No pickleball emoji exists; 🎾 is the nearest racquet-and-ball one (🏓 is table tennis).
+const ICON: Record<string, string> = {
+  pickleball: "🎾",
+  swim: "🏊",
+  yoga: "🧘",
+  skate: "⛸️",
+  hockey: "🏒",
+  basketball: "🏀",
+  badminton: "🏸",
+  volleyball: "🏐",
+  "table-tennis": "🏓",
+  soccer: "⚽",
+};
 
 function activity(slug: string, q: string, label: string, h1: string, what: string): Activity {
   return {
@@ -21,6 +37,7 @@ function activity(slug: string, q: string, label: string, h1: string, what: stri
     q,
     label,
     h1,
+    icon: ICON[slug],
     description: `Upcoming ${what} at Mississauga community centres, with times, centres and spots left. Unofficial; not affiliated with the City of Mississauga.`,
     intro: `All upcoming ${what} at City of Mississauga community centres.`,
   };
@@ -98,3 +115,68 @@ export function activityFor(title: string): Activity | null {
 }
 
 const FOLDED = ACTIVITIES.map(({ q }) => foldText(q));
+
+// Titles no chip covers, matched at the start of a word ("art" finds "Art Club", not "Party").
+// First match wins: water before cycle and fitness ("Aqua Cycle"), dance before fitness ("hip hop").
+const MORE_ICONS: Array<[string[], string]> = [
+  [["skating"], "⛸️"],
+  [["aqua", "h2o", "h20", "water", "therapeutic", "ai chi"], "🏊"],
+  [["cycle", "spin"], "🚴"],
+  [["meditation", "mind body", "tai chi", "chi fusion"], "🧘"],
+  [["dance", "ballet", "hip hop", "swing"], "💃"],
+  [
+    [
+      "boot camp",
+      "bootcamp",
+      "fit",
+      "workout",
+      "tone",
+      "toning",
+      "low impact",
+      "aching",
+      "hip",
+      "mobility",
+      "core",
+      "abs",
+      "stretch",
+      "stronger",
+      "foam roller",
+      "20 20 20",
+      "trx",
+      "kettlebell",
+      "hiit",
+      "high intensity",
+      "step",
+      "buttocks",
+      "zumba",
+      "aerobic",
+      "strength",
+      "cardio",
+      "pilates",
+      "circuit",
+    ],
+    "💪",
+  ],
+  [["camp"], "🏕️"],
+  [["euchre", "bridge", "cribbage", "bingo", "mah jongg", "cards"], "🃏"],
+  [["shuffleboard", "bowling"], "🎳"],
+  [["stay and play", "playtime"], "🧸"],
+  [["chill zone", "games room"], "🎮"],
+  [["open gym"], "🏃"],
+  [["music", "piano", "guitar", "singing", "vocal", "choir", "drum"], "🎵"],
+  [["drama", "theatre", "acting"], "🎭"],
+  [["art", "paint", "draw", "craft", "pottery", "sketch"], "🎨"],
+  [["tennis"], "🎾"],
+  [["billiard", "snooker", "pool table"], "🎱"],
+  [["chess"], "♟️"],
+  [["karate", "taekwondo", "martial", "judo"], "🥋"],
+  [["cook", "baking"], "🍳"],
+];
+
+/** An emoji for a session or program title: its chip's, else a keyword's, else none. */
+export function iconFor(title: string): string | undefined {
+  const chip = activityFor(title);
+  if (chip) return chip.icon;
+  const words = ` ${foldText(title)}`;
+  return MORE_ICONS.find(([keys]) => keys.some((k) => words.includes(` ${k}`)))?.[1];
+}

@@ -24,7 +24,7 @@ import {
 } from "@/lib/params";
 import { ALL_CENTRES, centreBySlug, centrePath, centreSlug } from "@/lib/centres";
 import { clientIp, createRateLimiter } from "@/lib/rate-limit";
-import { ACTIVITIES, activityBySlug, activityFor } from "@/models/activities";
+import { ACTIVITIES, activityBySlug, activityFor, iconFor } from "@/models/activities";
 
 describe("format", () => {
   it("formats time ranges", () => {
@@ -275,6 +275,24 @@ describe("activity pages", () => {
     expect(new Set(slugs).size).toBe(slugs.length);
     expect(new Set(ACTIVITIES.map((a) => a.q)).size).toBe(slugs.length);
     for (const slug of slugs) expect(slug).toMatch(/^[a-z]+(-[a-z]+)*$/);
+    for (const { icon } of ACTIVITIES) expect(icon).toBeTruthy();
+  });
+
+  it("give titles an icon: the chip's, else a keyword's at a word start, else none", () => {
+    expect(iconFor("Adult Leisure Swim")).toBe("🏊");
+    expect(iconFor("Learn to Skate")).toBe("⛸️");
+    expect(iconFor("Figure Skating 2")).toBe("⛸️");
+    expect(iconFor("March Break Camp")).toBe("🏕️");
+    expect(iconFor("Boot Camp")).toBe("💪");
+    expect(iconFor("Seniors' Centre Art Club")).toBe("🎨");
+    expect(iconFor("Seniors' Centre Billiards/Snooker")).toBe("🎱");
+    expect(iconFor("Drop In Low and Tone")).toBe("💪");
+    expect(iconFor("Drop In Aqua Cycle-Therapeutic")).toBe("🏊");
+    expect(iconFor("Drop In Cycle and Tone")).toBe("🚴");
+    expect(iconFor("Drop In Seniors' Centre Euchre - 8 Card")).toBe("🃏");
+    expect(iconFor("Drop In Hip & Knee")).toBe("💪");
+    expect(iconFor("Birthday Party")).toBeUndefined();
+    expect(iconFor("Drop In Diabetes(Sweet Success)Partnership Program")).toBeUndefined();
     expect(activityBySlug("table-tennis")?.q).toBe("table tennis");
     expect(activityBySlug("activity")).toBeUndefined();
     expect(activityFor("Adult Leisure Swim")?.slug).toBe("swim");
