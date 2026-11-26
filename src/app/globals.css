@@ -12,6 +12,9 @@
   --open: #1d7a3a;
   --few: #9a5b00;
   --full: #b42318;
+  /* Mississauga red, from the logo: the header stripe and the Drop-in | Registered toggle. */
+  --brand: #d52b1e;
+  --on-brand: #ffffff;
   --radius: 12px;
   --space: 16px;
   /* The sticky header: a 44px row, 8px padding above and below, a 1px border. */
@@ -33,6 +36,8 @@
     --open: #5cc97a;
     --few: #f0b44c;
     --full: #ff7b6e;
+    --brand: #ff6b5e;
+    --on-brand: #2a0603;
     --shimmer: rgb(255 255 255 / 0.12);
   }
 }
@@ -153,6 +158,8 @@ h1 {
   z-index: 10;
   border-bottom: 1px solid var(--border);
   background: var(--bg);
+  /* A brand stripe along the top; a shadow, so --header-h stays the same. */
+  box-shadow: inset 0 3px 0 var(--brand);
 }
 
 .site-header-inner {
@@ -513,7 +520,7 @@ h1 {
   left: 3px;
   width: calc((100% - 8px) / 2);
   border-radius: 999px;
-  background: var(--accent);
+  background: var(--brand);
   transition:
     transform 0.25s ease,
     opacity 0.2s ease;
@@ -547,7 +554,7 @@ h1 {
 }
 
 .area-tabs a[aria-current="page"] {
-  color: var(--on-accent);
+  color: var(--on-brand);
 }
 
 .area-tabs a:focus-visible {

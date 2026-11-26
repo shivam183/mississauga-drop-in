@@ -13,7 +13,7 @@ import {
   weekdayName,
 } from "@/lib/format";
 import { EMPTY_SEARCH, hrefWith } from "@/lib/params";
-import { activityFor } from "@/models/activities";
+import { activityFor, iconFor } from "@/models/activities";
 import type { ActivityInfo } from "@/models/activity";
 import type { Session } from "@/models/session";
 import styles from "./ActivityDetails.module.css";
@@ -143,6 +143,7 @@ export function ActivityDetails({
     shown.type === "dropin" ? sessions.filter((s) => s !== shown).slice(0, UPCOMING) : [];
   const summary = shown.type === "dropin" ? runSummary(sessions, info) : "";
   const chip = activityFor(shown.title);
+  const icon = iconFor(shown.title);
   const enroll = shown.type === "enroll";
   const Heading = page ? "h1" : "h2";
   const factList = facts(info);
@@ -169,6 +170,7 @@ export function ActivityDetails({
       </div>
       <div className={styles.body}>
         <Heading id={DETAILS_TITLE_ID} className={styles.name}>
+          {icon && <span aria-hidden="true">{icon} </span>}
           {name}
         </Heading>
         {factList.length > 0 && (

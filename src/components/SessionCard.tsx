@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { LocalDateTime } from "@/lib/activenet/types";
 import { displayTitle, formatDate, formatTimeRange, sessionWhen, startsLabel } from "@/lib/format";
 import { EMPTY_SEARCH, hrefWith } from "@/lib/params";
+import { iconFor } from "@/models/activities";
 import type { Session } from "@/models/session";
 import { DetailsLink } from "./DetailsPreview";
 import { EnrollPanel } from "./EnrollPanel";
@@ -27,6 +28,7 @@ export function SessionCard({
   const day = session.start.slice(0, 10);
   // shortcut: computed at render time, so it can be a few minutes stale if the page sits open; move to a client tick if users notice.
   const soon = startsLabel(session.start, session.end, now);
+  const icon = iconFor(session.title);
   return (
     <article className={styles.card} aria-label={`${title}, ${time}`}>
       <div className={styles.top}>
@@ -49,6 +51,7 @@ export function SessionCard({
         </p>
       )}
       <h3 className={styles.title}>
+        {icon && <span aria-hidden="true">{icon} </span>}
         {/* Opens the details popup, which shows this card's name, time and place straight away. */}
         <DetailsLink
           preview={{

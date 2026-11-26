@@ -1,3 +1,4 @@
+import { iconFor } from "@/models/activities";
 import { spotsLeftText, type EnrollState } from "@/models/availability";
 import { agesLabel, type Program } from "@/models/registered";
 import { DetailsLink } from "./DetailsPreview";
@@ -19,6 +20,7 @@ export function RegisteredCard({ program }: { program: Program }) {
   const level = status.state === "full" ? "full" : status.few ? "few" : "open";
   const spots = status.state === "full" ? "Full" : spotsLeftText(status.spots);
   const whenLine = [when, dates].filter(Boolean).join(" · ");
+  const icon = iconFor(program.name);
   const state: EnrollState =
     status.state === "full"
       ? { state: "full" }
@@ -52,6 +54,7 @@ export function RegisteredCard({ program }: { program: Program }) {
         </p>
       )}
       <h3 className={`${cardStyles.title} ${styles.name}`}>
+        {icon && <span aria-hidden="true">{icon} </span>}
         {/* Opens the details popup, which shows this card's name and times straight away. */}
         <DetailsLink
           preview={{
