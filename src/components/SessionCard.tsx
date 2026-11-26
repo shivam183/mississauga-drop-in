@@ -4,6 +4,7 @@ import { displayTitle, formatDate, formatTimeRange, sessionWhen, startsLabel } f
 import { EMPTY_SEARCH, hrefWith } from "@/lib/params";
 import { iconFor } from "@/models/activities";
 import type { Session } from "@/models/session";
+import { CalendarLink } from "./CalendarLink";
 import { DetailsLink } from "./DetailsPreview";
 import { EnrollPanel } from "./EnrollPanel";
 import { LinkPending } from "./LinkPending";
@@ -37,6 +38,10 @@ export function SessionCard({
         </p>
         <div className={styles.actions}>
           <TypeBadge type={session.type} />
+          <CalendarLink
+            href={`/activity/${session.activityId}/calendar?session=${session.id}`}
+            className={styles.calendar}
+          />
           <ShareButton
             title={title}
             text={[title, `${formatDate(day)}, ${time}`, session.centreName].join("\n")}

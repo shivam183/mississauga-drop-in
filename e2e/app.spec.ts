@@ -828,6 +828,26 @@ test.describe("details popup", () => {
     return { dialog, name, title };
   }
 
+  test("Add to calendar gives this session as an .ics file", async ({ page, request }) => {
+    const { dialog } = await openFirst(page);
+    const add = dialog.getByRole("link", { name: "Add to calendar" });
+    const href = (await add.getAttribute("href"))!;
+    expect(href).toMatch(/^\/activity\/\d+\/calendar\?session=[de]\d+-\d{12}$/);
+    const response = await request.get(href);
+    expect(response.headers()["content-type"]).toMatch(/^text\/calendar/);
+    expect(response.headers()["content-disposition"]).toMatch(/^attachment; filename=".+\.ics"$/);
+    const ics = await response.text();
+    expect(ics).toMatch(/^BEGIN:VCALENDAR\r\n/);
+    expect(ics).toContain("DTSTART;TZID=America/Toronto:");
+    // A single session doesn't repeat.
+    expect(ics).not.toContain("RRULE:FREQ=WEEKLY");
+    expect(ics.replace(/\r\n /g, "")).toContain(`UID:${href.split("session=")[1]}@`);
+    // A session that isn't upcoming isn't found.
+    expect(
+      (await request.get(href.replace(/session=.*/, "session=e1-200001010000"))).status(),
+    ).toBe(404);
+  });
+
   test("shows what the program is and where, with directions", async ({ page }) => {
     const { dialog } = await openFirst(page);
     await expect(dialog).toHaveAccessibleName(/\S/);
@@ -1413,4 +1433,22 @@ test.describe("registered programs", () => {
     await expect(page.getByText(/could not be found/i)).toBeVisible();
     await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute("content", /noindex/);
   });
+
+  test(
+    "Add to calendar gives the program's classes as a weekly event",
+    ANY_SIZE,
+    async ({ page, request }) => {
+      await page.goto("/registered/158821");
+      const add = page.getByRole("link", { name: "Add to calendar" });
+      await expect(add).toHaveAttribute("href", "/registered/158821/calendar");
+      const response = await request.get("/registered/158821/calendar");
+      expect(response.headers()["content-type"]).toMatch(/^text\/calendar/);
+      const ics = await response.text();
+      expect(ics).toContain("SUMMARY:H3O Swim For Life 1");
+      // Saturdays 8:30 from Sep 26 to Dec 12 (the fixture's meeting pattern).
+      expect(ics).toContain("DTSTART;TZID=America/Toronto:20260926T083000");
+      expect(ics).toContain("RRULE:FREQ=WEEKLY;BYDAY=SA;UNTIL=20261213T050000Z");
+      expect((await request.get("/registered/999999/calendar")).status()).toBe(404);
+    },
+  );
 });

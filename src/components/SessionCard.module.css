@@ -69,6 +69,12 @@
   color: var(--text);
 }
 
+/* Add to calendar, just before Share and styled like it; Share stays the one pulled to the edge. */
+.calendar {
+  composes: share;
+  margin-right: 0;
+}
+
 .copied {
   position: absolute;
   top: calc(100% + 4px);

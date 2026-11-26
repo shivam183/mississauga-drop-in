@@ -171,7 +171,15 @@ export function RegisteredDetails({
               {m.dates && <p className={styles.meetingDates}>{m.dates}</p>}
             </div>
           ))}
-          {centreName && <WhereRow centreName={centreName} info={info} />}
+          {centreName && (
+            <WhereRow
+              centreName={centreName}
+              info={info}
+              calendarHref={
+                program.calendar.length > 0 ? `/registered/${program.id}/calendar` : undefined
+              }
+            />
+          )}
         </section>
 
         {fees.length > 0 && (

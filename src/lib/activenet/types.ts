@@ -261,6 +261,14 @@ export interface MeetingDatesBody {
       ending_date?: string;
       /** e.g. [{ weekdays: "Weekdays" | "Sat" | "Mon, Wed", starting_time: "09:00:00", ending_time: "12:00:00" }] */
       pattern_dates?: Array<{ weekdays?: string; starting_time?: string; ending_time?: string }>;
+      /** Days it skips: "25 Dec 2026", "24,30,31 Dec 2026". */
+      exception_dates?: string[] | null;
+    }> | null;
+    /** One-off extra meetings: [{ meeting_date: "2026-12-30", starting_time, ending_time }]. */
+    additional_dates?: Array<{
+      meeting_date?: string;
+      starting_time?: string;
+      ending_time?: string;
     }> | null;
     [field: string]: unknown;
   };

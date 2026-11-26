@@ -8,11 +8,10 @@ import { AvailabilityProvider } from "@/components/AvailabilityProvider";
 import { CoffeeNudge } from "@/components/CoffeeNudge";
 import { StandInDetails } from "@/components/DetailsPreview";
 import { ExternalLink } from "@/components/ExternalLink";
+import { COFFEE_URL, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const REPO_URL = "https://github.com/shivam183/mississauga-drop-in";
-const COFFEE_URL = "https://buymeacoffee.com/shivam183";
-const SITE_URL = "https://mississaugadropin.com";
 const DESCRIPTION =
   "Find drop-in and online-enrollable recreation programs in Mississauga, with times, centres and spots left. Unofficial; not affiliated with the City of Mississauga.";
 
