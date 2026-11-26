@@ -21,6 +21,7 @@ import { DETAILS_TITLE_ID } from "./detailsIds";
 import { DetailsEnrollButton, DetailsSpots } from "./DetailsEnroll";
 import { PreviewShown } from "./DetailsPreview";
 import { ExternalLink } from "./ExternalLink";
+import { CalendarLink } from "./CalendarLink";
 import { MapsMenu, type MapApp } from "./MapsMenu";
 import { ShareButton } from "./ShareButton";
 import { TypeBadge } from "./TypeBadge";
@@ -197,7 +198,12 @@ export function ActivityDetails({
               </span>
             )}
           </p>
-          <WhereRow centreName={shown.centreName} facility={shown.facility} info={info} />
+          <WhereRow
+            centreName={shown.centreName}
+            facility={shown.facility}
+            info={info}
+            calendarHref={`/activity/${shown.activityId}/calendar?session=${shown.id}`}
+          />
           {enroll && <DetailsSpots activityId={shown.activityId} className={styles.spots} />}
         </section>
 
@@ -276,17 +282,20 @@ const PHONE_ICON =
   "M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z";
 
 /**
- * "📍 Centre · Room" with Directions (a maps-app menu) and Call beside it; the
- * details card of a drop-in and of a registered program.
+ * "📍 Centre · Room" with Directions (a maps-app menu), Call and Add to calendar
+ * beside it; the details card of a drop-in and of a registered program.
  */
 export function WhereRow({
   centreName,
   facility = "",
   info,
+  calendarHref,
 }: {
   centreName: string;
   facility?: string;
   info: ActivityInfo | null;
+  /** An .ics for this session or program; no button without it. */
+  calendarHref?: string;
 }) {
   const phone = info?.centre?.phone ?? "";
   const tel = phone.replace(/[^\d+]/g, "");
@@ -311,6 +320,7 @@ export function WhereRow({
             <Icon d={PHONE_ICON} />
           </a>
         )}
+        {calendarHref && <CalendarLink href={calendarHref} className={styles.iconLink} />}
       </span>
     </div>
   );

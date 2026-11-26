@@ -69,6 +69,19 @@
   color: var(--text);
 }
 
+/* The place line with Add to calendar at its end, styled like Share and pulled to the edge the same way. */
+.whereRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.calendar {
+  composes: share;
+  flex-shrink: 0;
+}
+
 .copied {
   position: absolute;
   top: calc(100% + 4px);

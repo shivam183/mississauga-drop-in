@@ -14,6 +14,7 @@ import { displayTitle, formatMonthDay, formatTimeRange } from "@/lib/format";
 import type { RawSearchParams } from "@/lib/params";
 import { formatAges } from "./activity";
 import { FEW_SPACES } from "./availability";
+import { cityDates, cityWeekdays, type CalendarPattern } from "./calendar";
 import { noticeToText, safeCityUrl } from "./links";
 
 export interface Program {
@@ -168,6 +169,42 @@ export function meetingLines(body: MeetingDatesBody): Meeting[] {
       return { time: [text(d.weekdays), time].filter(Boolean).join(" · "), dates };
     });
   });
+}
+
+const clock = (value: unknown) =>
+  typeof value === "string" && /^\d{2}:\d{2}:\d{2}$/.test(value) ? value : "";
+
+/**
+ * When a program meets, for its calendar file: one weekly pattern per weekday
+ * set and time, and each extra one-off date. Parts with unknown days, dates or
+ * times are left out rather than guessed.
+ */
+export function calendarPatterns(body: MeetingDatesBody): CalendarPattern[] {
+  const dates = body.meeting_and_registration_dates;
+  const weekly = (dates.activity_patterns ?? []).flatMap((p) => {
+    const from = isoDate(p.beginning_date);
+    const until = isoDate(p.ending_date);
+    const except = (p.exception_dates ?? []).flatMap((raw) => cityDates(text(raw)));
+    return (p.pattern_dates ?? []).flatMap((d) => {
+      const days = cityWeekdays(text(d.weekdays));
+      const start = clock(d.starting_time);
+      const end = clock(d.ending_time);
+      return days && from && until && start && end
+        ? [{ days, from, until, start, end, except }]
+        : [];
+    });
+  });
+  const extra = (dates.additional_dates ?? []).flatMap((d) => {
+    const date = isoDate(d.meeting_date);
+    const start = clock(d.starting_time);
+    const end = clock(d.ending_time);
+    if (!date || !start || !end) return [];
+    const day = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"][
+      new Date(`${date}T12:00:00Z`).getUTCDay()
+    ];
+    return [{ days: [day], from: date, until: date, start, end, except: [] }];
+  });
+  return [...weekly, ...extra];
 }
 
 // URL state ----------------------------------------------------------------

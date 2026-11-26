@@ -30,7 +30,9 @@ import {
   type Spaces,
 } from "@/models/availability";
 import { noticeToText } from "@/models/links";
+import type { CalendarPattern } from "@/models/calendar";
 import {
+  calendarPatterns,
   EMPTY_PROGRAM_SEARCH,
   isDropInType,
   meetingLines,
@@ -225,8 +227,8 @@ async function programDetail(id: number) {
   // on their own; the popup then leaves that part out.
   const meetingsAsked = client
     .getMeetingDates(id)
-    .then(meetingLines)
-    .catch((): Meeting[] => []);
+    .then((body) => ({ lines: meetingLines(body), calendar: calendarPatterns(body) }))
+    .catch(() => ({ lines: [] as Meeting[], calendar: [] as CalendarPattern[] }));
   const feesAsked = client
     .getEstimatePrice(id)
     .then(toFees)
@@ -237,7 +239,7 @@ async function programDetail(id: number) {
     throw new Error(`detail for ${id} returned activity ${detail.activity_id}`);
   }
   const firstDate = /^\d{4}-\d{2}-\d{2}$/.test(detail.first_date ?? "") ? detail.first_date! : "";
-  const [button, meetings, fees] = await Promise.all([
+  const [button, { lines: meetings, calendar }, fees] = await Promise.all([
     // The button status doesn't depend on the date for a program; it only has to look like one.
     firstDate
       ? client.getButtonStatus(id, `${firstDate} 00:00:00`).catch(() => null)
@@ -250,6 +252,7 @@ async function programDetail(id: number) {
     info: toActivityInfo(detail),
     status: toSessionStatus(id, body, button, new Date()),
     meetings,
+    calendar,
     fees,
     plan: paymentPlan(detail.term_name),
   };
@@ -260,6 +263,8 @@ export interface ProgramDetails {
   info: ActivityInfo;
   /** One per pattern: "Weekdays · 9:00 AM – 12:00 PM", "Mar 15 – Mar 19". */
   meetings: Meeting[];
+  /** The same meetings for "Add to calendar"; empty if the City gave none we can read. */
+  calendar: CalendarPattern[];
   fees: Fee[];
   /** "50% now, 50% on Oct 5"; "" when none. */
   plan: string;
@@ -288,7 +293,7 @@ export const getProgram = cache(async (id: number): Promise<ProgramDetails | nul
   }
   await connection(); // "now" comes from the request, never a prerender
   const now = toTorontoLocal(new Date());
-  const { info, status, type, meetings, fees, plan } = detail;
+  const { info, status, type, meetings, calendar, fees, plan } = detail;
   if (isDropInType(type)) return null;
   if (info.lastDate && info.lastDate < now.slice(0, 10)) return null;
   // Registration that hasn't opened yet comes without a link; Enroll is the usual page then.
@@ -300,6 +305,7 @@ export const getProgram = cache(async (id: number): Promise<ProgramDetails | nul
     id,
     info,
     meetings,
+    calendar,
     fees,
     plan,
     spaces: status.spaces,
