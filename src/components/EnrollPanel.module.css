@@ -148,6 +148,19 @@
   text-decoration: none;
 }
 
+/* "Join waitlist" with how many are on it under it. */
+.waitlist {
+  display: grid;
+  gap: 4px;
+}
+
+.waiting {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
 .placeholder {
   background: var(--surface);
 }

@@ -3,6 +3,7 @@ import { spotsLeftText, type EnrollState } from "@/models/availability";
 import { agesLabel, type Program } from "@/models/registered";
 import { DetailsLink } from "./DetailsPreview";
 import { EnrollButton } from "./EnrollButton";
+import { ProgramWaitlist } from "./ProgramWaitlist";
 import styles from "./RegisteredCard.module.css";
 import cardStyles from "./SessionCard.module.css";
 import { ShareButton } from "./ShareButton";
@@ -87,7 +88,9 @@ export function RegisteredCard({ program }: { program: Program }) {
         {program.centre}
       </p>
       {program.ages && <p className={styles.ages}>{agesLabel(program.ages)}</p>}
-      {state.state !== "full" && (
+      {state.state === "full" ? (
+        <ProgramWaitlist id={program.id} className={styles.enroll} />
+      ) : (
         <div className={styles.enroll}>
           <EnrollButton
             state={state}

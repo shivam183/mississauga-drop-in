@@ -53,6 +53,26 @@ const BUTTON: Record<number, string> = {
   164373: "buttonstatus.3.opens.json",
 };
 
+/** Registered programs, made from the full drop-in fixtures with these fields changed. */
+const PROGRAMS: Record<number, Record<string, unknown>> = {
+  153735: {
+    activity_type: "Registered Program",
+    first_date: "2027-01-04",
+    last_date: "2027-02-01",
+    space_message: "Waiting List registration is open. 2 persons are on waiting list.",
+  },
+  // Over: ended before NOW.
+  153736: {
+    activity_type: "Registered Program",
+    first_date: "2026-09-01",
+    last_date: "2026-10-01",
+  },
+};
+for (const id of Object.keys(PROGRAMS).map(Number)) {
+  DETAIL[id] = "detail.3.full.json";
+  BUTTON[id] = "buttonstatus.3.full.json";
+}
+
 let failing: { calendar?: number; activityId?: number } = {};
 const requests: string[] = [];
 
@@ -76,8 +96,21 @@ const fakeFetch = vi.fn<typeof fetch>(async (input, init) => {
   if (id === failing.activityId) return json({}, 500);
   const file = url.includes("/buttonstatus/") ? BUTTON[id] : DETAIL[id];
   if (!file) return json({}, 404);
-  const envelope = fixture<{ headers: unknown; body: { detail?: { activity_id: number } } }>(file);
+  const envelope = fixture<{
+    headers: unknown;
+    body: { detail?: Record<string, unknown>; button_status?: Record<string, unknown> };
+  }>(file);
   if (envelope.body.detail) envelope.body.detail.activity_id = id;
+  const program = PROGRAMS[id];
+  if (program && envelope.body.detail) Object.assign(envelope.body.detail, program);
+  if (program && envelope.body.button_status) {
+    // As the City answers a full program with a waitlist: "+ Waiting List" to the enroll page.
+    envelope.body.button_status.action_link = {
+      href: `https://anc.ca.apm.activecommunities.com/activemississauga/activity/search/enroll/${id}?locale=en-US`,
+      label: "+ Waiting List",
+      type: 4,
+    };
+  }
   return json(envelope);
 });
 
@@ -156,6 +189,21 @@ describe("getAvailability", () => {
     expect(result.unknownIds).toEqual([164222, 999999]);
     expect(Object.keys(result.statuses)).toEqual(["166860"]);
     expect(requests.some((u) => /\/(164222|999999)\?/.test(u))).toBe(false);
+  });
+
+  it("programs: a full one with a waitlist; drop-ins and programs that are over are unknown", async () => {
+    const result = await getAvailability([153735, 153736, 164542], { programs: true });
+    expect(result.unknownIds).toEqual([153736, 164542]);
+    expect(result.statuses[153735].waitlist).toBe(2);
+    expect(toEnrollState(result.statuses[153735], "2026-11-14 15:00:00")).toEqual({
+      state: "waitlist",
+      url: expect.stringContaining("/enroll/153735"),
+      waiting: 2,
+    });
+    // No schedule needed: programs aren't in it.
+    expect(requests.some((u) => u.endsWith("/multicenter/events"))).toBe(false);
+    // The over program's button status is never asked for.
+    expect(requests.some((u) => u.includes("/buttonstatus/153736"))).toBe(false);
   });
 
   it("reports failed lookups without failing the others", async () => {

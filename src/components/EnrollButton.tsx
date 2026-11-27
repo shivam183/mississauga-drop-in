@@ -71,6 +71,19 @@ export function EnrollButton({
     case "full":
       // The card itself already links to the City's page.
       return null;
+    case "waitlist":
+      return (
+        <div className={styles.waitlist}>
+          <ExternalLink className={`${styles.button} ${styles.secondary}`} href={state.url}>
+            Join waitlist <span aria-hidden="true">↗</span>
+          </ExternalLink>
+          {state.waiting > 0 && (
+            <p className={styles.waiting}>
+              {state.waiting} {state.waiting === 1 ? "person" : "people"} on the waitlist
+            </p>
+          )}
+        </div>
+      );
     case "closed":
       return (
         <p className={styles.notice}>

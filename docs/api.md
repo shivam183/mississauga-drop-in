@@ -91,12 +91,15 @@ Shared caches may reuse a response for up to a minute.
 ## `GET /api/availability`
 
 Spots left and enroll status for up to 20 `enroll` sessions, by `activityId`
-(from `/api/sessions`). Only upcoming `enroll` sessions are looked up.
+(from `/api/sessions`). Only upcoming `enroll` sessions are looked up, unless
+`kind=program`: then the ids are registered program `id`s (from `/api/programs`),
+and drop-ins and programs that are over come back in `unknownIds`.
 
 | Parameter | Example         | Meaning                                                                |
 | --------- | --------------- | ---------------------------------------------------------------------- |
 | `ids`     | `166860,164542` | Comma-separated `activityId`s, at most 20                              |
 | `fresh`   | `1`             | Skip the 60-second cache. Limited to 10 per minute per IP (429 after). |
+| `kind`    | `program`       | The ids are registered programs, not sessions                          |
 
 ```json
 {
@@ -129,6 +132,9 @@ Spots left and enroll status for up to 20 `enroll` sessions, by `activityId`
   - `{ "state": "opens", "opensAt", "url" }`: online enrollment opens at
     `opensAt` (ISO 8601)
   - `{ "state": "full" }`
+  - `{ "state": "waitlist", "url", "waiting" }`: full, but the City takes names
+    for a waitlist at `url`; `waiting` people are on it (0 when it doesn't say).
+    `statuses` then has `waitlist` with the same count.
   - `{ "state": "closed", "message" }`: the City's notice, in its own words
   - `{ "state": "unknown" }`: check the session's page on ActiveMississauga
 - In `statuses`, `opensAt` and `now` are Toronto wall time

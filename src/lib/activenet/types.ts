@@ -98,6 +98,8 @@ export interface RawActivityDetail {
   activity_type?: string;
   /** "Full" or "N openings remaining". */
   space_status: string | null;
+  /** "Waiting List registration is open. 2 persons are on waiting list." when full with a waitlist. */
+  space_message?: string | null;
   /** Seen: 2 with openings, 3 when full. */
   space_type?: number;
   first_date?: string;

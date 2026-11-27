@@ -231,7 +231,7 @@ export function RegisteredDetails({
         {enroll.state !== "unknown" && (
           <ExternalLink
             className={
-              enroll.state === "enroll" || enroll.state === "opens"
+              enroll.state === "enroll" || enroll.state === "opens" || enroll.state === "waitlist"
                 ? styles.cityLink
                 : styles.cityButton
             }
