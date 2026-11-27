@@ -318,7 +318,7 @@ h1 {
   }
   to {
     visibility: hidden;
-    transform: scale(0.5);
+    transform: scale(0);
   }
 }
 
@@ -342,9 +342,10 @@ h1 {
     visibility: visible;
     transform: none;
   }
+  /* All the way to nothing, so it shrinks away instead of vanishing at half size. */
   100% {
     visibility: hidden;
-    transform: scale(0.5);
+    transform: scale(0);
   }
 }
 
