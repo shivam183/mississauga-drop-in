@@ -49,10 +49,11 @@ const text = (value: unknown) =>
 const isoDate = (value: unknown) =>
   typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : "";
 
-/** "6:30 PM - 7:30 PM" -> "6:30 – 7:30 PM"; "11:00 AM - Noon" -> "11:00 AM – 12:00 PM". */
+/** "6:30 PM - 7:30 PM" -> "6:30 – 7:30 PM"; "11:00 AM - Noon" -> "11 AM – 12 PM" (no ":00", as formatTimeRange). */
 export function formatCityTimeRange(raw: string): string {
   const [a, b] = text(raw)
     .replace(/\bNoon\b/i, "12:00 PM")
+    .replace(/:00\b/g, "")
     .split(/\s+-\s+/);
   if (!a || !b) return text(raw);
   const sameHalf = a.slice(-2) === b.slice(-2);

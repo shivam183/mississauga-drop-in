@@ -14,17 +14,20 @@ function clock(time: LocalDateTime): { h: number; m: string; pm: boolean } {
   return { h: h24 % 12 || 12, m: time.slice(14, 16), pm: h24 >= 12 };
 }
 
-/** "7:00 PM" */
+/** "7" on the hour, else "7:30": shorter, so a time that crosses noon fits beside the card's badge. */
+const hourMinute = ({ h, m }: { h: number; m: string }) => (m === "00" ? `${h}` : `${h}:${m}`);
+
+/** "7 PM", "7:30 PM" */
 export function formatTime(time: LocalDateTime): string {
-  const { h, m, pm } = clock(time);
-  return `${h}:${m} ${pm ? "PM" : "AM"}`;
+  const c = clock(time);
+  return `${hourMinute(c)} ${c.pm ? "PM" : "AM"}`;
 }
 
-/** "7:00 – 9:00 PM", or "11:30 AM – 1:00 PM" when it crosses noon. */
+/** "7 – 9 PM", "7:30 – 9 PM", or "10 AM – 12:30 PM" when it crosses noon. */
 export function formatTimeRange(start: LocalDateTime, end: LocalDateTime): string {
   const a = clock(start);
   const b = clock(end);
-  const startText = a.pm === b.pm ? `${a.h}:${a.m}` : formatTime(start);
+  const startText = a.pm === b.pm ? hourMinute(a) : formatTime(start);
   return `${startText} – ${formatTime(end)}`;
 }
 
@@ -79,7 +82,7 @@ export function sessionWhen(start: LocalDateTime, end: LocalDateTime, today: str
   return `${day} · ${formatTimeRange(start, end)}`;
 }
 
-/** "Tue Dec 30, 7:00 AM" */
+/** "Tue Dec 30, 7 AM" */
 export function formatDateTime(time: LocalDateTime): string {
   return `${formatDate(time.slice(0, 10))}, ${formatTime(time)}`;
 }
@@ -87,7 +90,7 @@ export function formatDateTime(time: LocalDateTime): string {
 /** "Nov 27, 7 AM" or "Nov 27, 7:30 AM": short enough to sit beside a button on a phone. */
 export function formatShortDateTime(time: LocalDateTime): string {
   // A non-breaking space keeps "7 AM" together if it wraps.
-  const clock = formatTime(time).replace(":00 ", " ").replace(" ", "\u00a0");
+  const clock = formatTime(time).replace(" ", "\u00a0");
   return `${formatMonthDay(time.slice(0, 10))}, ${clock}`;
 }
 

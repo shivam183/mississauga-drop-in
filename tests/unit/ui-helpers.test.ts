@@ -29,13 +29,11 @@ import { ACTIVITIES, activityBySlug, activityFor, iconFor } from "@/models/activ
 
 describe("format", () => {
   it("formats time ranges", () => {
-    expect(formatTimeRange("2026-11-14 19:00:00", "2026-11-14 21:00:00")).toBe("7:00 – 9:00 PM");
-    expect(formatTimeRange("2026-11-14 11:30:00", "2026-11-14 13:00:00")).toBe(
-      "11:30 AM – 1:00 PM",
-    );
-    expect(formatTimeRange("2026-11-14 00:15:00", "2026-11-14 12:00:00")).toBe(
-      "12:15 AM – 12:00 PM",
-    );
+    expect(formatTimeRange("2026-11-14 19:00:00", "2026-11-14 21:00:00")).toBe("7 – 9 PM");
+    expect(formatTimeRange("2026-11-14 19:30:00", "2026-11-14 21:00:00")).toBe("7:30 – 9 PM");
+    expect(formatTimeRange("2026-11-14 11:30:00", "2026-11-14 13:00:00")).toBe("11:30 AM – 1 PM");
+    expect(formatTimeRange("2026-11-14 10:00:00", "2026-11-14 12:00:00")).toBe("10 AM – 12 PM");
+    expect(formatTimeRange("2026-11-14 00:15:00", "2026-11-14 12:00:00")).toBe("12:15 AM – 12 PM");
   });
 
   it("formats dates and day headings", () => {
@@ -43,7 +41,7 @@ describe("format", () => {
     expect(formatDayHeading("2026-11-14", "2026-11-14")).toBe("Today · Sat Nov 14");
     expect(formatDayHeading("2026-11-15", "2026-11-14")).toBe("Tomorrow · Sun Nov 15");
     expect(formatDayHeading("2026-11-16", "2026-11-14")).toBe("Mon Nov 16");
-    expect(formatDateTime("2026-12-30 07:00:00")).toBe("Wed Dec 30, 7:00 AM");
+    expect(formatDateTime("2026-12-30 07:00:00")).toBe("Wed Dec 30, 7 AM");
     expect(formatShortDateTime("2026-12-30 07:00:00")).toBe("Dec 30, 7 AM");
     expect(formatShortDateTime("2026-12-30 19:30:00")).toBe("Dec 30, 7:30 PM");
   });
