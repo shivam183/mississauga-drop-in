@@ -9,6 +9,7 @@ import styles from "./ActivityDetails.module.css";
 import { DETAILS_TITLE_ID } from "./detailsIds";
 import { PreviewShown } from "./DetailsPreview";
 import { EnrollButton } from "./EnrollButton";
+import { ButtonIcon, WEB_ICON } from "./ButtonIcon";
 import { ExternalLink } from "./ExternalLink";
 import { ShareButton } from "./ShareButton";
 import { TypeBadge } from "./TypeBadge";
@@ -113,6 +114,9 @@ export function RegisteredDetails({
   page?: boolean;
 }) {
   const { info, meetings, fees, enroll } = program;
+  // Under a real button the City's page is a plain link; otherwise it's the button.
+  const cityIsLink =
+    enroll.state === "enroll" || enroll.state === "opens" || enroll.state === "waitlist";
   const centreName = info.centre?.name ?? "";
   const Heading = page ? "h1" : "h2";
   const factList = facts(info);
@@ -230,13 +234,11 @@ export function RegisteredDetails({
         {/* "unknown" already shows "Check on ActiveMississauga"; under a real button this is a plain link. */}
         {enroll.state !== "unknown" && (
           <ExternalLink
-            className={
-              enroll.state === "enroll" || enroll.state === "opens"
-                ? styles.cityLink
-                : styles.cityButton
-            }
+            className={cityIsLink ? styles.cityLink : styles.cityButton}
             href={program.cityUrl}
           >
+            {/* Only as a button: under a real one it's a quiet link. */}
+            {!cityIsLink && <ButtonIcon d={WEB_ICON} />}
             View on ActiveMississauga <span aria-hidden="true">↗</span>
           </ExternalLink>
         )}

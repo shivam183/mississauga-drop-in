@@ -36,7 +36,7 @@ export function EnrollPanel({
   // For the card's visual cue (see SessionCard.module.css). A stripe only when
   // you can enroll (now or later); faded when full.
   const level =
-    state?.state === "full"
+    state?.state === "full" || state?.state === "waitlist"
       ? "full"
       : (state?.state === "enroll" || state?.state === "opens") &&
           status?.spaces.level !== "unknown"

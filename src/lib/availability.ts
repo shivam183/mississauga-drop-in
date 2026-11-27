@@ -10,6 +10,7 @@ import type { ActivityDetailBody, ButtonStatusBody, LocalDateTime } from "@/lib/
 import { toTorontoLocal } from "@/lib/dates";
 import { getSchedule } from "@/lib/schedule";
 import { toSessionStatus, type SessionStatus } from "@/models/availability";
+import { isDropInType } from "@/models/registered";
 
 /** Most sessions one availability call may ask for. */
 export const MAX_AVAILABILITY_IDS = 20;
@@ -71,12 +72,35 @@ export interface AvailabilityResult {
 export interface AvailabilityOptions {
   /** Skip the 60 s cache for spots left (the refresh button). Rate-limit callers. */
   fresh?: boolean;
+  /**
+   * The ids are registered programs (for the waitlist on full cards), not
+   * sessions. Any id is asked about once, like /registered/{id}; drop-ins and
+   * programs that are over come back unknown.
+   */
+  programs?: boolean;
 }
 
-/** Looks up availability for up to MAX_AVAILABILITY_IDS enroll-online sessions. */
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** A registered program's status, or null when it's a drop-in, over, or has no dates. */
+async function programStatus(
+  id: number,
+  fresh: boolean,
+  today: string,
+): Promise<SessionStatus | null> {
+  const detail = await (fresh ? fetchDetail(id) : getCachedDetail(id));
+  const { activity_type, first_date = "", last_date = "" } = detail.body.detail;
+  if (isDropInType(activity_type ?? "") || !ISO_DATE.test(first_date)) return null;
+  if (ISO_DATE.test(last_date) && last_date < today) return null;
+  // A program's button status doesn't depend on the date; it only has to look like one.
+  const button = await getCachedButtonStatus(id, `${first_date} 00:00:00`);
+  return toSessionStatus(id, detail.body, button, new Date(detail.at));
+}
+
+/** Looks up availability for up to MAX_AVAILABILITY_IDS enroll-online sessions (or programs). */
 export async function getAvailability(
   activityIds: readonly number[],
-  { fresh = false }: AvailabilityOptions = {},
+  { fresh = false, programs = false }: AvailabilityOptions = {},
 ): Promise<AvailabilityResult> {
   const ids = [...new Set(activityIds)];
   if (ids.length > MAX_AVAILABILITY_IDS) {
@@ -86,29 +110,42 @@ export async function getAvailability(
     throw new RangeError("Session ids must be positive integers");
   }
 
-  const { sessions } = await getSchedule(["enroll"]);
   const now = toTorontoLocal(new Date());
-  const startById = new Map(
-    sessions.filter((s) => s.end > now).map((s) => [s.activityId, s.start]),
-  );
+  // Sessions: only real upcoming ones are looked up, so callers can't make us query anything else.
+  const startById = programs
+    ? null
+    : new Map(
+        (await getSchedule(["enroll"])).sessions
+          .filter((s) => s.end > now)
+          .map((s) => [s.activityId, s.start]),
+      );
 
   const result: AvailabilityResult = { statuses: {}, unknownIds: [], failedIds: [] };
   await Promise.all(
     ids.map(async (id) => {
-      const start = startById.get(id);
-      if (!start) {
+      const start = startById?.get(id);
+      if (startById && !start) {
         result.unknownIds.push(id);
         return;
       }
       try {
-        const [detail, button] = await Promise.all([
-          fresh ? fetchDetail(id) : getCachedDetail(id),
-          getCachedButtonStatus(id, start),
-        ]);
+        let status: SessionStatus | null;
+        if (start) {
+          const [detail, button] = await Promise.all([
+            fresh ? fetchDetail(id) : getCachedDetail(id),
+            getCachedButtonStatus(id, start),
+          ]);
+          status = toSessionStatus(id, detail.body, button, new Date(detail.at));
+        } else {
+          status = await programStatus(id, fresh, now.slice(0, 10));
+        }
         // The cached count is now older than what this caller saw, so drop it:
         // the next normal load fetches again instead of showing the old count.
         if (fresh) revalidateTag(`spots-${id}`, { expire: 0 });
-        const status = toSessionStatus(id, detail.body, button, new Date(detail.at));
+        if (!status) {
+          result.unknownIds.push(id);
+          return;
+        }
         if (status.spaces.level === "unknown") {
           console.warn(`[availability] unknown space_status for ${id}:`, status.spaces.text);
         }

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { ActivityDetailBody, ButtonStatusBody, Envelope } from "@/lib/activenet/types";
 import {
   parseSpaces,
+  parseWaitlist,
   toEnrollState,
   toSessionStatus,
   type SessionStatus,
@@ -28,6 +29,21 @@ describe("parseSpaces", () => {
 
   it.each([["Waitlist available"], [""], [null], [undefined]])("unknown wording %j", (text) => {
     expect(parseSpaces(text)).toEqual({ level: "unknown", text: text?.trim() ?? null });
+  });
+});
+
+describe("parseWaitlist", () => {
+  // The City's space_message, as seen live on full programs (Nov 2026).
+  it.each([
+    ["Waiting List registration is open.", 0],
+    ["Waiting List registration is open. One person on waiting list.", 1],
+    ["Waiting List registration is open. 2 persons are on waiting list.", 2],
+    ["Waiting List registration is open. 20 persons are on waiting list.", 20],
+    ["", undefined],
+    [null, undefined],
+    ["Some other message", undefined],
+  ])("%j", (text, expected) => {
+    expect(parseWaitlist(text)).toBe(expected);
   });
 });
 
@@ -117,6 +133,17 @@ describe("toEnrollState", () => {
     ).toEqual({
       state: "full",
     });
+  });
+
+  it("waitlist: full with a waitlist open and its link; full without either", () => {
+    const full = { ...base, spaces: { level: "full", count: 0 } as const, waitlist: 2 };
+    expect(toEnrollState(full, now)).toEqual({
+      state: "waitlist",
+      url: base.enrollUrl,
+      waiting: 2,
+    });
+    expect(toEnrollState({ ...full, waitlist: undefined }, now)).toEqual({ state: "full" });
+    expect(toEnrollState({ ...full, enrollUrl: null }, now)).toEqual({ state: "full" });
   });
 
   it("closed: another notice and no link", () => {

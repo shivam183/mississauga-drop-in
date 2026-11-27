@@ -32,6 +32,17 @@ export function parseSpaces(spaceStatus: string | null | undefined): Spaces {
 }
 
 /**
+ * People on the waitlist when the City's `space_message` says one is open
+ * (0 when it gives no count), else undefined.
+ */
+export function parseWaitlist(spaceMessage: string | null | undefined): number | undefined {
+  if (!spaceMessage || !/waiting list registration is open/i.test(spaceMessage)) return undefined;
+  if (/\bone person\b/i.test(spaceMessage)) return 1;
+  const count = spaceMessage.match(/(\d+) persons?\b/i);
+  return count ? Number(count[1]) : 0;
+}
+
+/**
  * What we know about one session's availability, as fetched. Plain data so it
  * can be cached; turn it into an EnrollState with `toEnrollState` at the time
  * it's shown, because "opens at 7 am" depends on the current time.
@@ -45,6 +56,8 @@ export interface SessionStatus {
   opensAt: LocalDateTime | null;
   /** The City's notice as plain text, e.g. "This activity is full…". */
   notice: string;
+  /** Full with a waitlist open: how many are on it (0 when the City gives no count). */
+  waitlist?: number;
   /** The centre's phone as the City writes it; missing if unknown (or cached before it was kept). */
   phone?: string;
   /** When this was fetched from the City, as an ISO timestamp. */
@@ -66,6 +79,7 @@ export function toSessionStatus(
     enrollUrl: safeCityUrl(status?.action_link?.href),
     opensAt: LOCAL_DATE_TIME.test(opens) ? opens : null,
     notice: noticeToText(status?.notification),
+    waitlist: parseWaitlist(detail?.detail.space_message),
     phone: centrePhone(detail?.detail.centers?.[0]) || undefined,
     checkedAt: checkedAt.toISOString(),
   };
@@ -75,6 +89,8 @@ export type EnrollState =
   | { state: "enroll"; url: string }
   | { state: "opens"; opensAt: LocalDateTime; url: string }
   | { state: "full" }
+  /** Full, but the City takes names for a waitlist at `url`; `waiting` are on it already. */
+  | { state: "waitlist"; url: string; waiting: number }
   | { state: "closed"; message: string }
   /** Started with spots left: online enrollment is over, but a walk-in may work. */
   | { state: "walk-in"; phone?: string }
@@ -82,11 +98,16 @@ export type EnrollState =
 
 /**
  * Decides what the Enroll button shows. `now` is Toronto local time in the
- * API's format (see toTorontoLocal). Order matters: "full" wins over a link.
+ * API's format (see toTorontoLocal). Order matters: "full" wins over a link
+ * (the link is then the waitlist's, when one is open).
  */
 export function toEnrollState(status: SessionStatus | null, now: LocalDateTime): EnrollState {
   if (!status) return { state: "unknown" };
-  if (status.spaces.level === "full" || /\bfull\b/i.test(status.notice)) return { state: "full" };
+  if (status.spaces.level === "full" || /\bfull\b/i.test(status.notice)) {
+    return status.waitlist !== undefined && status.enrollUrl
+      ? { state: "waitlist", url: status.enrollUrl, waiting: status.waitlist }
+      : { state: "full" };
+  }
   if (status.enrollUrl) {
     if (status.opensAt && status.opensAt > now) {
       return { state: "opens", opensAt: status.opensAt, url: status.enrollUrl };

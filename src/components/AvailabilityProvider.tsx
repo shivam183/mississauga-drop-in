@@ -66,7 +66,7 @@ type Store = ReturnType<typeof createStore>;
 
 interface AvailabilityContextValue {
   store: Store;
-  observe(id: number, element: Element): () => void;
+  observe(id: number, element: Element, kind: AvailabilityKind): () => void;
   refresh(id: number): Promise<void>;
 }
 
@@ -79,8 +79,15 @@ interface ApiResponse {
   error?: string;
 }
 
-async function fetchAvailability(ids: number[], fresh = false): Promise<ApiResponse> {
-  const query = `ids=${ids.join(",")}${fresh ? "&fresh=1" : ""}`;
+/** Session ids, or registered program ids (asked about for their waitlist). */
+export type AvailabilityKind = "session" | "program";
+
+async function fetchAvailability(
+  ids: number[],
+  kind: AvailabilityKind,
+  fresh = false,
+): Promise<ApiResponse> {
+  const query = `ids=${ids.join(",")}${kind === "program" ? "&kind=program" : ""}${fresh ? "&fresh=1" : ""}`;
   const response = await fetch(`/api/availability?${query}`, { cache: "no-store" });
   const body = (await response.json().catch(() => ({}))) as ApiResponse;
   if (!response.ok) throw new Error(body.error ?? `Request failed (${response.status})`);
@@ -93,6 +100,8 @@ export function AvailabilityProvider({ children }: { children: ReactNode }) {
   const queue = useRef(new Set<number>());
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const elements = useRef(new Map<Element, number>());
+  /** What each id is, so it's asked about the right way. */
+  const kinds = useRef(new Map<number, AvailabilityKind>());
   const observer = useRef<IntersectionObserver | null>(null);
 
   const apply = useCallback(
@@ -120,14 +129,18 @@ export function AvailabilityProvider({ children }: { children: ReactNode }) {
 
   const flush = useCallback(() => {
     timer.current = undefined;
-    const ids = [...queue.current];
+    const queued = [...queue.current];
     queue.current.clear();
-    for (let i = 0; i < ids.length; i += BATCH_SIZE) {
-      const batch = ids.slice(i, i + BATCH_SIZE);
-      fetchAvailability(batch).then(
-        (body) => apply(batch, body),
-        (cause: unknown) => apply(batch, cause instanceof Error ? cause : new Error(String(cause))),
-      );
+    for (const kind of ["session", "program"] as const) {
+      const ids = queued.filter((id) => (kinds.current.get(id) ?? "session") === kind);
+      for (let i = 0; i < ids.length; i += BATCH_SIZE) {
+        const batch = ids.slice(i, i + BATCH_SIZE);
+        fetchAvailability(batch, kind).then(
+          (body) => apply(batch, body),
+          (cause: unknown) =>
+            apply(batch, cause instanceof Error ? cause : new Error(String(cause))),
+        );
+      }
     }
   }, [apply]);
 
@@ -162,7 +175,8 @@ export function AvailabilityProvider({ children }: { children: ReactNode }) {
     };
   }, [request]);
 
-  const observe = useCallback((id: number, element: Element) => {
+  const observe = useCallback((id: number, element: Element, kind: AvailabilityKind) => {
+    kinds.current.set(id, kind);
     elements.current.set(element, id);
     observer.current?.observe(element);
     return () => {
@@ -175,7 +189,7 @@ export function AvailabilityProvider({ children }: { children: ReactNode }) {
     async (id: number) => {
       store.setRefreshState(id, "");
       try {
-        const body = await fetchAvailability([id], true);
+        const body = await fetchAvailability([id], kinds.current.get(id) ?? "session", true);
         apply([id], body);
         store.setRefreshState(id, undefined);
       } catch (cause) {
@@ -189,8 +203,12 @@ export function AvailabilityProvider({ children }: { children: ReactNode }) {
   return <AvailabilityContext.Provider value={value}>{children}</AvailabilityContext.Provider>;
 }
 
-/** Availability for one session; starts loading when `ref` scrolls near the screen. */
-export function useAvailability(id: number, ref: RefObject<Element | null>) {
+/** Availability for one session (or program); starts loading when `ref` scrolls near the screen. */
+export function useAvailability(
+  id: number,
+  ref: RefObject<Element | null>,
+  kind: AvailabilityKind = "session",
+) {
   const context = useContext(AvailabilityContext);
   if (!context) throw new Error("useAvailability must be used inside <AvailabilityProvider>");
   const { observe, refresh, store } = context;
@@ -211,8 +229,8 @@ export function useAvailability(id: number, ref: RefObject<Element | null>) {
 
   useEffect(() => {
     if (!ref.current) return;
-    return observe(id, ref.current);
-  }, [id, observe, ref]);
+    return observe(id, ref.current, kind);
+  }, [id, kind, observe, ref]);
 
   return {
     entry,

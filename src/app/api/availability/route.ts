@@ -1,9 +1,10 @@
 /**
- * GET /api/availability?ids=166860,164542[&fresh=1]
+ * GET /api/availability?ids=166860,164542[&fresh=1][&kind=program]
  *
  * Spots left and enroll status for up to 20 upcoming "enroll online" sessions
  * (ids are ActiveNet activity ids, which are per session for these).
- * `fresh=1` skips the 60-second cache and is rate-limited per IP.
+ * `kind=program` takes registered program ids instead (full cards ask for
+ * their waitlist). `fresh=1` skips the 60-second cache and is rate-limited per IP.
  * See docs/api.md.
  */
 import type { NextRequest } from "next/server";
@@ -35,7 +36,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const result = await getAvailability(ids, { fresh });
+    const result = await getAvailability(ids, {
+      fresh,
+      programs: params.get("kind") === "program",
+    });
     const now = toTorontoLocal(new Date());
     // The Enroll button state per session, worked out now (opensAt as ISO 8601).
     const enroll: Record<number, EnrollState> = {};
