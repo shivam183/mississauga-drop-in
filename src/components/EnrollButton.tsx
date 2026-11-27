@@ -4,11 +4,8 @@ import { formatShortDateTime } from "@/lib/format";
 import type { EnrollState } from "@/models/availability";
 import { telHref } from "@/models/phones";
 import styles from "./EnrollPanel.module.css";
+import { ALARM_ICON, ButtonIcon as Icon, ENROLL_ICON, JOIN_ICON, WEB_ICON } from "./ButtonIcon";
 import { ExternalLink } from "./ExternalLink";
-
-// An alarm clock, outlined like the other small icons.
-const ALARM_ICON =
-  "M20 13a8 8 0 1 1-16 0 8 8 0 0 1 16 0zM12 9v4l2 2M5 3 2 6M22 6l-3-3M6.4 18.7 4 21M17.6 18.7 20 21";
 
 /** The full-width Enroll button, or what to do instead when it isn't available. */
 export function EnrollButton({
@@ -36,6 +33,7 @@ export function EnrollButton({
     case "enroll":
       return (
         <ExternalLink className={`${styles.button} ${styles.primary}`} href={state.url}>
+          <Icon d={ENROLL_ICON} />
           Enroll now <span aria-hidden="true">↗</span>
         </ExternalLink>
       );
@@ -53,16 +51,7 @@ export function EnrollButton({
               aria-label="Remind me when enrollment opens (adds to your calendar)"
               title="Add a reminder to your calendar"
             >
-              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
-                <path
-                  d={ALARM_ICON}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <Icon d={ALARM_ICON} />
               Remind me
             </a>
           )}
@@ -73,16 +62,11 @@ export function EnrollButton({
       return null;
     case "waitlist":
       return (
-        <div className={styles.waitlist}>
-          <ExternalLink className={`${styles.button} ${styles.secondary}`} href={state.url}>
-            Join waitlist <span aria-hidden="true">↗</span>
-          </ExternalLink>
-          {state.waiting > 0 && (
-            <p className={styles.waiting}>
-              {state.waiting} {state.waiting === 1 ? "person" : "people"} on the waitlist
-            </p>
-          )}
-        </div>
+        <ExternalLink className={`${styles.button} ${styles.secondary}`} href={state.url}>
+          <Icon d={JOIN_ICON} />
+          Join waitlist{state.waiting > 0 && ` · ${state.waiting} waiting`}{" "}
+          <span aria-hidden="true">↗</span>
+        </ExternalLink>
       );
     case "closed":
       return (
@@ -115,6 +99,7 @@ export function EnrollButton({
     case "unknown":
       return cityUrl ? (
         <ExternalLink className={`${styles.button} ${styles.secondary}`} href={cityUrl}>
+          <Icon d={WEB_ICON} />
           Check on ActiveMississauga
         </ExternalLink>
       ) : null;

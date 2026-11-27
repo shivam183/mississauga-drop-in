@@ -21,6 +21,7 @@ import styles from "./ActivityDetails.module.css";
 import { DETAILS_TITLE_ID } from "./detailsIds";
 import { DetailsEnrollButton, DetailsSpots } from "./DetailsEnroll";
 import { PreviewShown } from "./DetailsPreview";
+import { ButtonIcon, WEB_ICON } from "./ButtonIcon";
 import { ExternalLink } from "./ExternalLink";
 import { CalendarLink } from "./CalendarLink";
 import { MapsMenu, type MapApp } from "./MapsMenu";
@@ -285,6 +286,8 @@ export function ActivityDetails({
         {enroll && <DetailsEnrollButton activityId={shown.activityId} cityUrl={shown.url} />}
         {shown.url && (
           <ExternalLink className={enroll ? styles.cityLink : styles.cityButton} href={shown.url}>
+            {/* Only as a button: under Enroll it's a quiet link. */}
+            {!enroll && <ButtonIcon d={WEB_ICON} />}
             View on ActiveMississauga <span aria-hidden="true">↗</span>
           </ExternalLink>
         )}
