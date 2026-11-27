@@ -98,10 +98,27 @@
 }
 
 .title {
-  margin: 4px 0 2px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0 4px;
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.35;
+}
+
+/* The emoji in a soft circle, tinted by activity family (--tint from data-tint, globals.css). */
+.icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: var(--tint, var(--surface));
+  font-size: 1.125rem;
+  line-height: 1;
 }
 
 .title a {

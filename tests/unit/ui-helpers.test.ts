@@ -25,7 +25,20 @@ import {
 } from "@/lib/params";
 import { ALL_CENTRES, centreBySlug, centrePath, centreSlug } from "@/lib/centres";
 import { clientIp, createRateLimiter } from "@/lib/rate-limit";
-import { ACTIVITIES, activityBySlug, activityFor, iconFor } from "@/models/activities";
+import { ACTIVITIES, activityBySlug, activityFor, iconFor, iconTint } from "@/models/activities";
+
+describe("iconTint", () => {
+  it("gives each activity family its colour, and none to the rest", () => {
+    expect(iconTint(iconFor("Adult Lane Swim"))).toBe("water");
+    expect(iconTint(iconFor("Public Skating"))).toBe("ice");
+    expect(iconTint(iconFor("Drop In Adult Pickleball"))).toBe("racquet");
+    expect(iconTint(iconFor("Basketball 16+"))).toBe("ball");
+    expect(iconTint(iconFor("Gentle Yoga"))).toBe("fitness");
+    expect(iconTint(iconFor("Winter Break Camp"))).toBe("camp");
+    expect(iconTint(iconFor("Euchre"))).toBeUndefined();
+    expect(iconTint(undefined)).toBeUndefined();
+  });
+});
 
 describe("format", () => {
   it("formats time ranges", () => {

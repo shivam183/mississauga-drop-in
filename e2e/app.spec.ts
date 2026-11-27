@@ -1251,7 +1251,7 @@ test.describe("registered programs", () => {
     await toggle.getByRole("link", { name: "Registered" }).click();
     await expect(page).toHaveURL(/\/registered$/);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Registered programs in Mississauga",
+      "Find your next registered program",
     );
     await expect(toggle.getByRole("link", { name: "Registered" })).toHaveAttribute(
       "aria-current",
