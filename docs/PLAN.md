@@ -109,7 +109,7 @@ Dependabot (`dependabot.yml`) uses Conventional Commit prefixes (`fix(deps)`, `c
 
 ```
 ┌──────────────────────────────────────┐
-│ 7:00 – 9:00 PM          [Enroll online]│  ← time: largest text
+│ 7 – 9 PM                [Enroll online]│  ← time: largest text
 │ Pickleball – Adult 18+                │
 │ 📍 Meadowvale Community Centre · Gym 2 │  ← centre: bold, second line
 │ 12 spots left · as of 3:42 pm  ↻      │  ← calendar 3 only
@@ -122,7 +122,7 @@ Dependabot (`dependabot.yml`) uses Conventional Commit prefixes (`fix(deps)`, `c
 - **Filters:** activity chips (Pickleball, Swim…) above the list; type (Drop-in or Enroll online) is in the filter sheet.
 - **Time labels:** a session that's under way says **On now** (amber); one starting within the hour says **Starts in N min** (green at 15 min or less, blue up to 60). Worked out when the page renders, so it can be a few minutes stale if the page sits open.
 - **Share:** each card has a share icon. Phones open the share sheet; elsewhere it copies the same text. The message is one detail per line (title, day and time, centre, link), and the link (`/?session=<id>`) opens exactly that session.
-- Times are always shown in Toronto time with am/pm.
+- Times are always shown in Toronto time with am/pm, without ":00" on the hour ("7 – 9 PM", "10 AM – 12:30 PM"): a range that crosses noon with ":00"s, like "10:00 AM – 12:00 PM", wrapped under the badge on a 390px phone.
 - There is no horizontal scrolling at 360px width.
 - The default font is 16px, and contrast meets WCAG AA in light and dark mode.
 - Spots-left colour: green for more than 5, amber for 1–5, red for full. The text label is always shown too, so colour is never the only signal.

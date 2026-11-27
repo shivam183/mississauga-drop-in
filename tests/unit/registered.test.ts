@@ -71,7 +71,7 @@ describe("toProgram", () => {
       name: "H3O Swim For Life 1",
       centre: "Frank McKechnie Cmty Centre",
       days: "Sat",
-      time: "8:30 – 9:00 AM",
+      time: "8:30 – 9 AM",
       dates: "Sep 26 – Dec 12",
       ages: "At least 4y 9m but less than 15",
       status: { state: "full" }, // the City says "Full" even with total_open 3
@@ -108,7 +108,8 @@ describe("toProgram", () => {
 describe("formatting", () => {
   it("time ranges", () => {
     expect(formatCityTimeRange("6:30 PM - 7:30 PM")).toBe("6:30 – 7:30 PM");
-    expect(formatCityTimeRange("9:00 AM - Noon")).toBe("9:00 AM – 12:00 PM");
+    expect(formatCityTimeRange("9:00 AM - Noon")).toBe("9 AM – 12 PM");
+    expect(formatCityTimeRange("10:00 AM - 10:30 AM")).toBe("10 – 10:30 AM");
     expect(formatCityTimeRange("")).toBe("");
   });
 
@@ -165,7 +166,7 @@ describe("formatting", () => {
 
   it("meeting pattern", () => {
     expect(meetingLines(meetings.body)).toEqual([
-      { time: "Sat · 8:30 – 9:00 AM", dates: "Sep 26 – Dec 12" },
+      { time: "Sat · 8:30 – 9 AM", dates: "Sep 26 – Dec 12" },
     ]);
   });
 });

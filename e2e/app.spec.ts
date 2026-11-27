@@ -40,7 +40,10 @@ test("results are grouped by day and lead with time and centre", async ({ page }
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 2, name: /^Tomorrow · / })).toBeVisible();
   const card = page.getByRole("article").first();
-  await expect(card.locator("time")).toHaveText(/^\d{1,2}:\d{2}( [AP]M)? – \d{1,2}:\d{2} [AP]M$/);
+  // No ":00" on the hour: "7 – 9 PM", "7:30 – 9 PM", "10 AM – 12:30 PM".
+  await expect(card.locator("time")).toHaveText(
+    /^\d{1,2}(:\d{2})?( [AP]M)? – \d{1,2}(:\d{2})? [AP]M$/,
+  );
   await expect(card.getByRole("link", { name: "Burnhamthorpe Community Centre" })).toBeVisible();
 });
 
@@ -66,7 +69,7 @@ test(
     // One detail per line, then the link on its own line.
     const [name, when, centre, url] = copied.split("\n");
     expect(name).toBe(title);
-    expect(when).toMatch(/^\w{3} \w{3} \d{1,2}, \d{1,2}:\d{2}/);
+    expect(when).toMatch(/^\w{3} \w{3} \d{1,2}, \d{1,2}(:\d{2})? /);
     expect(centre).toBe("Burnhamthorpe Community Centre");
     // The link shows just that one session, with a way back to everything.
     expect(url).toMatch(/\/\?session=[de]\d+-\d{12}$/);
@@ -1277,7 +1280,7 @@ test.describe("registered programs", () => {
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /\/registered$/);
     const cards = page.getByRole("article");
     const open = cards.nth(0);
-    await expect(open.getByText("Sat 8:30 – 9:00 AM", { exact: true })).toBeVisible();
+    await expect(open.getByText("Sat 8:30 – 9 AM", { exact: true })).toBeVisible();
     await expect(open.getByText("Sep 26 – Dec 12", { exact: true })).toBeVisible();
     await expect(open.getByText(/\$\d/)).toHaveCount(0); // the price varies, so it is only in the popup
     await expect(open.getByRole("button", { name: /^Share / })).toBeVisible();
@@ -1420,7 +1423,7 @@ test.describe("registered programs", () => {
     await page.getByRole("article").first().getByRole("heading").getByRole("link").click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByRole("heading", { name: "H3O Swim For Life 1" })).toBeVisible();
-    await expect(dialog.getByText("Sat · 8:30 – 9:00 AM", { exact: true })).toBeVisible();
+    await expect(dialog.getByText("Sat · 8:30 – 9 AM", { exact: true })).toBeVisible();
     await expect(dialog.getByText("Sep 26 – Dec 12", { exact: true })).toBeVisible();
     await expect(dialog.getByText("Non-resident")).toBeVisible();
     await expect(dialog.getByText("$298.00")).toBeVisible();
