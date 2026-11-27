@@ -1,4 +1,4 @@
-import { iconFor } from "@/models/activities";
+import { iconFor, iconTint } from "@/models/activities";
 import { spotsLeftText, type EnrollState } from "@/models/availability";
 import { agesLabel, type Program } from "@/models/registered";
 import { DetailsLink } from "./DetailsPreview";
@@ -64,7 +64,11 @@ export function RegisteredCard({ program }: { program: Program }) {
         </p>
       )}
       <h3 className={`${cardStyles.title} ${styles.name}`}>
-        {icon && <span aria-hidden="true">{icon} </span>}
+        {icon && (
+          <span aria-hidden="true" className={cardStyles.icon} data-tint={iconTint(icon)}>
+            {icon}
+          </span>
+        )}
         {/* Opens the details popup, which shows this card's name and times straight away. */}
         <DetailsLink
           preview={{

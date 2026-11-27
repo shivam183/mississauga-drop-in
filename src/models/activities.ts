@@ -173,6 +173,35 @@ const MORE_ICONS: Array<[string[], string]> = [
   [["cook", "baking"], "🍳"],
 ];
 
+export type IconTint = "water" | "ice" | "racquet" | "ball" | "fitness" | "camp";
+
+// The family behind each emoji above, for the coloured circle on cards; others get a plain one.
+const TINT: Record<string, IconTint> = {
+  "🏊": "water",
+  "⛸️": "ice",
+  "🏒": "ice",
+  "🎾": "racquet",
+  "🏸": "racquet",
+  "🏓": "racquet",
+  "🏀": "ball",
+  "🏐": "ball",
+  "⚽": "ball",
+  "🎳": "ball",
+  "🎱": "ball",
+  "🧘": "fitness",
+  "💃": "fitness",
+  "💪": "fitness",
+  "🚴": "fitness",
+  "🏃": "fitness",
+  "🥋": "fitness",
+  "🏕️": "camp",
+};
+
+/** The colour family for an icon from iconFor ("🏊" -> "water"), or undefined for a plain circle. */
+export function iconTint(icon: string | undefined): IconTint | undefined {
+  return icon ? TINT[icon] : undefined;
+}
+
 /** An emoji for a session or program title: its chip's, else a keyword's, else none. */
 export function iconFor(title: string): string | undefined {
   const chip = activityFor(title);
