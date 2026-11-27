@@ -16,6 +16,7 @@ import {
 import {
   activeProgramFilterCount,
   agesLabel,
+  chipSearch,
   EMPTY_PROGRAM_SEARCH,
   formatCityTimeRange,
   MAX_PAGES,
@@ -61,6 +62,29 @@ describe("recorded activity search responses", () => {
     expect(dropIn).toBeDefined();
     expect(ids).not.toContain(dropIn.id);
     expect(ids.length).toBe(filters.body.types.length - 1);
+  });
+});
+
+describe("chipSearch", () => {
+  const categories = [
+    { id: "39", label: "Sports" },
+    { id: "48", label: "Swimming Lessons" },
+  ];
+  const with_ = (q: string) => ({ ...EMPTY_PROGRAM_SEARCH, q });
+
+  it("searches a category chip's category when the box holds just its word", () => {
+    expect(chipSearch(with_("sports"), categories)).toMatchObject({ q: "", category: "39" });
+    expect(chipSearch(with_("  Swim Lessons "), categories)).toMatchObject({
+      q: "",
+      category: "48",
+    });
+  });
+
+  it("leaves other words, word chips and unknown categories as a word search", () => {
+    expect(chipSearch(with_("sports tennis"), categories)).toEqual(with_("sports tennis"));
+    expect(chipSearch(with_("camp"), categories)).toEqual(with_("camp"));
+    expect(chipSearch(with_("arts"), categories)).toEqual(with_("arts")); // not in this list
+    expect(chipSearch(with_("sports"), undefined)).toEqual(with_("sports")); // options failed
   });
 });
 

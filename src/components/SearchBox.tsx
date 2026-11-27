@@ -30,6 +30,8 @@ export function SearchBox({
   const [waiting, setWaiting] = useState(false);
   const [hasText, setHasText] = useState(defaultValue !== "");
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  /** A typed search is waiting for its timer (`waiting`, readable from the click listener). */
+  const waitingRef = useRef(false);
   const lastSearched = useRef(defaultValue.trim());
   const input = useRef<HTMLInputElement>(null);
 
@@ -39,11 +41,36 @@ export function SearchBox({
     return () => clearTimeout(timer.current);
   }, []);
 
+  // A link tapped while a search waits (a chip right after typing) decides the search: without
+  // this, the timer fired after the chip's navigation and replaced it with the typed word.
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      const box = input.current;
+      if (!waitingRef.current || !box) return;
+      const link = (event.target as Element | null)?.closest?.("a[href]");
+      if (!(link instanceof HTMLAnchorElement) || box.form?.contains(link)) return;
+      // Only links to the list this box searches (chips); a card or another page leaves it be.
+      const to = new URL(link.href);
+      if (to.pathname !== new URL(action, location.href).pathname) return;
+      clearTimeout(timer.current);
+      waitingRef.current = false;
+      setWaiting(false);
+      // The box shows the link's search, so it matches the results it brings.
+      const q = (to.searchParams.get("q") ?? "").trim();
+      box.value = q;
+      setHasText(q !== "");
+      lastSearched.current = q;
+    };
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
+  }, [action]);
+
   // When something else changes the search (e.g. "clear all filters"), show it.
   // Our own searches already match, so typing is never overwritten.
   useEffect(() => {
     if (defaultValue.trim() === lastSearched.current || !input.current) return;
     clearTimeout(timer.current);
+    waitingRef.current = false;
     setWaiting(false);
     input.current.value = defaultValue;
     setHasText(defaultValue !== "");
@@ -52,6 +79,7 @@ export function SearchBox({
 
   function search(value: string) {
     clearTimeout(timer.current);
+    waitingRef.current = false;
     setWaiting(false);
     const q = value.replace(/\s+/g, " ").trim();
     if (q === lastSearched.current) return;
@@ -102,6 +130,7 @@ export function SearchBox({
           const value = event.currentTarget.value;
           setHasText(value !== "");
           clearTimeout(timer.current);
+          waitingRef.current = true;
           setWaiting(true);
           timer.current = setTimeout(() => search(value), SEARCH_DELAY_MS);
         }}
