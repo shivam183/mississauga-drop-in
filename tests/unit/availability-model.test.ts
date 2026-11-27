@@ -47,6 +47,7 @@ describe("toSessionStatus with recorded responses", () => {
       ),
       opensAt: null,
       notice: "",
+      phone: "905-615-4640", // Malton's own line
       checkedAt: "2026-11-14T20:21:58.000Z",
     });
   });
@@ -126,13 +127,25 @@ describe("toEnrollState", () => {
     });
   });
 
-  it("a session that has started passes on the City's notice word for word", () => {
+  it("a started session with spots left suggests a walk-in; otherwise the City's words", () => {
     const over =
       "We're sorry, but this activity is over. The last meeting was Saturday, November 14, 2026.";
     expect(toEnrollState({ ...base, enrollUrl: null, notice: over }, now)).toEqual({
-      state: "closed",
-      message: over,
+      state: "walk-in",
     });
+    const phone = "(905) 615-4100";
+    expect(toEnrollState({ ...base, phone, enrollUrl: null, notice: over }, now)).toEqual({
+      state: "walk-in",
+      phone,
+    });
+    const full = { level: "full", count: 0 } as const;
+    expect(toEnrollState({ ...base, spaces: full, enrollUrl: null, notice: over }, now)).toEqual({
+      state: "full",
+    });
+    const unknown = { level: "unknown", text: null } as const;
+    expect(toEnrollState({ ...base, spaces: unknown, enrollUrl: null, notice: over }, now)).toEqual(
+      { state: "closed", message: over },
+    );
   });
 
   it("unknown: lookup failed, or nothing to go on", () => {

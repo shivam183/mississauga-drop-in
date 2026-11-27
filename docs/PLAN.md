@@ -34,8 +34,10 @@ The calendar 3 enroll state comes from `buttonstatus` and `detail` combined. `bu
 - **Enroll now:** there is an `href`, the opening time is **empty or in the past** (it is `""` once enrollment is open), and `space_status` isn't "Full". The button opens `href`.
 - **Opens {date}:** there is an `href` and the opening time is in the future (seen: 7 am the day before the session). The button is disabled.
 - **Full:** `space_status` is "Full" for that session, or the notice says "full". There is no button, but a link to the City page remains.
-- **Closed:** any other notice with no `href`, such as "this activity is over". There is no button, and the notice is shown as plain text.
+- **Closed:** any other notice with no `href`, such as "this activity is over". There is no button, and the notice is shown as plain text. One exception: "this activity is over" (the session has started) while at least 1 spot is still open is replaced by a hint to call the centre (its own number as a `tel:` link inside the sentence) or ask at the front desk about walking in. There is no "Details" link there, so the phone number isn't next to another link, since the City's wording puts people off trying.
 - **Unknown:** the lookup failed. Show "Check on ActiveMississauga" and link to `activity_detail_url`.
+
+**Centre phone numbers:** the API's `detail.centers[0].phone` is (905) 615-4100, the City's general line, for every centre. Each centre's own front-desk number is kept by hand in `src/models/phones.ts`, keyed by `centers[0].id`, from the centre's page at mississauga.ca/recreation-and-sports/locations/ (checked 2026-11-26). Centres missing from that list fall back to the API's number. The details popup, the centre pages and the walk-in hint all use this number.
 
 Only https `*.activecommunities.com` URLs are allowed as links. The notice HTML is turned into plain text and never rendered as markup.
 

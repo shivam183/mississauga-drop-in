@@ -2,6 +2,7 @@
 
 import { formatShortDateTime } from "@/lib/format";
 import type { EnrollState } from "@/models/availability";
+import { telHref } from "@/models/phones";
 import styles from "./EnrollPanel.module.css";
 import { ExternalLink } from "./ExternalLink";
 
@@ -80,6 +81,22 @@ export function EnrollButton({
               <ExternalLink href={cityUrl}>Details</ExternalLink>
             </>
           )}
+        </p>
+      );
+    case "walk-in":
+      // No "Details" link: the card already links to the City's page, and a second
+      // link beside the phone number is easy to tap by mistake.
+      return (
+        <p className={styles.notice}>
+          Online enrollment closed when this activity started, but spots were still available. Call
+          the centre
+          {state.phone && (
+            <>
+              {" at "}
+              <a href={telHref(state.phone)}>{state.phone}</a>
+            </>
+          )}{" "}
+          or ask at the front desk about walking in.
         </p>
       );
     case "unknown":
