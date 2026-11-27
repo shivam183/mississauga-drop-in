@@ -235,6 +235,43 @@ export interface ProgramSearch {
   pages: number;
 }
 
+/**
+ * Quick picks under the search box. Like Drop-in's, a chip puts its word in the
+ * box. Most stand for a City category (found by name, so a renumbered id still
+ * works; a missing one is left out): a box holding just that word searches the
+ * category, since a word search finds far fewer (Sports 476 vs "sport" 56,
+ * Learning 65 vs "learn" none). Camps span three categories, so "camp" is a word.
+ */
+export const PROGRAM_CHIPS: Array<{
+  label: string;
+  icon: string;
+  word: string;
+  category?: string;
+}> = [
+  { label: "Swim lessons", icon: "🏊", word: "swim lessons", category: "Swimming Lessons" },
+  { label: "Camps", icon: "🏕️", word: "camp" },
+  { label: "Sports", icon: "🏀", word: "sports", category: "Sports" },
+  { label: "Fitness", icon: "💪", word: "fitness", category: "Fitness" },
+  { label: "Skating", icon: "⛸️", word: "skating", category: "Skating & Hockey" },
+  { label: "Dance & music", icon: "💃", word: "dance & music", category: "Dance, Drama, Music" },
+  { label: "Arts", icon: "🎨", word: "arts", category: "Arts" },
+  { label: "Leagues", icon: "🏆", word: "leagues", category: "Sport Leagues" },
+  { label: "Learning", icon: "📚", word: "learning", category: "Learning" },
+];
+
+type Categories = Array<{ id: string; label: string }> | undefined;
+
+/** A chip's City category id, by name; undefined for a word chip or a category the City dropped. */
+export const chipCategoryId = (category: string | undefined, categories: Categories) =>
+  category ? categories?.find((c) => c.label === category)?.id : undefined;
+
+/** The search to run: a box holding just a category chip's word searches that category. */
+export function chipSearch(state: ProgramSearch, categories: Categories): ProgramSearch {
+  const word = state.q.trim().toLowerCase();
+  const id = chipCategoryId(PROGRAM_CHIPS.find((c) => c.word === word)?.category, categories);
+  return id ? { ...state, q: "", category: id } : state;
+}
+
 export const EMPTY_PROGRAM_SEARCH: ProgramSearch = {
   q: "",
   category: null,

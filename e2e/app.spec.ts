@@ -1319,30 +1319,49 @@ test.describe("registered programs", () => {
     }
   });
 
-  test("a chip picks a category that later filters keep, and is one choice at a time", async ({
+  test("a chip puts its word in the box, like Drop-in's; later filters keep it; one at a time", async ({
     page,
   }, testInfo) => {
     await page.goto("/registered");
     const chips = page.getByRole("navigation", { name: "Program type" });
+    const box = page.getByRole("searchbox");
+    // Arts is a City category: its word in the box searches that category (chipSearch).
     await chips.getByRole("link", { name: "Arts" }).click();
-    await expect(page).toHaveURL(/\/registered\?cat=47$/);
+    await expect(page).toHaveURL(/\/registered\?q=arts$/);
+    await expect(box).toHaveValue("arts");
     await expect(chips.getByRole("link", { name: "Arts" })).toHaveAttribute("aria-current", "page");
-    // No Category menu (chips and search cover it); the form carries the chip's category.
+    // No Category menu (chips and search cover it); the form keeps the chip's word.
     if (isPhone(testInfo.project.name))
       await page.getByRole("button", { name: /^Filters/ }).click();
     const filters = page.getByRole("region", { name: "Filters" });
     await expect(filters.getByLabel("Category")).toHaveCount(0);
     await filters.getByLabel("Has open spots").check();
-    await expect(page).toHaveURL(/[?&]cat=47\b/);
+    await expect(page).toHaveURL(/[?&]q=arts\b/);
     await expect(page).toHaveURL(/[?&]open=1\b/);
     // Clear filters keeps the chip, like the drop-in page.
     await filters.getByRole("button", { name: "Clear filters" }).click();
-    await expect(page).toHaveURL(/\/registered\?cat=47$/);
+    await expect(page).toHaveURL(/\/registered\?q=arts$/);
     await expect(chips.getByRole("link", { name: "Arts" })).toHaveAttribute("aria-current", "page");
-    // Camps is a keyword; picking it drops the Arts category.
+    // An old category link still lights its chip; another chip replaces it.
     await page.goto("/registered?cat=47");
+    await expect(chips.getByRole("link", { name: "Arts" })).toHaveAttribute("aria-current", "page");
     await chips.getByRole("link", { name: "Camps" }).click();
     await expect(page).toHaveURL(/\/registered\?q=camp$/);
+    await expect(box).toHaveValue("camp");
+    // A chip starts fresh: its word replaces a typed one ("swim" + Sports found nothing).
+    await page.goto("/registered?q=swim");
+    await chips.getByRole("link", { name: "Arts" }).click();
+    await expect(page).toHaveURL(/\/registered\?q=arts$/);
+    await expect(box).toHaveValue("arts");
+    // Also when the chip is tapped before the typed word's search has run.
+    await page.goto("/registered");
+    await box.fill("tennis");
+    await chips.getByRole("link", { name: "Arts" }).click();
+    await expect(page).toHaveURL(/\/registered\?q=arts$/);
+    await expect(box).toHaveValue("arts");
+    // Past the box's 300ms search delay (SEARCH_DELAY_MS): the typed search must not come back.
+    await page.waitForTimeout(600);
+    await expect(page).toHaveURL(/\/registered\?q=arts$/);
   });
 
   test("the age stepper searches once taps pause, and typing works too", async ({

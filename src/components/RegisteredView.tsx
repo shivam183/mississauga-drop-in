@@ -10,7 +10,10 @@ import {
 } from "@/lib/registered";
 import {
   activeProgramFilterCount,
+  chipCategoryId,
+  chipSearch,
   MAX_PAGES,
+  PROGRAM_CHIPS,
   parseProgramParams,
   programHref,
   seasonStatus,
@@ -34,23 +37,6 @@ import styles from "./Search.module.css";
 
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-/**
- * Quick picks under the search box. Most are a City category, found by its
- * name so a renumbered id still works (a missing one is left out); camps span
- * three categories, so that one searches "camp".
- */
-const CHIPS: Array<{ label: string; icon: string; category?: string; q?: string }> = [
-  { label: "Swim lessons", icon: "🏊", category: "Swimming Lessons" },
-  { label: "Camps", icon: "🏕️", q: "camp" },
-  { label: "Sports", icon: "🏀", category: "Sports" },
-  { label: "Fitness", icon: "💪", category: "Fitness" },
-  { label: "Skating", icon: "⛸️", category: "Skating & Hockey" },
-  { label: "Dance & music", icon: "💃", category: "Dance, Drama, Music" },
-  { label: "Arts", icon: "🎨", category: "Arts" },
-  { label: "Leagues", icon: "🏆", category: "Sport Leagues" },
-  { label: "Learning", icon: "📚", category: "Learning" },
-];
-
 function RegisteredChips({
   state,
   options,
@@ -58,21 +44,14 @@ function RegisteredChips({
   state: ProgramSearch;
   options: ProgramOptions | null;
 }) {
-  // One chip at a time: picking one drops another chip's keyword or category.
-  const chipQ = CHIPS.some((c) => c.q === state.q.toLowerCase());
-  const chips = CHIPS.flatMap(({ label, icon, category, q }) => {
-    if (q) {
-      const on = state.q.toLowerCase() === q;
-      return [
-        { label, icon, on, href: programHref(state, on ? { q: "" } : { q, category: null }) },
-      ];
-    }
-    const id = options?.categories.find((c) => c.label === category)?.id;
-    if (!id) return [];
-    const on = state.category === id;
-    const href = on
-      ? programHref(state, { category: null })
-      : programHref(state, { category: id, ...(chipQ ? { q: "" } : {}) });
+  // One chip at a time, and it starts a fresh search: its word replaces what was typed.
+  const typed = state.q.trim().toLowerCase();
+  const chips = PROGRAM_CHIPS.flatMap(({ label, icon, word, category }) => {
+    const id = chipCategoryId(category, options?.categories);
+    if (category && !id) return [];
+    // Also on for an old ?cat= link with an empty box.
+    const on = typed === word || (!typed && id !== undefined && state.category === id);
+    const href = programHref(state, on ? { q: "", category: null } : { q: word, category: null });
     return [{ label, icon, on, href }];
   });
   return (
@@ -103,13 +82,14 @@ export async function RegisteredView({ searchParams }: { searchParams: Promise<R
   // below: during prerendering this rejects on purpose, and must not read as a failed search.
   await connection();
   const now = toTorontoLocal(new Date());
-  const [options, results] = await Promise.all([
-    getProgramOptions().catch(() => null),
-    searchPrograms(state).catch((error: unknown) => {
+  // Options first (cached): a chip's word in the box searches its category.
+  const options = await getProgramOptions().catch(() => null);
+  const results = await searchPrograms(chipSearch(state, options?.categories)).catch(
+    (error: unknown) => {
       console.error("[programs] search failed:", error instanceof Error ? error.message : error);
       return null;
-    }),
-  ]);
+    },
+  );
   const more = results !== null && hasMorePages(results, state.pages);
 
   return (
