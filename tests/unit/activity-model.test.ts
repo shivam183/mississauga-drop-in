@@ -21,7 +21,7 @@ describe("toActivityInfo with recorded responses", () => {
       centre: {
         name: "Burnhamthorpe Community Centre",
         address: "1500 Gulleden Drive, Mississauga, ON L4X 2T7",
-        phone: expect.stringMatching(/^\(905\)/),
+        phone: "905-615-4630", // the centre's own line, not the City's (905) 615-4100
         lat: expect.any(Number),
         lng: expect.any(Number),
       },

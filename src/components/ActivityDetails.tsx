@@ -15,6 +15,7 @@ import {
 import { EMPTY_SEARCH, hrefWith } from "@/lib/params";
 import { activityFor, iconFor } from "@/models/activities";
 import type { ActivityInfo } from "@/models/activity";
+import { telHref } from "@/models/phones";
 import type { Session } from "@/models/session";
 import styles from "./ActivityDetails.module.css";
 import { DETAILS_TITLE_ID } from "./detailsIds";
@@ -298,7 +299,6 @@ export function WhereRow({
   calendarHref?: string;
 }) {
   const phone = info?.centre?.phone ?? "";
-  const tel = phone.replace(/[^\d+]/g, "");
   return (
     <div className={styles.whereRow}>
       <p className={styles.where}>
@@ -310,9 +310,9 @@ export function WhereRow({
         <MapsMenu apps={mapApps(centreName, info)} label={`Directions to ${centreName}`}>
           <Icon d={DIRECTIONS_ICON} />
         </MapsMenu>
-        {tel && (
+        {phone && (
           <a
-            href={`tel:${tel}`}
+            href={telHref(phone)}
             className={styles.iconLink}
             aria-label={`Call ${phone}`}
             title={`Call ${phone}`}

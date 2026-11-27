@@ -1,6 +1,7 @@
 import type { RawActivityDetail } from "@/lib/activenet/types";
 import { displayTitle } from "@/lib/format";
 import { noticeToText } from "./links";
+import { centrePhone } from "./phones";
 
 /** What the details popup shows about an activity. Plain data, so it can be cached. */
 export interface ActivityInfo {
@@ -129,7 +130,7 @@ export function toActivityInfo(detail: RawActivityDetail): ActivityInfo {
           address: [text(centre?.address1), text(centre?.address2), cityLine]
             .filter(Boolean)
             .join(", "),
-          phone: text(centre?.phone),
+          phone: centrePhone(centre),
           lat: coordinate(centre?.latitude),
           lng: coordinate(centre?.longitude),
         }

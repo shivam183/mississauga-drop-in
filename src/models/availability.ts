@@ -5,6 +5,7 @@ import {
   type LocalDateTime,
 } from "@/lib/activenet/types";
 import { noticeToText, safeCityUrl } from "./links";
+import { centrePhone } from "./phones";
 
 /** Openings at or below this count are shown as "few". */
 export const FEW_SPACES = 5;
@@ -44,6 +45,8 @@ export interface SessionStatus {
   opensAt: LocalDateTime | null;
   /** The City's notice as plain text, e.g. "This activity is full…". */
   notice: string;
+  /** The centre's phone as the City writes it; missing if unknown (or cached before it was kept). */
+  phone?: string;
   /** When this was fetched from the City, as an ISO timestamp. */
   checkedAt: string;
 }
@@ -63,6 +66,7 @@ export function toSessionStatus(
     enrollUrl: safeCityUrl(status?.action_link?.href),
     opensAt: LOCAL_DATE_TIME.test(opens) ? opens : null,
     notice: noticeToText(status?.notification),
+    phone: centrePhone(detail?.detail.centers?.[0]) || undefined,
     checkedAt: checkedAt.toISOString(),
   };
 }
@@ -72,6 +76,8 @@ export type EnrollState =
   | { state: "opens"; opensAt: LocalDateTime; url: string }
   | { state: "full" }
   | { state: "closed"; message: string }
+  /** Started with spots left: online enrollment is over, but a walk-in may work. */
+  | { state: "walk-in"; phone?: string }
   | { state: "unknown" };
 
 /**
@@ -87,8 +93,14 @@ export function toEnrollState(status: SessionStatus | null, now: LocalDateTime):
     }
     return { state: "enroll", url: status.enrollUrl };
   }
-  // Any other notice is passed on in the City's own words, e.g. "We're sorry,
-  // but this activity is over…" once a session has started.
+  // Once a session starts the City says "We're sorry, but this activity is
+  // over…". With spots still open that reads as "don't bother", but the desk
+  // may still take a walk-in, so say that instead.
+  const spotsLeft = "count" in status.spaces && status.spaces.count >= 1;
+  if (/activity is over/i.test(status.notice) && spotsLeft) {
+    return { state: "walk-in", phone: status.phone };
+  }
+  // Any other notice is passed on in the City's own words.
   if (status.notice) return { state: "closed", message: status.notice };
   return { state: "unknown" };
 }

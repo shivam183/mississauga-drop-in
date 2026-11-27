@@ -8,6 +8,7 @@ import { getActivity } from "@/lib/activity";
 import { ALL_CENTRES, centreBySlug, centreSlug } from "@/lib/centres";
 import { toTorontoLocal } from "@/lib/dates";
 import { getSchedule } from "@/lib/schedule";
+import { telHref } from "@/models/phones";
 
 // One static page per centre; any other slug is a notFound() below, as on /[activity].
 export function generateStaticParams() {
@@ -72,16 +73,15 @@ async function CentreContact({ centreId }: { centreId: number }) {
   const next = here.find((s) => s.type === "dropin") ?? here[0];
   const info = next && (await getActivity(next.activityId))?.info?.centre;
   if (!info?.address) return null;
-  const tel = info.phone.replace(/[^\d+]/g, "");
   const listing = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${info.name}, ${info.address}`)}`;
   return (
     <>
       <br />
       <ExternalLink href={listing}>{info.address}</ExternalLink>
-      {tel && (
+      {info.phone && (
         <>
           {" · "}
-          <a href={`tel:${tel}`}>{info.phone}</a> (City of Mississauga)
+          <a href={telHref(info.phone)}>{info.phone}</a>
         </>
       )}
     </>

@@ -121,6 +121,8 @@ export interface RawActivityDetail {
 }
 
 export interface RawDetailCentre {
+  /** The same centre id as in /onlinecalendar/filters. */
+  id?: number | null;
   name?: string | null;
   address1?: string | null;
   address2?: string | null;
