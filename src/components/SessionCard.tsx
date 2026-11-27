@@ -4,7 +4,6 @@ import { displayTitle, formatDate, formatTimeRange, sessionWhen, startsLabel } f
 import { EMPTY_SEARCH, hrefWith } from "@/lib/params";
 import { iconFor } from "@/models/activities";
 import type { Session } from "@/models/session";
-import { CalendarLink } from "./CalendarLink";
 import { DetailsLink } from "./DetailsPreview";
 import { EnrollPanel } from "./EnrollPanel";
 import { LinkPending } from "./LinkPending";
@@ -68,25 +67,19 @@ export function SessionCard({
           {title}
         </DetailsLink>
       </h3>
-      {/* Add to calendar sits at the end of the place line, as in the popup; the top row has no room for it. */}
-      <div className={styles.whereRow}>
-        <p className={styles.where}>
-          <span aria-hidden="true">📍 </span>
-          <Link
-            className={styles.centre}
-            href={centreHref}
-            title={`Add ${session.centreName} to the filter`}
-          >
-            {session.centreName}
-            <LinkPending />
-          </Link>
-          {session.facility && <span className={styles.facility}> · {session.facility}</span>}
-        </p>
-        <CalendarLink
-          href={`/activity/${session.activityId}/calendar?session=${session.id}`}
-          className={styles.calendar}
-        />
-      </div>
+      {/* No Add to calendar here: it's in the details popup, so the card stays uncluttered. */}
+      <p className={styles.where}>
+        <span aria-hidden="true">📍 </span>
+        <Link
+          className={styles.centre}
+          href={centreHref}
+          title={`Add ${session.centreName} to the filter`}
+        >
+          {session.centreName}
+          <LinkPending />
+        </Link>
+        {session.facility && <span className={styles.facility}> · {session.facility}</span>}
+      </p>
       {session.type === "enroll" && (
         <EnrollPanel activityId={session.activityId} cityUrl={session.url} />
       )}
