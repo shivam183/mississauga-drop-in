@@ -163,9 +163,20 @@
 }
 
 .name {
-  margin: 4px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 10px;
   font-size: 1.5rem;
   line-height: 1.2;
+}
+
+/* The card's tinted icon circle, a size up for the title. */
+.nameIcon {
+  composes: icon from "./SessionCard.module.css";
+  width: 44px;
+  height: 44px;
+  font-size: 1.375rem;
 }
 
 .facts {
@@ -216,11 +227,17 @@
   }
 }
 
+/* When and where: washed in the activity's colour (data-tint), so it's what the eye finds first. */
 .session {
   margin: 16px 0 0;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--tint, var(--surface));
+}
+
+/* Over a box this size, the full tint is heavy: about half strength, in light and dark. */
+.session[data-tint] {
+  background: color-mix(in srgb, var(--tint) 55%, var(--bg));
 }
 
 .label {
@@ -284,10 +301,6 @@
 }
 
 .whereRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
   margin-top: 4px;
 }
 
@@ -296,10 +309,36 @@
   color: var(--muted);
 }
 
+.centre {
+  color: var(--text);
+}
+
+/* Directions, Call and Calendar: equal labelled buttons in a row, under the place. */
 .quick {
-  display: flex;
-  flex-shrink: 0;
-  gap: 6px;
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.quick .iconLink {
+  width: auto;
+  height: auto;
+  min-height: 60px;
+  gap: 2px;
+  padding: 8px 4px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--bg);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.quick .iconLink:hover {
+  background: var(--surface);
 }
 
 .iconLink {
@@ -498,11 +537,22 @@ button.iconLink {
   font-size: 0.9375rem;
 }
 
+/* "Good to know": a light blue note with an info icon. */
 .notes {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
   margin: 0;
-  padding: 10px 14px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
   border-radius: var(--radius);
-  background: var(--surface);
+  background: var(--today-bg);
+}
+
+.notes svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--accent);
 }
 
 .more {
@@ -519,6 +569,15 @@ button.iconLink {
 
 .pill:hover {
   border-color: var(--accent);
+}
+
+/* The chip's icon in a small tinted circle, like the cards. */
+.pillIcon {
+  composes: icon from "./SessionCard.module.css";
+  width: 26px;
+  height: 26px;
+  margin-left: -6px;
+  font-size: 0.9375rem;
 }
 
 /* The main action, always in reach: pinned under the scrolling body. */

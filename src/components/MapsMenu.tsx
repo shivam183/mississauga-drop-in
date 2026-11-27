@@ -49,7 +49,7 @@ export function MapsMenu({
   apps: MapApp[];
   /** The button's accessible name, e.g. "Directions to Malton Community Centre". */
   label: string;
-  /** The button's icon. */
+  /** The button's icon, and its visible label. */
   children: ReactNode;
 }) {
   const id = useId();

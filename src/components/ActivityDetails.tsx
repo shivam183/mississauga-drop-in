@@ -13,7 +13,7 @@ import {
   weekdayName,
 } from "@/lib/format";
 import { EMPTY_SEARCH, hrefWith } from "@/lib/params";
-import { activityFor, iconFor } from "@/models/activities";
+import { activityFor, iconFor, iconTint } from "@/models/activities";
 import type { ActivityInfo } from "@/models/activity";
 import { telHref } from "@/models/phones";
 import type { Session } from "@/models/session";
@@ -146,6 +146,7 @@ export function ActivityDetails({
   const summary = shown.type === "dropin" ? runSummary(sessions, info) : "";
   const chip = activityFor(shown.title);
   const icon = iconFor(shown.title);
+  const tint = iconTint(icon);
   const enroll = shown.type === "enroll";
   const Heading = page ? "h1" : "h2";
   const factList = facts(info);
@@ -172,7 +173,11 @@ export function ActivityDetails({
       </div>
       <div className={styles.body}>
         <Heading id={DETAILS_TITLE_ID} className={styles.name}>
-          {icon && <span aria-hidden="true">{icon} </span>}
+          {icon && (
+            <span aria-hidden="true" className={styles.nameIcon} data-tint={tint}>
+              {icon}
+            </span>
+          )}
           {name}
         </Heading>
         {factList.length > 0 && (
@@ -186,7 +191,7 @@ export function ActivityDetails({
           </ul>
         )}
 
-        <section className={styles.session} aria-label="This session">
+        <section className={styles.session} data-tint={tint} aria-label="This session">
           <p className={styles.label}>{shown === sessions[0] ? "Next" : "Session"}</p>
           <p className={styles.when}>
             <time dateTime={shown.start.replace(" ", "T")}>
@@ -239,7 +244,7 @@ export function ActivityDetails({
             <h3 id="details-notes" className={styles.heading}>
               Good to know
             </h3>
-            <p className={styles.notes}>{info.notes}</p>
+            <Notes text={info.notes} />
           </section>
         )}
 
@@ -250,6 +255,13 @@ export function ActivityDetails({
           <div className={styles.more}>
             {chip && (
               <Link className={styles.pill} href={`/${chip.slug}`}>
+                <span
+                  aria-hidden="true"
+                  className={styles.pillIcon}
+                  data-tint={iconTint(chip.icon)}
+                >
+                  {chip.icon}
+                </span>
                 More {chip.label.toLowerCase()} sessions <span aria-hidden="true">→</span>
               </Link>
             )}
@@ -260,6 +272,9 @@ export function ActivityDetails({
                 hrefWith("/", EMPTY_SEARCH, { centreIds: [shown.centreId] })
               }
             >
+              <span aria-hidden="true" className={styles.pillIcon}>
+                📍
+              </span>
               More at {shortCentre(shown.centreName)} <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -283,8 +298,8 @@ const PHONE_ICON =
   "M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z";
 
 /**
- * "📍 Centre · Room" with Directions (a maps-app menu), Call and Add to calendar
- * beside it; the details card of a drop-in and of a registered program.
+ * "📍 Centre · Room", then Directions (a maps-app menu), Call and Add to calendar as
+ * labelled buttons in a row; the details card of a drop-in and of a registered program.
  */
 export function WhereRow({
   centreName,
@@ -303,12 +318,14 @@ export function WhereRow({
     <div className={styles.whereRow}>
       <p className={styles.where}>
         <span aria-hidden="true">📍 </span>
-        {centreName}
+        <strong className={styles.centre}>{centreName}</strong>
         {facility && ` · ${facility}`}
       </p>
+      {/* Each visible label is part of the button's name ("Directions to …", "Call 905-…"). */}
       <span className={styles.quick}>
         <MapsMenu apps={mapApps(centreName, info)} label={`Directions to ${centreName}`}>
           <Icon d={DIRECTIONS_ICON} />
+          Directions
         </MapsMenu>
         {phone && (
           <a
@@ -318,11 +335,29 @@ export function WhereRow({
             title={`Call ${phone}`}
           >
             <Icon d={PHONE_ICON} />
+            Call
           </a>
         )}
-        {calendarHref && <CalendarLink href={calendarHref} className={styles.iconLink} />}
+        {calendarHref && (
+          <CalendarLink href={calendarHref} className={styles.iconLink}>
+            Calendar
+          </CalendarLink>
+        )}
       </span>
     </div>
+  );
+}
+
+// The "i": a stem and a dot (a zero-length line, so Icon needs round caps to draw it).
+const INFO_ICON = "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM12 17v-6M12 7.5h.01";
+
+/** "Good to know": the City's notes as a light blue note with an info icon. */
+export function Notes({ text }: { text: string }) {
+  return (
+    <p className={styles.notes}>
+      <Icon d={INFO_ICON} />
+      <span>{text}</span>
+    </p>
   );
 }
 
@@ -330,7 +365,14 @@ export function WhereRow({
 function Icon({ d }: { d: string }) {
   return (
     <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
-      <path d={d} fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <path
+        d={d}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }

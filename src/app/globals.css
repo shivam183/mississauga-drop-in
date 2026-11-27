@@ -364,6 +364,12 @@ h1 {
   display: none;
 }
 
+/* Not while a details popup is open: it showed through the popup's dimmed backdrop. Opacity,
+   which the animation doesn't touch, so closing the popup doesn't replay it. */
+html:has(dialog[open]) .coffee-nudge {
+  opacity: 0;
+}
+
 .coffee-nudge-gone {
   animation: coffee-nudge-out 0.3s ease-out both;
 }
