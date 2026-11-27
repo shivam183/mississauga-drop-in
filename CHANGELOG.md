@@ -5,6 +5,30 @@ This file is updated automatically by
 Conventional Commit messages on `main`. Don't edit it by hand. The project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.1.0](https://github.com/shivam183/mississauga-drop-in/compare/v1.0.0...v1.1.0) (2026-11-27)
+
+
+### Features
+
+* add to calendar from cards and details ([#93](https://github.com/shivam183/mississauga-drop-in/issues/93)) ([7802f0e](https://github.com/shivam183/mississauga-drop-in/commit/7802f0e16ff5372106eb620410a6937f45987949))
+* brand red in the header and activity icons on chips, cards and details ([#89](https://github.com/shivam183/mississauga-drop-in/issues/89)) ([1a1492f](https://github.com/shivam183/mississauga-drop-in/commit/1a1492fa444254e8009b400cffd7dd3dbf18a713))
+* colour pass: activity tints, day bands, violet Drop-in, navy dark mode ([#101](https://github.com/shivam183/mississauga-drop-in/issues/101)) ([36a6137](https://github.com/shivam183/mississauga-drop-in/commit/36a61376a9cd627ea5c1d663f41f57c862354ae5))
+* details popup: tinted Next box, labelled actions, info note; fix run-together notes ([#102](https://github.com/shivam183/mississauga-drop-in/issues/102)) ([d9359a7](https://github.com/shivam183/mississauga-drop-in/commit/d9359a756059dd40f6ecc42bb33045b0a359687e))
+* registered cards show the days on one line and the time on the next ([#100](https://github.com/shivam183/mississauga-drop-in/issues/100)) ([68007a1](https://github.com/shivam183/mississauga-drop-in/commit/68007a1b7a7cf9a34992a09747024ed035f6686c))
+* Registered chips work like Drop-in's: the word goes in the box ([#104](https://github.com/shivam183/mississauga-drop-in/issues/104)) ([c90c9a6](https://github.com/shivam183/mississauga-drop-in/commit/c90c9a61cc5f5da364fe702cbbfc8489837012c5))
+* remind me when enrollment opens ([#94](https://github.com/shivam183/mississauga-drop-in/issues/94)) ([61e4084](https://github.com/shivam183/mississauga-drop-in/commit/61e40846238878013a6915c8439d697d3891a50e))
+* suggest a walk-in, with the centre's own number, when a started session still has spots ([#96](https://github.com/shivam183/mississauga-drop-in/issues/96)) ([142174c](https://github.com/shivam183/mississauga-drop-in/commit/142174ceabd711855c463cd8550fe0c7d48897fe))
+
+
+### Bug Fixes
+
+* anchor the Waze route pattern in the directions test ([#95](https://github.com/shivam183/mississauga-drop-in/issues/95)) ([c5a613c](https://github.com/shivam183/mississauga-drop-in/commit/c5a613c8374269d44f51d8efaafebbe515793e62))
+* coffee bubble passes Lighthouse's contrast and link-name checks ([#92](https://github.com/shivam183/mississauga-drop-in/issues/92)) ([c9a4e8d](https://github.com/shivam183/mississauga-drop-in/commit/c9a4e8d8ecee9088e6a53acd83be5c35547a3dbe))
+* coffee bubble shrinks away smoothly instead of vanishing at half size ([#97](https://github.com/shivam183/mississauga-drop-in/issues/97)) ([4063cf5](https://github.com/shivam183/mississauga-drop-in/commit/4063cf588b053284fae22e373648dbcf27c3ae9a))
+* drop :00 from times on the hour, so noon-crossing ranges fit on one line ([#99](https://github.com/shivam183/mississauga-drop-in/issues/99)) ([cb12664](https://github.com/shivam183/mississauga-drop-in/commit/cb12664d68c1f62b471eb6a4b8671d277e47850b))
+* give the registered program list an h2, so headings don't skip a level ([#91](https://github.com/shivam183/mississauga-drop-in/issues/91)) ([9993bcd](https://github.com/shivam183/mississauga-drop-in/commit/9993bcd3d78a199c2bc7b0d6adb504489672ea08))
+* keep the chips under the search box when nothing matches on desktop ([#88](https://github.com/shivam183/mississauga-drop-in/issues/88)) ([a4a6341](https://github.com/shivam183/mississauga-drop-in/commit/a4a63412532cf34ff10a2523343b5b08c1abdc03))
+
 ## [1.0.0](https://github.com/shivam183/mississauga-drop-in/compare/v0.7.1...v1.0.0) (2026-11-19)
 
 
