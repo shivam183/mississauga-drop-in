@@ -66,7 +66,8 @@ export function noticeToText(value: unknown): string {
     before = text;
     text = text
       .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, " ")
-      .replace(/<br\s*\/?>|<\/(p|div|li|h\d)\s*>/gi, " ")
+      // A block tag, opening or closing, is a break: "CC<div>Program runs" mustn't become "CCProgram".
+      .replace(/<br\s*\/?>|<\/?(p|div|li|h\d)\b[^>]*>/gi, " ")
       .replace(/<[^>]*>/g, "");
   } while (text !== before);
   // A tag start with no ">" after it ("Hi <script") survives the loop; a plain "a < b" stays.

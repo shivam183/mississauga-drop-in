@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
 import styles from "./ActivityDetails.module.css";
 import { CloseIcon } from "./CloseIcon";
-import { iconFor } from "@/models/activities";
+import { iconFor, iconTint } from "@/models/activities";
 import { DETAILS_TITLE_ID } from "./detailsIds";
 import { TypeBadge, type BadgeType } from "./TypeBadge";
 
@@ -230,6 +230,7 @@ export function DetailsLoading({ close }: { close: ReactNode }) {
   // Not from the URL: this part is prebuilt. PreviewShown forgets the tap once
   // the details are up, so a later Back/Forward doesn't show a stale card.
   const preview = lastPreview;
+  const icon = preview ? iconFor(preview.title) : undefined;
   return (
     <div aria-busy="true" className={styles.loadingRoot}>
       <div className={styles.head}>
@@ -240,11 +241,19 @@ export function DetailsLoading({ close }: { close: ReactNode }) {
         {preview ? (
           <>
             <h2 id={DETAILS_TITLE_ID} className={styles.name}>
-              <span aria-hidden="true">{iconFor(preview.title) ?? ""} </span>
+              {icon && (
+                <span aria-hidden="true" className={styles.nameIcon} data-tint={iconTint(icon)}>
+                  {icon}
+                </span>
+              )}
               {preview.title}
             </h2>
             <div className={`${styles.factsPlaceholder} shimmer`} />
-            <section className={styles.session} aria-label="This session">
+            <section
+              className={styles.session}
+              data-tint={iconTint(icon)}
+              aria-label="This session"
+            >
               <p className={styles.when}>{preview.when}</p>
               <p className={styles.where}>
                 <span aria-hidden="true">📍 </span>
