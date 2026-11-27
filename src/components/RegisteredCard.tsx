@@ -33,7 +33,17 @@ export function RegisteredCard({ program }: { program: Program }) {
     // The spots' data-level gives the card its stripe or faded look (SessionCard.module.css).
     <article className={cardStyles.card} aria-label={program.name}>
       <div className={cardStyles.top}>
-        <p className={styles.when}>{when}</p>
+        <p className={styles.when}>
+          {program.days && program.time ? (
+            // Days on one line, time on the next ("Mon, Tue, Wed" / "9 AM – 4 PM"); the space keeps them apart when read aloud.
+            <>
+              <span className={styles.line}>{program.days}</span>{" "}
+              <span className={styles.line}>{program.time}</span>
+            </>
+          ) : (
+            when
+          )}
+        </p>
         <div className={cardStyles.actions}>
           <span className={styles.spots} data-level={level}>
             {spots}

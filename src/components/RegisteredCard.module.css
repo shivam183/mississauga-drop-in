@@ -1,12 +1,16 @@
 /* Program cards reuse SessionCard.module.css (card, title, centre, stripes); these keep them compact. */
 
-/* "Sat 8:30 – 9:00 AM": one line on a phone, a step below a session card's time. */
+/* "Mon, Tue, Wed" over "9:00 AM – 4:00 PM", a step below a session card's time. */
 .when {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 800;
   line-height: 1.3;
   font-variant-numeric: tabular-nums;
+}
+
+.line {
+  display: block;
 }
 
 /* "Sep 26 – Dec 12", right under the time: for a program the dates matter as much. */
