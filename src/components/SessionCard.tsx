@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { LocalDateTime } from "@/lib/activenet/types";
 import { displayTitle, formatDate, formatTimeRange, sessionWhen, startsLabel } from "@/lib/format";
 import { EMPTY_SEARCH, hrefWith } from "@/lib/params";
-import { iconFor } from "@/models/activities";
+import { iconFor, iconTint } from "@/models/activities";
 import type { Session } from "@/models/session";
 import { DetailsLink } from "./DetailsPreview";
 import { EnrollPanel } from "./EnrollPanel";
@@ -51,7 +51,11 @@ export function SessionCard({
         </p>
       )}
       <h3 className={styles.title}>
-        {icon && <span aria-hidden="true">{icon} </span>}
+        {icon && (
+          <span aria-hidden="true" className={styles.icon} data-tint={iconTint(icon)}>
+            {icon}
+          </span>
+        )}
         {/* Opens the details popup, which shows this card's name, time and place straight away. */}
         <DetailsLink
           preview={{

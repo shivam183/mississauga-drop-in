@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { ExternalLink } from "@/components/ExternalLink";
 import { SearchSkeleton, SearchView } from "@/components/SearchView";
 import { ALL_CENTRES, centreSlug } from "@/lib/centres";
 import { ACTIVITIES } from "@/models/activities";
@@ -18,13 +17,10 @@ export default function Home({ searchParams }: PageProps<"/">) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: WEBSITE_JSON_LD }} />
-      <h1 className="page-title">What&rsquo;s on at Mississauga community centres</h1>
+      <h1 className="page-title">Find your next drop-in</h1>
+      {/* The footer credits ActiveMississauga and says we're unofficial. */}
       <p className="muted intro">
-        Drop-in and enroll-online sessions from{" "}
-        <ExternalLink href="https://anc.ca.apm.activecommunities.com/activemississauga/home">
-          ActiveMississauga
-        </ExternalLink>
-        , with live spots left.
+        Swim, skate, pickleball and more at {ALL_CENTRES.length} City centres, with live spots left.
       </p>
       <Suspense fallback={<SearchSkeleton />}>
         <SearchView searchParams={searchParams} path="/" />

@@ -12,7 +12,8 @@
   gap: 10px;
   min-height: 44px;
   margin: 0 calc(-1 * var(--space));
-  padding: 10px var(--space);
+  /* The text sits inside the band (below), which lines up with the cards. */
+  padding: 10px calc(var(--space) + 12px);
   background: var(--bg);
   border-bottom: 1px solid var(--border);
   cursor: pointer;
@@ -23,11 +24,56 @@
   display: none;
 }
 
+/* Today in a blue band with a "Today" pill, Tomorrow with an outlined one; weekends in an amber band with a "Weekend" pill. */
+.today {
+  --band: var(--today-bg);
+}
+
+.weekend {
+  --band: var(--weekend-bg);
+}
+
+/* The row stays full width in the page colour, so cards scrolling under the stuck heading stay
+   hidden; the band is drawn only over the card column, rounded like the cards. */
+.today::before,
+.weekend::before {
+  content: "";
+  position: absolute;
+  inset: 4px var(--space);
+  z-index: -1;
+  border-radius: 8px;
+  background: var(--band);
+}
+
 .title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
   margin: 0;
   font-size: 1rem;
   font-weight: 800;
   line-height: 1.5;
+}
+
+/* Same size as the date beside it, so the heading reads as one line. */
+.pill {
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.weekendPill {
+  background: var(--few);
+  color: var(--on-few);
+}
+
+/* Tomorrow: the Today pill in outline, so it ranks just below it. */
+.tomorrowPill {
+  background: none;
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
 }
 
 /* Points down when open, right when collapsed. */

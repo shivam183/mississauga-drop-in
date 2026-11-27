@@ -1,6 +1,5 @@
 import type { Metadata, ResolvingMetadata } from "next";
 import { Suspense } from "react";
-import { ExternalLink } from "@/components/ExternalLink";
 import { RegisteredView } from "@/components/RegisteredView";
 import { SearchSkeleton } from "@/components/SearchView";
 
@@ -27,13 +26,10 @@ export async function generateMetadata(_: unknown, parent: ResolvingMetadata): P
 export default function ProgramsPage({ searchParams }: PageProps<"/registered">) {
   return (
     <>
-      <h1 className="page-title">{TITLE}</h1>
+      {/* TITLE stays the tab and search title ("Registered programs in Mississauga"). */}
+      <h1 className="page-title">Find your next registered program</h1>
       <p className="muted intro">
-        Lessons, camps and leagues you sign up for once for the season, from{" "}
-        <ExternalLink href="https://anc.ca.apm.activecommunities.com/activemississauga/activity/search">
-          ActiveMississauga
-        </ExternalLink>
-        , with spots left and fees.
+        Lessons, camps and leagues you sign up for once for the season, with spots left and fees.
       </p>
       <Suspense fallback={<SearchSkeleton />}>
         <RegisteredView searchParams={searchParams} />

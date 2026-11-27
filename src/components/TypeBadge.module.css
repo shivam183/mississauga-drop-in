@@ -8,10 +8,11 @@
   white-space: nowrap;
 }
 
+/* Violet, so it reads apart from the solid blue Enroll online at a glance. */
 .dropin {
-  background: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--border);
+  background: var(--dropin-bg);
+  color: var(--dropin-text);
+  border: 1px solid var(--dropin-bg);
 }
 
 .enroll {

@@ -15,6 +15,23 @@
   /* Mississauga red, from the logo: the header stripe and the Drop-in | Registered toggle. */
   --brand: #d52b1e;
   --on-brand: #ffffff;
+  /* Page headings in brand red: a darker shade, since text needs more contrast than the stripe. */
+  --title: #b3241a;
+  /* Day headings: today in a blue band, weekends in an amber one (pill text on --few). */
+  --today-bg: #e8f0fc;
+  --weekend-bg: #fdf1dc;
+  --on-few: #ffffff;
+  /* The Drop-in badge: violet, so it reads apart from Enroll online (solid --accent). */
+  --dropin-bg: #efe9fd;
+  --dropin-text: #4c2a9e;
+  /* A soft circle behind each card's emoji, one per activity family (iconTint in
+     src/models/activities.ts). Kept away from green, amber and red, which mean spots. */
+  --tint-water: #d4f0f4;
+  --tint-ice: #e1e5fb;
+  --tint-racquet: #e9f4cc;
+  --tint-ball: #fde3cc;
+  --tint-fitness: #f9ddef;
+  --tint-camp: #f3ead9;
   --radius: 12px;
   --space: 16px;
   /* The sticky header: a 44px row, 8px padding above and below, a 1px border. */
@@ -26,11 +43,12 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #111418;
-    --surface: #1b1f25;
+    /* Tinted navy rather than plain grey. */
+    --bg: #0e1320;
+    --surface: #161d2d;
     --text: #eef1f5;
-    --muted: #a3acb8;
-    --border: #2e343d;
+    --muted: #a8b2c6;
+    --border: #27314a;
     --accent: #6aa8ff;
     --on-accent: #0b1a2e;
     --open: #5cc97a;
@@ -38,6 +56,18 @@
     --full: #ff7b6e;
     --brand: #ff6b5e;
     --on-brand: #2a0603;
+    --title: #ff8a7f;
+    --today-bg: #16263f;
+    --weekend-bg: #30240e;
+    --on-few: #2a1a00;
+    --dropin-bg: #2e2552;
+    --dropin-text: #d4c6ff;
+    --tint-water: #123b42;
+    --tint-ice: #262d57;
+    --tint-racquet: #2f3a13;
+    --tint-ball: #47290e;
+    --tint-fitness: #47183b;
+    --tint-camp: #3a3020;
     --shimmer: rgb(255 255 255 / 0.12);
   }
 }
@@ -46,6 +76,32 @@
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+/* An activity family's colour (iconTint) as --tint, for whatever carries data-tint:
+   card and popup icons, the popup's "Next" box, "See more" chips. */
+[data-tint="water"] {
+  --tint: var(--tint-water);
+}
+
+[data-tint="ice"] {
+  --tint: var(--tint-ice);
+}
+
+[data-tint="racquet"] {
+  --tint: var(--tint-racquet);
+}
+
+[data-tint="ball"] {
+  --tint: var(--tint-ball);
+}
+
+[data-tint="fitness"] {
+  --tint: var(--tint-fitness);
+}
+
+[data-tint="camp"] {
+  --tint: var(--tint-camp);
 }
 
 html {
@@ -308,6 +364,12 @@ h1 {
   display: none;
 }
 
+/* Not while a details popup is open: it showed through the popup's dimmed backdrop. Opacity,
+   which the animation doesn't touch, so closing the popup doesn't replay it. */
+html:has(dialog[open]) .coffee-nudge {
+  opacity: 0;
+}
+
 .coffee-nudge-gone {
   animation: coffee-nudge-out 0.3s ease-out both;
 }
@@ -370,6 +432,7 @@ h1 {
 
 .page-title {
   margin-top: 8px;
+  color: var(--title);
 }
 
 .intro {

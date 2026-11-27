@@ -34,6 +34,15 @@ describe("noticeToText", () => {
     ).toBe("This activity is full and is not able to accept any more enrollments.");
   });
 
+  it("keeps words apart where a block opens mid-text (a registered program's note)", () => {
+    expect(
+      noticeToText(
+        "Program runs in the MATTAMY DOME at Churchill Meadows CC<div>Program runs 7:30am - 9am     </div>",
+      ),
+    ).toBe("Program runs in the MATTAMY DOME at Churchill Meadows CC Program runs 7:30am - 9am");
+    expect(noticeToText('One<p class="x">Two</p><li>Three')).toBe("One Two Three");
+  });
+
   it("decodes entities and collapses whitespace", () => {
     expect(noticeToText("We&#39;re sorry &amp; <b>it&rsquo;s</b>\n over&nbsp;&#x21;")).toBe(
       "We're sorry & it’s over !",
