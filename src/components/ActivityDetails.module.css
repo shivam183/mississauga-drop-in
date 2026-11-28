@@ -381,6 +381,38 @@ button.iconLink {
   margin: 0;
 }
 
+/* Like the coffee nudge: grows in from half size and shrinks away to nothing, from the pointer. */
+.mapsMenu {
+  transform: scale(0);
+  transform-origin: calc(100% - var(--pointer-right, 50%)) top;
+  transition:
+    transform 0.3s ease-out,
+    display 0.3s allow-discrete,
+    overlay 0.3s allow-discrete;
+}
+
+.mapsMenu[data-side="above"] {
+  transform-origin: calc(100% - var(--pointer-right, 50%)) bottom;
+}
+
+.mapsMenu:popover-open {
+  transform: none;
+  transition-duration: 0.25s;
+  transition-timing-function: ease;
+}
+
+@starting-style {
+  .mapsMenu:popover-open {
+    transform: scale(0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapsMenu {
+    transition: none;
+  }
+}
+
 /* The pointer: a small turned square, half hidden under the card's edge. */
 .mapsMenu[data-side]::before {
   content: "";
