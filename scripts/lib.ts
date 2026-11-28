@@ -15,8 +15,12 @@ export function run(main: () => Promise<void>): void {
   });
 }
 
-/** The front-desk number on a mississauga.ca location page, or null if the page has none. */
+/**
+ * The front-desk number on a mississauga.ca location page, or null if the page
+ * has none or it isn't shaped like one (only a number gets written to data/).
+ */
 export function locationPhone(html: string): string | null {
   const match = /class="location-phone">([^<]+)</.exec(html);
-  return match ? match[1].replace(/\s+/g, " ").trim() : null;
+  const phone = match?.[1].replace(/\s+/g, " ").trim() ?? "";
+  return /^\d{3}-\d{3}-\d{4}( ext \d{1,5})?$/.test(phone) ? phone : null;
 }
