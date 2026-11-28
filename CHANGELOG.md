@@ -5,6 +5,21 @@ This file is updated automatically by
 Conventional Commit messages on `main`. Don't edit it by hand. The project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.0](https://github.com/shivam183/mississauga-drop-in/compare/v1.1.0...v1.2.0) (2026-11-28)
+
+
+### Features
+
+* emojis for 93 more program titles ([#105](https://github.com/shivam183/mississauga-drop-in/issues/105)) ([2c48291](https://github.com/shivam183/mississauga-drop-in/commit/2c4829178643bf3c424d865cd8bd6d52af910bcd))
+* Join waitlist for full programs ([#107](https://github.com/shivam183/mississauga-drop-in/issues/107)) ([d3dc2b4](https://github.com/shivam183/mississauga-drop-in/commit/d3dc2b493886aef7a679ac4f917263a9e9c25a9f))
+* weekly check of centre phone numbers against the City's pages ([#108](https://github.com/shivam183/mississauga-drop-in/issues/108)) ([acaad9e](https://github.com/shivam183/mississauga-drop-in/commit/acaad9e6cee451c9d25598e04d08a36d512e944d))
+
+
+### Bug Fixes
+
+* keep the Directions menu on screen on phones, and animate it ([#110](https://github.com/shivam183/mississauga-drop-in/issues/110)) ([2949d45](https://github.com/shivam183/mississauga-drop-in/commit/2949d45232fe862f16298ad8ae62a082d8c9fecc))
+* only write phone-shaped numbers from the City's pages ([#109](https://github.com/shivam183/mississauga-drop-in/issues/109)) ([a6d1f94](https://github.com/shivam183/mississauga-drop-in/commit/a6d1f9435cb826b498642020012933ed32db372c))
+
 ## [1.1.0](https://github.com/shivam183/mississauga-drop-in/compare/v1.0.0...v1.1.0) (2026-11-27)
 
 
