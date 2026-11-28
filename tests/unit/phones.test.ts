@@ -26,5 +26,7 @@ describe("locationPhone", () => {
       "905-615-3200 ext 2895",
     );
     expect(locationPhone("<div>no phone here</div>")).toBeNull();
+    expect(locationPhone('<div class="location-phone">Call us!</div>')).toBeNull();
+    expect(locationPhone('<div class="location-phone">905-615-4630 javascript:x</div>')).toBeNull();
   });
 });

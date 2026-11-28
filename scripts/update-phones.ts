@@ -46,7 +46,7 @@ run(async () => {
       const response = await fetch(`${BASE_URL}${slug}/`);
       if (!response.ok) throw new Error(`${slug}: HTTP ${response.status}`);
       const found = locationPhone(await response.text());
-      if (!found) throw new Error(`${slug}: no phone number on the page`);
+      if (!found) throw new Error(`${slug}: no phone number we can read on the page`);
       phone = found;
       bySlug.set(slug, phone);
     }
