@@ -922,12 +922,22 @@ test.describe("details popup", () => {
     const directions = dialog.getByRole("button", { name: /^Directions to / });
     const apps = dialog.locator("[popover]").getByRole("link");
     await directions.click();
-    // A dropdown under the button, not a card in the middle of the screen.
+    // Measured once it has grown in.
+    await dialog
+      .locator("[popover]")
+      .evaluate((el) => Promise.all(el.getAnimations().map((a) => a.finished)));
+    // A dropdown under the button, not a card in the middle of the screen, and all on screen.
     const button = (await directions.boundingBox())!;
     const card = (await dialog.locator("[popover]").boundingBox())!;
     expect(card.y).toBeGreaterThan(button.y + button.height);
     expect(card.y).toBeLessThan(button.y + button.height + 20);
-    expect(Math.abs(card.x + card.width - (button.x + button.width))).toBeLessThan(2);
+    // Right-aligned with the button, unless that would push it off the left (phones: Directions is leftmost).
+    const rightAligned = button.x + button.width - card.width >= 16;
+    if (rightAligned) {
+      expect(Math.abs(card.x + card.width - (button.x + button.width))).toBeLessThan(2);
+    } else {
+      expect(Math.abs(card.x - 16)).toBeLessThan(2);
+    }
     await expect(apps).toHaveText(
       ["Google Maps", "Apple Maps", "Waze"].map((a) => `${a} (opens in a new tab)`),
     );
