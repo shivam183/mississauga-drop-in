@@ -15,6 +15,8 @@ const LAST_KEY = "maps-app";
 
 /** About the card's height (title and three rows), to choose below or above the button. */
 const CARD_HEIGHT = 240;
+/** The card's max width, as `.mapsMenu` sets it. */
+const CARD_WIDTH = 260;
 const EDGE = 16;
 
 /**
@@ -24,7 +26,9 @@ const EDGE = 16;
  */
 function anchor(card: HTMLElement, button: DOMRect) {
   const width = document.documentElement.clientWidth; // without a scrollbar, unlike innerWidth
-  const right = Math.max(EDGE, width - button.right);
+  const cardWidth = Math.min(CARD_WIDTH, width - 2 * EDGE);
+  // Right-aligned with the button, but shifted right when that would push it off the left edge.
+  const right = Math.min(width - EDGE - cardWidth, Math.max(EDGE, width - button.right));
   const below = innerHeight - button.bottom >= CARD_HEIGHT || button.top < CARD_HEIGHT;
   card.dataset.side = below ? "below" : "above";
   card.style.right = `${right}px`;
