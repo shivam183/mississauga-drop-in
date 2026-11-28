@@ -76,8 +76,16 @@ export function MapsMenu({
           const card = menu.current;
           if (!card || card.matches(":popover-open")) return; // this click closes it
           anchor(card, event.currentTarget.getBoundingClientRect());
-          // Scrolling would leave it floating away from the button.
-          addEventListener("scroll", () => card.hidePopover(), { capture: true, once: true });
+          // Scrolling or resizing (e.g. closing devtools) would leave it floating away from the button.
+          const close = new AbortController();
+          const hide = () => card.hidePopover();
+          addEventListener("scroll", hide, { capture: true, signal: close.signal });
+          addEventListener("resize", hide, { signal: close.signal });
+          card.addEventListener(
+            "toggle",
+            (toggle) => toggle.newState === "closed" && close.abort(),
+            { signal: close.signal },
+          );
         }}
       >
         {children}
