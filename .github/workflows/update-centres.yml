@@ -23,6 +23,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run update-centres
+      - run: npm run update-phones
       - uses: peter-evans/create-pull-request@v8
         with:
           # PRs opened with the default GITHUB_TOKEN don't trigger CI; the same
