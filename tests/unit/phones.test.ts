@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { centrePhone, telHref } from "@/models/phones";
+import { locationPhone } from "../../scripts/lib";
 
 describe("centrePhone", () => {
   it("prefers the centre's own line, else what the City sent", () => {
@@ -16,5 +17,14 @@ describe("telHref", () => {
     expect(telHref("(905) 615-4100")).toBe("tel:9056154100");
     expect(telHref("905-615-3200 ext 2895")).toBe("tel:9056153200,2895");
     expect(telHref("905-615-3200 Ext. 2895")).toBe("tel:9056153200,2895");
+  });
+});
+
+describe("locationPhone", () => {
+  it("reads the number from a City location page", () => {
+    expect(locationPhone('<div class="location-phone">905-615-3200  ext 2895\n</div>')).toBe(
+      "905-615-3200 ext 2895",
+    );
+    expect(locationPhone("<div>no phone here</div>")).toBeNull();
   });
 });

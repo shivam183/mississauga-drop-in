@@ -21,6 +21,7 @@
     "format:check": "prettier --check .",
     "capture-fixtures": "tsx scripts/capture-fixtures.ts",
     "update-centres": "tsx scripts/update-centres.ts",
+    "update-phones": "tsx scripts/update-phones.ts",
     "check-api": "tsx scripts/check-api.ts"
   },
   "dependencies": {

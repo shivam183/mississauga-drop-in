@@ -37,7 +37,7 @@ The calendar 3 enroll state comes from `buttonstatus` and `detail` combined. `bu
 - **Closed:** any other notice with no `href`, such as "this activity is over". There is no button, and the notice is shown as plain text. One exception: "this activity is over" (the session has started) while at least 1 spot is still open is replaced by a hint to call the centre (its own number as a `tel:` link inside the sentence) or ask at the front desk about walking in. There is no "Details" link there, so the phone number isn't next to another link, since the City's wording puts people off trying.
 - **Unknown:** the lookup failed. Show "Check on ActiveMississauga" and link to `activity_detail_url`.
 
-**Centre phone numbers:** the API's `detail.centers[0].phone` is (905) 615-4100, the City's general line, for every centre. Each centre's own front-desk number is kept by hand in `src/models/phones.ts`, keyed by `centers[0].id`, from the centre's page at mississauga.ca/recreation-and-sports/locations/ (checked 2026-11-26). Centres missing from that list fall back to the API's number. The details popup, the centre pages and the walk-in hint all use this number.
+**Centre phone numbers:** the API's `detail.centers[0].phone` is (905) 615-4100, the City's general line, for every centre. Each centre's own front-desk number is in `data/centres.phones.json`, keyed by `centers[0].id`, scraped from the centre's page at mississauga.ca/recreation-and-sports/locations/ (the `location-phone` element) by `npm run update-phones`; the id → page list is kept by hand in `scripts/update-phones.ts`. The weekly Update centres workflow runs it, so a changed number opens the same PR as a changed centre list, and a page that moves or loses its number fails the run. Centres missing from that list fall back to the API's number. The details popup, the centre pages and the walk-in hint all use this number.
 
 Only https `*.activecommunities.com` URLs are allowed as links. The notice HTML is turned into plain text and never rendered as markup.
 
@@ -90,7 +90,7 @@ The Hobby plan includes **1M Runtime Cache read units a month** (1 unit = 8 KB r
 | `codeql.yml`               | push to `main`, PRs, weekly     | CodeQL security scan (`security-extended` queries)                                                                                                                                                                                                      |
 | `dependabot-automerge.yml` | Dependabot PRs                  | Auto-merges patch updates, and minor updates to dev dependencies and Actions, once required checks pass. Major updates wait for a human.                                                                                                                |
 | `api-health.yml`           | nightly cron, manual            | `npm run check-api`: 8 requests covering all four endpoints. Fails if a response shape or the `space_status` wording changes, so a broken unofficial API is noticed before users notice it.                                                             |
-| `update-centres.yml`       | weekly cron, manual             | Runs `scripts/update-centres.ts` and opens a PR if `data/centres.*.json` changed                                                                                                                                                                        |
+| `update-centres.yml`       | weekly cron, manual             | Runs `scripts/update-centres.ts` and `update-phones.ts`, opens a PR if `data/centres.*.json` changed                                                                                                                                                    |
 | `lighthouse.yml` _(Ph. 3)_ | Vercel preview deployment ready | Lighthouse CI on the preview URL; fails below 90 for mobile accessibility or performance                                                                                                                                                                |
 
 Dependabot (`dependabot.yml`) uses Conventional Commit prefixes (`fix(deps)`, `chore(deps)`, `ci(deps)`), so its PRs pass the title check.
@@ -138,7 +138,7 @@ mississauga-drop-in/
 │           PULL_REQUEST_TEMPLATE.md  dependabot.yml
 ├── docs/ PLAN.md  architecture.md  data-source.md
 ├── public/
-├── scripts/ capture-fixtures.ts  update-centres.ts  check-api.ts  lib.ts
+├── scripts/ capture-fixtures.ts  update-centres.ts  update-phones.ts  check-api.ts  lib.ts
 ├── data/ centres.dropin.json  centres.enroll.json
 ├── src/
 │   ├── app/            # /, /api/*
